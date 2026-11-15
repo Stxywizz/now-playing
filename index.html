@@ -970,6 +970,45 @@ async function pipedMix(id){
   if(!id||id.startsWith('dz:'))return null;
   try{const j=await pipedJson('/playlists/RD'+id,7000);const l=pipedMap(j.relatedStreams);return l.length?l:null}catch(e){return null}
 }
+
+const SADW=/เศร้า|เหงา|ร้องไห้|น้ำตา|คิดถึง|ลืม|เสียใจ|เจ็บ|ปวดใจ|จากลา|ลาก่อน|อกหัก|ทิ้งไป|โดดเดี่ยว|ผิดหวัง|ขอโทษ|ไม่เหลือ|หายไป|ฝนตก|\b(sad|cry|crying|tears?|lonely|alone|miss(ing)?|goodbye|broken|hurt|pain|heartbreak|heartbroken|lost|regret|sorry|blue|rain|die|ghost|leave|left)\b/ig;
+const UPW=/สนุก|ปาร์ตี้|เต้น|เมา|ฟิน|ซัมเมอร์|มันส์|ปาร์ตี้|\b(party|dance|club|summer|fun|hype|bounce|vibe|drip|high|fire|turn up|banger|energy|boom)\b/ig;
+const cnt=(t,re)=>((t||'').match(re)||[]).length;
+const moodScore=t=>{const a=cnt(t,SADW),b=cnt(t,UPW);return a+b?(b-a)/(a+b):0};
+const bpmCache={};
+async function dzBpm(title,author){
+  const k=tkey({title:title,author:author});
+  if(k in bpmCache)return bpmCache[k];
+  let v=0;
+  try{
+    const p=parse(title||'',author||''),T=norm(p.track).slice(0,10),A=norm(p.artist||author);
+    const j=await dz('/search?limit=6&q='+enc((p.artist||author||'')+' '+p.track));
+    const hit=((j&&j.data)||[]).find(x=>{const t=norm(x.title),a=norm(x.artist&&x.artist.name);return T&&t.includes(T)&&(!A||a.includes(A)||A.includes(a))});
+    if(hit){const tr=await dz('/track/'+hit.id);v=(tr&&tr.bpm>0)?tr.bpm:0}
+  }catch(e){}
+  bpmCache[k]=v;return v;
+}
+const withTO=(p,ms)=>Promise.race([p,new Promise(r=>setTimeout(()=>r(0),ms))]);
+async function moodAdjust(it,pool,curText){
+  const lyr=(lines&&lines.length?lines.map(l=>l.s).join(' '):curPlain)||'';
+  const curM=moodScore(curText+' '+lyr);
+  const curB=await withTO(dzBpm(it.title,it.author),4500);
+  const slow=(curB>0&&curB<=105)||curM<-.25,fast=curB>=125&&curM>=0;
+  if(!slow&&!fast&&!curB&&!curM)return;
+  const top=[];const seenT=new Set();
+  for(const o of pool){const k=o.x.id;if(seenT.has(k))continue;seenT.add(k);top.push(o);if(top.length>=14)break}
+  await Promise.all(top.map(async o=>{
+    const x=o.x,t=(x.title||'')+' '+(x.author||''),m=moodScore(t);
+    if(slow){if(m>0)o.s-=4;else if(m<0)o.s+=2}
+    if(fast&&m<0)o.s-=1.5;
+    const b=await withTO(dzBpm(x.title,x.author),4500);
+    if(b>0){
+      if(slow){if(b>=120)o.s-=5;else if(b>=110)o.s-=2.5}
+      else if(fast&&b<=85)o.s-=2;
+      if(curB>0&&Math.abs(b-curB)>35)o.s-=2;
+    }
+  }));
+}
 async function getRecs(it){
   if(!it)return[];
   if(recCache.has(it.id))return recCache.get(it.id);
@@ -989,11 +1028,12 @@ async function getRecs(it){
   const seeds=[].concat((mix||[]).slice(0,2),(rel||[]).slice(0,2)).filter((x,i,a)=>a.findIndex(y=>y.id===x.id)===i).slice(0,3);
   if(seeds.length){
     const hop=await Promise.all(seeds.map(x=>pipedRelated(x.id).catch(()=>null)));
-    hop.forEach(l=>add(l&&l.slice(0,10),6,.2,1.5));
+    hop.forEach(l=>add(l&&l.slice(0,10),5,.2,1.5));
   }
   add(dzl,thai?2.5:5.5,.1,3);
   if(thai)pool.forEach(o=>{const t=(o.x.title||'')+(o.x.author||'');if(isThai(t))o.s+=1.5});
   pool.sort((a,b)=>b.s-a.s);
+  try{await moodAdjust(it,pool,curTitle);pool.sort((a,b)=>b.s-a.s)}catch(e){}
   const seen=new Set([it.id,tkey(it)]),per={},out=[];
   for(const o of pool){
     const x=o.x,k=tkey(x),a=norm(x.author||'');

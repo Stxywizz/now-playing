@@ -205,6 +205,17 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
 body.idle{cursor:none}
 body.idle .topbar,body.idle .card .prog,body.idle .ctl,body.idle .vol,body.idle .cact,body.idle .cactL,body.idle .lyrics header{opacity:0;pointer-events:none}
 body.idle .card{background:transparent;border-color:transparent;backdrop-filter:none}
+.lyrics{position:relative}
+.lychoice{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:13px;color:var(--dim);transition:opacity .6s}
+.lychoice span{flex:1 1 100%}
+.lyrics.vizon .lbox{visibility:hidden}
+.lyrics.vizon .lychoice{display:none!important}
+.viz{position:absolute;left:0;right:0;top:44px;bottom:0;border-radius:22px;overflow:hidden;z-index:5;display:none}
+.viz canvas{width:100%;height:100%;display:block}
+.viztools{position:absolute;left:0;right:0;bottom:8px;display:flex;flex-direction:column;gap:7px;align-items:center;padding:0 8px;transition:opacity .6s}
+.vinfo{font-size:12px;color:rgba(255,255,255,.75);text-shadow:0 1px 8px rgba(0,0,0,.6);text-align:center}
+.vbtns{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+body.idle .viztools,body.idle .lychoice{opacity:0;pointer-events:none}
 /* ---------- misc ---------- */
 #toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:rgba(20,28,48,.95);border:1px solid var(--line);padding:10px 18px;border-radius:14px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:60}
 #toast.show{opacity:1;transform:translate(-50%,0)}
@@ -264,8 +275,10 @@ body.idle .card{background:transparent;border-color:transparent;backdrop-filter:
   </main>
 
   <section class="lyrics">
-    <header><b id="lh">เนื้อเพลง</b><button id="autoSync" style="display:none;width:auto;padding:0 10px;font-size:12px" title="เนื้อเพลงนี้ไม่มีเวลา ให้แอปประมาณเวลาให้">ซิงค์อัตโนมัติ</button><button id="lyNext" title="เนื้อเพลงไม่ตรง? ลองเวอร์ชันอื่น">⟳</button><button id="lyEdit" title="ใส่/แก้เนื้อเพลงเอง">✎</button><button id="offM" title="เนื้อเพลงมาช้าลง 0.5 วิ">−</button><span id="offV">0.0s</span><button id="offP" title="เนื้อเพลงมาเร็วขึ้น 0.5 วิ">+</button></header>
+    <header><b id="lh">เนื้อเพลง</b><button id="autoSync" style="display:none;width:auto;padding:0 10px;font-size:12px" title="เนื้อเพลงนี้ไม่มีเวลา ให้แอปประมาณเวลาให้">ซิงค์อัตโนมัติ</button><button id="vizBtn" title="แอนิเมชันตามจังหวะเพลง">♫</button><button id="lyNext" title="เนื้อเพลงไม่ตรง? ลองเวอร์ชันอื่น">⟳</button><button id="lyEdit" title="ใส่/แก้เนื้อเพลงเอง">✎</button><button id="offM" title="เนื้อเพลงมาช้าลง 0.5 วิ">−</button><span id="offV">0.0s</span><button id="offP" title="เนื้อเพลงมาเร็วขึ้น 0.5 วิ">+</button></header>
+    <div id="lyChoice" class="lychoice" style="display:none"></div>
     <div class="lbox" id="lbox"><div class="lin plain" id="lin"><div class="lmsg">เนื้อเพลงจะขึ้นที่นี่</div></div></div>
+    <div class="viz" id="viz"><canvas id="vizc"></canvas><div class="viztools"><div class="vinfo" id="vInfo"></div><div class="vbtns"><button class="mini" id="vTap" title="แตะซ้ำ ๆ ตามจังหวะที่ได้ยิน">แตะตามจังหวะ</button><button class="mini" id="vHalf" title="ครึ่งความเร็ว">½</button><button class="mini" id="vDbl" title="สองเท่า">×2</button><button class="mini" id="vAud" title="จับเสียงจริงเพื่อขยับตามเพลงแม่นขึ้น">🎧 จับเสียงจริง</button><button class="mini" id="vBack">← เนื้อเพลง</button></div></div></div>
   </section>
 </div>
 
@@ -914,7 +927,7 @@ window.onYouTubeIframeAPIReady=()=>{
 function playAt(i){
   if(i<0||i>=queue.length)return;
   idx=i;save();drawQ();$('ph').style.display='none';
-  const it=queue[i];updateHeart();playedSet.add(it);curGenre='';curArtist='';
+  const it=queue[i];updateHeart();playedSet.add(it);curGenre='';curArtist='';vizSet(false);
   if(it.pend){
     $('ttl').textContent=it.title||'';$('art').textContent=it.author||'';
     resetLyrics('กำลังหาเพลง…');metaFor='';coverSeq++;thumbSeq++;
@@ -1064,14 +1077,14 @@ async function fetchLyrics(p,vid){
     list=lyRank(all,p,dur);
     if(list[0]&&list[0].s>=10&&list[0].x.syncedLyrics)break;
   }
-  if(!anyOk)return resetLyrics('เชื่อมต่อแหล่งเนื้อเพลงไม่ได้');
+  if(!anyOk){resetLyrics('เชื่อมต่อแหล่งเนื้อเพลงไม่ได้');lyState('none');return}
   list=lyRank(all,p,dur);
   if(list[0]&&list[0].s>=8){lyList=list;lyPos=0;applyCand(list[0]);return}
   resetLyrics('ไม่พบเนื้อเพลงที่ตรงกับเพลงนี้<br>กดปุ่ม ✎ เพื่อวางเนื้อเพลงเอง'+(list.length?' หรือกด ⟳ เพื่อลองเวอร์ชันที่ใกล้เคียง':''));
-  lyList=list;lyPos=-1;
+  lyList=list;lyPos=-1;lyState('none');
 }
-function resetLyrics(msg){lines=[];actI=-1;curPlain='';showAuto(false);lyList=[];lyPos=0;const l=$('lin');l.className='lin plain';l.style.removeProperty('--y');$('lbox').classList.add('scroll');l.innerHTML='<div class="lmsg">'+msg+'</div>'}
-function setPlain(txt){lines=[];actI=-1;curPlain=txt;showAuto(true);const l=$('lin');l.className='lin plain';l.style.removeProperty('--y');$('lbox').classList.add('scroll');l.textContent=txt}
+function resetLyrics(msg){lines=[];actI=-1;curPlain='';showAuto(false);lyList=[];lyPos=0;lyState('loading');const l=$('lin');l.className='lin plain';l.style.removeProperty('--y');$('lbox').classList.add('scroll');l.innerHTML='<div class="lmsg">'+msg+'</div>'}
+function setPlain(txt){lines=[];actI=-1;curPlain=txt;showAuto(true);lyState('plain');const l=$('lin');l.className='lin plain';l.style.removeProperty('--y');$('lbox').classList.add('scroll');l.textContent=txt}
 const segr=(typeof Intl!=='undefined'&&Intl.Segmenter)?new Intl.Segmenter('th',{granularity:'word'}):null;
 function segment(s){return segr?[...segr.segment(s)].map(x=>x.segment):s.split(/(\s+)/).filter(Boolean)}
 function setSynced(txt){
@@ -1081,7 +1094,7 @@ function setSynced(txt){
   buildSynced(raw);
 }
 function buildSynced(raw){
-  curPlain='';showAuto(false);
+  curPlain='';showAuto(false);lyState('synced');
   lines=raw;actI=-1;
   const lin=$('lin');lin.innerHTML='';lin.className='lin';lin.style.removeProperty('--y');$('lbox').classList.remove('scroll');
   lines.forEach((l,i)=>{
@@ -1191,6 +1204,139 @@ document.addEventListener('keydown',e=>{
   if(e.code==='Space'||e.code==='Enter'){e.preventDefault();tapNow()}
   else if(e.code==='Backspace'){e.preventDefault();tapUndo()}
 });
+
+/* ---------- no-lyrics choice + beat animation ---------- */
+let lyKind='loading',vizOn=false,vraf=0,vlast=0,vrot=0,vpulse=0,vtick=0;
+const VN=72,vbars=new Float32Array(VN);
+const viz={bpm:110,off:0,label:'',audio:null,taps:[],bpmFor:''};
+function lyState(k){
+  lyKind=k;const box=$('lyChoice');if(!box)return;
+  box.innerHTML='';
+  if(k!=='none'&&k!=='plain'){box.style.display='none';return}
+  box.style.display='flex';
+  const sp=document.createElement('span');
+  sp.textContent=k==='none'?'ไม่มีเนื้อเพลงที่ซิงค์กับเพลงนี้ เลือกได้เลย':'เนื้อเพลงนี้ไม่มีเวลา เลือกได้เลย';
+  box.appendChild(sp);
+  const mk=(t,fn)=>{const b=document.createElement('button');b.className='mini';b.textContent=t;b.onclick=fn;box.appendChild(b)};
+  if(k==='plain')mk('ซิงค์อัตโนมัติ',()=>$('autoSync').click());
+  mk(k==='none'?'✎ ใส่เนื้อเพลงเอง':'✎ จับจังหวะเอง',()=>$('lyEdit').click());
+  mk('♫ แอนิเมชันตามจังหวะ',()=>{if(metaFor)lsSet('viz:'+metaFor,'1');vizSet(true)});
+  if(metaFor&&ls('viz:'+metaFor)==='1')vizSet(true);
+}
+function vizSet(on){
+  if(on===vizOn)return;
+  vizOn=on;$('viz').style.display=on?'block':'none';document.querySelector('.lyrics').classList.toggle('vizon',on);
+  if(on){vlast=performance.now();loadBpm();vizInfo();vraf=requestAnimationFrame(vizLoop)}
+  else cancelAnimationFrame(vraf);
+}
+$('vizBtn').onclick=()=>vizSet(!vizOn);
+$('vBack').onclick=()=>{if(metaFor)lsSet('viz:'+metaFor,'0');vizSet(false)};
+function vizInfo(){
+  $('vInfo').textContent=viz.audio?'ขยับตามเสียงจริง (กำลังแชร์เสียงอยู่)':('≈ '+Math.round(viz.bpm)+' BPM · '+viz.label);
+  $('vAud').textContent=viz.audio?'หยุดจับเสียง':'🎧 จับเสียงจริง';
+}
+function saveBpm(){if(metaFor)lsSet('bpmu:'+metaFor,JSON.stringify({bpm:viz.bpm,off:viz.off}))}
+async function loadBpm(){
+  const vid=metaFor;if(!vid||viz.bpmFor===vid)return;viz.bpmFor=vid;viz.taps=[];
+  try{const s=JSON.parse(ls('bpmu:'+vid)||'null');if(s&&s.bpm){viz.bpm=s.bpm;viz.off=s.off||0;viz.label='ที่คุณตั้งไว้';vizInfo();return}}catch(e){}
+  viz.bpm=110;viz.off=0;viz.label='ยังไม่รู้จังหวะ ใช้ค่ากลางก่อน กด “แตะตามจังหวะ” เพื่อปรับ';vizInfo();
+  const p=curP;if(!p||!p.track)return;
+  try{
+    const T=norm(p.track).slice(0,10),A=norm(p.artist);
+    const j=await dz('/search?limit=8&q='+enc((p.artist+' '+p.track).trim()));
+    const hit=((j&&j.data)||[]).find(x=>{const t=norm(x.title),a=norm(x.artist&&x.artist.name);return T&&t.includes(T)&&(!A||a.includes(A)||A.includes(a))});
+    if(!hit||viz.bpmFor!==vid)return;
+    const tr=await dz('/track/'+hit.id);
+    if(tr&&tr.bpm>0&&viz.bpmFor===vid&&!ls('bpmu:'+vid)){viz.bpm=tr.bpm;viz.label='จาก Deezer (ถ้าไม่ตรงกด ½ / ×2 หรือแตะตามจังหวะ)';vizInfo()}
+  }catch(e){}
+}
+$('vTap').onclick=()=>{
+  const now=performance.now(),t=(ready&&!inAd)?nowT():0;
+  if(viz.taps.length&&now-viz.taps[viz.taps.length-1].p>2500)viz.taps=[];
+  viz.taps.push({p:now,t:t});if(viz.taps.length>9)viz.taps.shift();
+  if(viz.taps.length>=2){
+    const iv=[];for(let i=1;i<viz.taps.length;i++)iv.push(viz.taps[i].p-viz.taps[i-1].p);
+    const s=iv.slice().sort((a,b)=>a-b),med=s[Math.floor(s.length/2)];
+    const good=iv.filter(x=>x>med*.6&&x<med*1.6),avg=good.reduce((a,b)=>a+b,0)/good.length;
+    viz.bpm=Math.max(50,Math.min(220,60000/avg));
+  }
+  viz.off=t-.08;viz.label='ที่คุณแตะ';saveBpm();vizInfo();
+};
+$('vHalf').onclick=()=>{viz.bpm=Math.max(40,viz.bpm/2);viz.label='ที่คุณตั้งไว้';saveBpm();vizInfo()};
+$('vDbl').onclick=()=>{viz.bpm=Math.min(240,viz.bpm*2);viz.label='ที่คุณตั้งไว้';saveBpm();vizInfo()};
+function stopAudio(){
+  if(!viz.audio)return;
+  try{viz.audio.s.getTracks().forEach(t=>t.stop())}catch(e){}
+  try{viz.audio.ac.close()}catch(e){}
+  viz.audio=null;vizInfo();
+}
+async function startAudio(){
+  try{
+    const s=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true});
+    if(!s.getAudioTracks().length){s.getTracks().forEach(t=>t.stop());toast('ไม่ได้แชร์เสียง ตอนเลือกให้ติ๊ก “แชร์เสียงของแท็บ / เสียงระบบ” ด้วย',5500);return}
+    const ac=new (window.AudioContext||window.webkitAudioContext)();
+    const src=ac.createMediaStreamSource(new MediaStream(s.getAudioTracks())),an=ac.createAnalyser();
+    an.fftSize=512;an.smoothingTimeConstant=.7;src.connect(an);
+    const g=ac.createGain();g.gain.value=0;an.connect(g);g.connect(ac.destination);
+    viz.audio={s:s,ac:ac,an:an,data:new Uint8Array(an.frequencyBinCount)};
+    s.getTracks().forEach(t=>t.addEventListener('ended',stopAudio));
+    vizInfo();toast('จับเสียงจริงแล้ว กด “หยุดจับเสียง” เมื่ออยากเลิก',4000);
+  }catch(e){toast('เปิดโหมดจับเสียงไม่ได้ ('+((e&&e.name)||'error')+')',4000)}
+}
+$('vAud').onclick=()=>{viz.audio?stopAudio():startAudio()};
+const vh=(a,b)=>{const x=Math.sin(a*127.1+b*311.7)*43758.5453;return x-Math.floor(x)};
+let vcol=[60,120,200],vcolAt=0;
+function themeRgb(){
+  const now=performance.now();if(now-vcolAt<1000)return vcol;vcolAt=now;
+  try{
+    const s=getComputedStyle(document.body).getPropertyValue('--c1').trim()||'#2f6bc2';
+    const c=document.createElement('canvas');c.width=c.height=1;const x=c.getContext('2d');x.fillStyle=s;x.fillRect(0,0,1,1);
+    const d=x.getImageData(0,0,1,1).data;vcol=[Math.min(255,d[0]*1.5+40),Math.min(255,d[1]*1.5+40),Math.min(255,d[2]*1.5+40)];
+  }catch(e){}
+  return vcol;
+}
+function vizLoop(ts){
+  if(!vizOn)return;
+  vraf=requestAnimationFrame(vizLoop);
+  const c=$('vizc'),dpr=window.devicePixelRatio||1,cw=Math.max(2,Math.round(c.clientWidth*dpr)),ch=Math.max(2,Math.round(c.clientHeight*dpr));
+  if(c.width!==cw||c.height!==ch){c.width=cw;c.height=ch}
+  const ctx=c.getContext('2d'),W=c.width,H=c.height,dt=Math.min(.05,(ts-vlast)/1000||.016);vlast=ts;
+  const tg=new Array(VN);let kick=0;
+  if(viz.audio){
+    const an=viz.audio.an,d=viz.audio.data;an.getByteFrequencyData(d);
+    let b=0;for(let i=0;i<6;i++)b+=d[i];kick=Math.pow(b/6/255,2.2);
+    for(let i=0;i<VN;i++){const bin=1+Math.floor(Math.pow(i/VN,1.7)*d.length*.7);tg[i]=Math.pow(d[bin]/255,1.5)}
+  }else{
+    const t=(ready&&!inAd)?nowT():0,x=(t-viz.off)*viz.bpm/60,idx=Math.floor(x),ph=x-idx,run=playing?1:0;
+    kick=Math.exp(-ph*5)*run;const sub=Math.exp(-((ph*2)%1)*7)*.45*run;
+    for(let i=0;i<VN;i++){
+      const m=i<VN/2?i:VN-1-i,tilt=1-.55*(m/(VN/2));
+      tg[i]=run?(.09+tilt*(kick*.85+sub)*(.4+.6*vh(m,idx))+.07*vh(m,Math.floor(x*4))*tilt):.035;
+    }
+  }
+  for(let i=0;i<VN;i++){const m=i<VN/2?i:VN-1-i;vbars[i]+=(tg[i]-vbars[i])*(tg[i]>vbars[i]?Math.min(1,dt*30):Math.min(1,dt*7))}
+  vpulse+=(kick-vpulse)*(kick>vpulse?Math.min(1,dt*30):Math.min(1,dt*6));
+  vrot+=dt*.1;
+  const col=themeRgb(),cx=W/2,cy=H*.44,U=Math.min(W,H),R=U*.2*(1+vpulse*.1);
+  ctx.clearRect(0,0,W,H);
+  for(let k=0;k<3;k++){
+    const a=vrot*(k+1)*.8+k*2.1,bx=cx+Math.cos(a)*W*.22,by=cy+Math.sin(a*1.3)*H*.16,r=U*(.34+.08*vpulse+k*.03);
+    const g=ctx.createRadialGradient(bx,by,0,bx,by,r);
+    g.addColorStop(0,'rgba('+col.map(Math.round).join(',')+','+(.3+.25*vpulse)+')');g.addColorStop(1,'rgba('+col.map(Math.round).join(',')+',0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(bx,by,r,0,6.2832);ctx.fill();
+  }
+  ctx.lineCap='round';ctx.lineWidth=Math.max(3,U*.011);
+  for(let i=0;i<VN;i++){
+    const a=i/VN*6.2832+vrot,v=vbars[i],len=U*.21*v+U*.012,co=Math.cos(a),si=Math.sin(a);
+    ctx.strokeStyle='rgba(255,255,255,'+(.45+.5*Math.min(1,v*1.4))+')';
+    ctx.beginPath();ctx.moveTo(cx+co*R*1.12,cy+si*R*1.12);ctx.lineTo(cx+co*(R*1.12+len),cy+si*(R*1.12+len));ctx.stroke();
+  }
+  const g2=ctx.createRadialGradient(cx,cy,R*.1,cx,cy,R);
+  g2.addColorStop(0,'rgba(255,255,255,'+(.22+.25*vpulse)+')');g2.addColorStop(1,'rgba(255,255,255,'+(.06+.08*vpulse)+')');
+  ctx.fillStyle=g2;ctx.shadowColor='rgba(255,255,255,.55)';ctx.shadowBlur=U*.05*(.4+vpulse);
+  ctx.beginPath();ctx.arc(cx,cy,R,0,6.2832);ctx.fill();ctx.shadowBlur=0;
+  if(ts-vtick>600){vtick=ts;vizInfo()}
+}
 
 /* ---------- frame loop ---------- */
 const fmt=t=>{t=Math.max(0,Math.floor(t));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')};

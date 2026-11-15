@@ -154,6 +154,33 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
 #pickpop .ppr{padding:8px 10px;border-radius:10px;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
 #pickpop .ppr:hover{background:var(--glass)}
 #pickpop .ppn{display:flex;gap:6px;padding:6px 4px 2px}
+#edModal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:55}
+#edModal.show{display:flex}
+#edModal textarea{width:100%;height:260px;resize:vertical;background:var(--glass);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:12px;font-size:14px;line-height:1.5;outline:none;font-family:inherit}
+.row2{display:flex;gap:10px;flex-wrap:wrap}
+.taplist{max-height:40vh;overflow:auto;background:var(--glass);border-radius:12px;padding:8px;scrollbar-width:thin}
+.taplist div{padding:5px 9px;font-size:14px;color:var(--dim);display:flex;justify-content:space-between;gap:10px}
+.taplist .done{color:rgba(255,255,255,.75)}
+.taplist .cur{color:#fff;background:rgba(255,255,255,.16);border-radius:8px;font-weight:600}
+.taplist small{opacity:.7;font-variant-numeric:tabular-nums}
+#app.nosearch .sbox{display:none}
+#app.nosearch .bar{justify-content:flex-end}
+.cactL{position:absolute;top:10px;left:14px;display:flex}
+.cactL button{background:none;border:0;color:var(--fg);font-size:21px;cursor:pointer;padding:4px 7px;border-radius:8px;opacity:.7;line-height:1;display:flex;align-items:center}
+.cactL button:hover{opacity:1;background:var(--glass)}
+.cactL button.on{opacity:1;color:#fff;background:var(--glass)}
+.card .title,.card .artist{padding:0 96px}
+.ctl{gap:30px}
+.ctl .sm{opacity:.55;position:relative}
+.ctl .sm svg{width:22px;height:22px}
+.ctl .sm.on{opacity:1}
+.ctl .sm.on::after{content:'';position:absolute;bottom:0;left:50%;width:4px;height:4px;border-radius:50%;background:#fff;transform:translateX(-50%)}
+#repBtn[data-m="2"]::before{content:'1';position:absolute;top:5px;right:5px;font-size:9px;font-weight:800}
+.vol{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:0}
+.vol button{background:none;border:0;color:var(--fg);cursor:pointer;display:flex;padding:4px;opacity:.8}
+.vol button:hover{opacity:1}
+.vol svg{width:20px;height:20px;fill:currentColor}
+.vol input{flex:none;width:150px}
 /* ---------- misc ---------- */
 #toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:rgba(20,28,48,.95);border:1px solid var(--line);padding:10px 18px;border-radius:14px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:60}
 #toast.show{opacity:1;transform:translate(-50%,0)}
@@ -172,12 +199,10 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
 </style>
 </head>
 <body>
-<div id="app" class="lyr">
+<div id="app" class="lyr nosearch">
   <aside>
-    <div class="clock"><div class="t" id="clk">--:--</div><div class="d" id="dt"></div></div>
-    <div class="cal"><h4 id="cm"></h4><table id="ct"></table></div>
     <div class="queue">
-      <h4><span>คิวเพลง</span><span class="sp" id="qn"></span><button class="mini" id="svBtn" title="บันทึกคิวเป็นเพลย์ลิสต์">บันทึก</button><button class="mini" id="shufBtn" title="สุ่มลำดับเพลงที่เหลือ">สุ่ม</button><button class="mini" id="clrBtn">ล้าง</button></h4>
+      <h4><span>คิวเพลง</span><span class="sp" id="qn"></span><button class="mini" id="svBtn" title="บันทึกคิวเป็นเพลย์ลิสต์">บันทึก</button><button class="mini" id="clrBtn">ล้าง</button></h4>
       <ul id="ql"></ul>
     </div>
   </aside>
@@ -195,6 +220,7 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
       <div class="coverwrap"><img class="cover" id="cover" alt=""></div>
     </div>
     <div class="page" id="vdisc">
+      <div id="rec"></div>
       <div id="srch"></div>
       <h3>แนะนำให้ลอง</h3><div class="chips" id="chips"></div>
       <div id="hist"></div>
@@ -202,20 +228,24 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
     </div>
     <div class="page" id="vlib"></div>
     <div class="card">
+      <div class="cactL"><button id="srchBtn" title="ค้นหาเพลง ( / )"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button><button id="autoBtn" title="เล่นเพลงแนะนำต่ออัตโนมัติเมื่อคิวหมด">∞</button></div>
       <div class="cact"><button id="likeBtn" title="ถูกใจ">♡</button><button id="plBtn" data-pick="1" title="เพิ่มเข้าเพลย์ลิสต์">♫+</button></div>
       <div class="title" id="ttl">ยังไม่ได้เลือกเพลง</div>
       <div class="artist" id="art">&nbsp;</div>
       <div class="prog"><span id="cur">0:00</span><input type="range" id="seek" min="0" max="1000" value="0"><span id="rem">-0:00</span></div>
       <div class="ctl">
+        <button class="sm" id="shufBtn" title="สุ่มเพลง"><svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg></button>
         <button id="prev" title="ก่อนหน้า"><svg viewBox="0 0 24 24"><path d="M11 6v12L2 12zM22 6v12l-9-6z"/></svg></button>
         <button class="pp" id="pp" title="เล่น/หยุด (Space)"><svg viewBox="0 0 24 24" id="ppi"><path d="M8 5v14l11-7z"/></svg></button>
         <button id="next" title="ถัดไป"><svg viewBox="0 0 24 24"><path d="M13 6v12l9-6zM2 6v12l9-6z"/></svg></button>
+        <button class="sm" id="repBtn" title="วนซ้ำ"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
       </div>
+      <div class="vol"><button id="volBtn" title="ปิด/เปิดเสียง (M)"><svg viewBox="0 0 24 24" id="volI"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button><input type="range" id="vol" min="0" max="100" value="80" title="ระดับเสียง (↑ ↓)"></div>
     </div>
   </main>
 
   <section class="lyrics">
-    <header><b id="lh">เนื้อเพลง</b><button id="offM" title="เนื้อเพลงมาช้าลง 0.5 วิ">−</button><span id="offV">0.0s</span><button id="offP" title="เนื้อเพลงมาเร็วขึ้น 0.5 วิ">+</button></header>
+    <header><b id="lh">เนื้อเพลง</b><button id="autoSync" style="display:none;width:auto;padding:0 10px;font-size:12px" title="เนื้อเพลงนี้ไม่มีเวลา ให้แอปประมาณเวลาให้">ซิงค์อัตโนมัติ</button><button id="lyEdit" title="ใส่/แก้เนื้อเพลงเอง">✎</button><button id="offM" title="เนื้อเพลงมาช้าลง 0.5 วิ">−</button><span id="offV">0.0s</span><button id="offP" title="เนื้อเพลงมาเร็วขึ้น 0.5 วิ">+</button></header>
     <div class="lbox" id="lbox"><div class="lin plain" id="lin"><div class="lmsg">เนื้อเพลงจะขึ้นที่นี่</div></div></div>
   </section>
 </div>
@@ -236,6 +266,21 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
   <p>ถ้ายังไม่ใส่ key แอปจะลองค้นหาผ่านบริการสำรองให้ก่อน (อาจใช้ไม่ได้บางช่วง) และวางลิงก์เพลงหรือเพลย์ลิสต์เล่นได้ตามปกติ</p>
   <div class="row"><button class="btn" id="setCancel">ปิด</button><button class="btn on" id="setSave">บันทึก</button></div>
 </div></div>
+<div id="edModal"><div class="panel">
+  <div id="edMain" style="display:flex;flex-direction:column;gap:12px">
+    <h3>ใส่ / แก้เนื้อเพลงเอง</h3>
+    <p>วางเนื้อเพลง (บรรทัดละประโยค) หรือวางแบบ LRC ที่มี [00:12.34] นำหน้า แล้วเลือก "บันทึก" ถ้าเป็นเนื้อเพลงธรรมดา ให้กด "จับจังหวะ" เพื่อกดบอกว่าแต่ละบรรทัดเริ่มตอนไหนระหว่างฟังเพลง บันทึกไว้เฉพาะเพลงนี้ในเครื่องคุณ</p>
+    <textarea id="edTa" placeholder="วางเนื้อเพลงที่นี่…" spellcheck="false"></textarea>
+    <div class="row2"><label class="btn" style="padding:9px 14px;cursor:pointer">เปิดไฟล์ .lrc / .txt<input type="file" id="edFile" accept=".lrc,.txt" style="display:none"></label><button class="btn" id="edClear">ลบที่บันทึกไว้</button></div>
+    <div class="row" style="justify-content:flex-end;display:flex;gap:10px"><button class="btn" id="edClose">ปิด</button><button class="btn" id="edTapStart">จับจังหวะ</button><button class="btn on" id="edSave">บันทึก</button></div>
+  </div>
+  <div id="edTapBox" style="display:none;flex-direction:column;gap:12px">
+    <h3>จับจังหวะ</h3>
+    <p id="edTapHint">เพลงจะเริ่มเล่นใหม่จากต้น กดปุ่มด้านล่าง (หรือกด Space) ตอนที่นักร้องเริ่มร้องบรรทัดที่ไฮไลต์ ผิดให้กด Backspace ย้อน</p>
+    <div class="taplist" id="edTapList"></div>
+    <div class="row2" style="justify-content:flex-end"><button class="btn" id="edTapCancel">ยกเลิก</button><button class="btn" id="edUndo">↩ ย้อน</button><button class="btn on" id="edTapBtn" style="min-width:210px;padding:12px 18px">เริ่มบรรทัดนี้ (Space)</button></div>
+  </div>
+</div></div>
 <div id="toast"></div>
 
 <script>
@@ -253,23 +298,6 @@ let view=ls('view')||'mv',useTheme=ls('theme')!=='0',apiKey=ls('key')||'',restor
 try{queue=JSON.parse(ls('q')||'[]');idx=+ls('idx');if(!(idx>=0&&idx<queue.length))idx=queue.length?0:-1}catch(e){queue=[];idx=-1}
 
 function toast(m,ms=2600){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),ms)}
-
-/* ---------- clock + calendar ---------- */
-function drawClock(){
-  const n=new Date();
-  $('clk').textContent=n.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',hour12:false});
-  $('dt').textContent=n.toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long'});
-  $('cm').textContent=n.toLocaleDateString('th-TH',{month:'long'});
-  const y=n.getFullYear(),m=n.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
-  let h='<tr>'+['อา','จ','อ','พ','พฤ','ศ','ส'].map(d=>'<th>'+d+'</th>').join('')+'</tr><tr>';
-  for(let i=0;i<first;i++)h+='<td class="o"><span>0</span></td>';
-  for(let d=1;d<=days;d++){
-    if((first+d-1)%7===0&&d>1)h+='</tr><tr>';
-    h+='<td'+(d===n.getDate()?' class="today"':'')+'><span>'+d+'</span></td>';
-  }
-  $('ct').innerHTML=h+'</tr>';
-}
-drawClock();setInterval(drawClock,15000);
 
 /* ---------- theme from cover ---------- */
 function resetTheme(){const s=document.body.style;['--c1','--c2','--c3'].forEach(k=>s.removeProperty(k))}
@@ -292,7 +320,8 @@ function themeFrom(url){
   im.onerror=resetTheme;im.src=url;
 }
 function setCover(url){$('cover').src=url;themeFrom(url)}
-let thumbSeq=0,coverArt=false;
+let thumbSeq=0,coverArt=false,curPlain='';
+const showAuto=on=>{$('autoSync').style.display=on?'':'none'};
 const BLANK='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 function loadImg(url){return new Promise((res,rej)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>res(im);im.onerror=()=>rej(new Error('img'));im.src=url})}
 function squareFrom(im){
@@ -340,7 +369,7 @@ async function findCover(p,id){
       const j=await itunesJ(term);
       if(my!==coverSeq)return;
       const best=(j.results||[]).filter(x=>x.trackName&&x.artworkUrl100).map(x=>({x,s:score(x)})).sort((a,b)=>b.s-a.s)[0];
-      if(best&&best.s>=need){coverArt=true;setCover(best.x.artworkUrl100.replace(/\d+x\d+bb/,'1000x1000bb'));return}
+      if(best&&best.s>=need){coverArt=true;curGenre=best.x.primaryGenreName||'';curArtist=best.x.artistName||'';setCover(best.x.artworkUrl100.replace(/\d+x\d+bb/,'1000x1000bb'));return}
     }catch(e){}
   }
 }
@@ -362,7 +391,7 @@ function drawQ(){
   if(!queue.length){ul.innerHTML='<div class="empty">ยังไม่มีเพลงในคิว<br>ค้นหา หรือวางลิงก์เพลย์ลิสต์ได้เลย</div>';return}
   queue.forEach((q,i)=>{
     const li=document.createElement('li');if(i===idx)li.className='cur';
-    const n=document.createElement('span');n.className='n';n.textContent=q.title||('youtube.com/'+q.id);li.appendChild(n);
+    const n=document.createElement('span');n.className='n';n.textContent=(q.rec?'✦ ':'')+(q.title||('youtube.com/'+q.id));li.appendChild(n);
     const x=document.createElement('button');x.className='x';x.textContent='×';x.title='เอาออก';
     x.onclick=e=>{e.stopPropagation();removeAt(i)};li.appendChild(x);
     li.onclick=()=>playAt(i);ul.appendChild(li);
@@ -376,11 +405,6 @@ function removeAt(i){
   save();drawQ();
 }
 $('clrBtn').onclick=()=>{queue=[];idx=-1;if(ready)player.stopVideo();save();drawQ()};
-$('shufBtn').onclick=()=>{
-  const head=queue.slice(0,idx+1),tail=queue.slice(idx+1);
-  for(let i=tail.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[tail[i],tail[j]]=[tail[j],tail[i]]}
-  queue=head.concat(tail);save();drawQ();toast('สุ่มลำดับเพลงที่เหลือแล้ว');
-};
 let fetching=false;
 async function fetchTitles(){
   if(fetching)return;fetching=true;
@@ -448,7 +472,8 @@ function setTab(t){
   $('vlib').style.display=t==='lib'?'block':'none';
   ['now','disc','lib'].forEach(k=>$('t'+k).classList.toggle('on',k===t));
   if(t==='disc'&&!discInit){discInit=true;initDiscover()}
-  if(t==='disc')drawHist();
+  $('app').classList.toggle('nosearch',t==='now');
+  if(t==='disc'){drawHist();drawRec()}
   if(t==='lib')drawLib();
   if(t==='now')setTimeout(()=>scrollTo(actI),60);
 }
@@ -470,15 +495,15 @@ async function ytSearch(q,n){
     }catch(e){}
   }
   const order=pipedOk?[pipedOk].concat(PIPED.filter(x=>x!==pipedOk)):PIPED;
-  for(const base of order){
-    try{
+  try{
+    return await Promise.any(order.map(async base=>{
       const j=await tfetch(base+'/search?q='+enc(q)+'&filter=videos',6500);
       const it=(j.items||[]).filter(x=>x.url&&x.url.includes('v=')).slice(0,n)
         .map(x=>({id:x.url.split('v=')[1].slice(0,11),title:x.title,author:x.uploaderName}));
-      if(it.length){pipedOk=base;return it}
-    }catch(e){}
-  }
-  return null;
+      if(!it.length)throw new Error('none');
+      pipedOk=base;return it;
+    }));
+  }catch(e){return null}
 }
 const thumb=id=>'https://i.ytimg.com/vi/'+id+'/mqdefault.jpg';
 function trackRow(it,extra){
@@ -682,19 +707,103 @@ $('svBtn').onclick=()=>{
   pls.push(pl);savePls();toast('บันทึกเป็น “'+pl.name+'” แล้ว (ดูในแท็บเพลย์ลิสต์)');
 };
 
+/* ---------- modes: shuffle / repeat / autoplay / volume ---------- */
+const playedSet=new WeakSet();let backStack=[],curGenre='',curArtist='',recBusy=false;
+let shuffleOn=ls('shuf')==='1',repeat=+(ls('rep')||0),autoplayOn=ls('auto')!=='0',vol=+(ls('vol')||80),muted=false;
+if(!(vol>=0&&vol<=100))vol=80;
+const VOLP='<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>';
+const MUTEP='<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.796 8.796 0 0021 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 003.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+function drawModes(){
+  $('shufBtn').classList.toggle('on',shuffleOn);$('repBtn').classList.toggle('on',repeat>0);
+  $('repBtn').dataset.m=repeat;$('autoBtn').classList.toggle('on',autoplayOn);
+}
+function applyVol(){
+  $('vol').value=muted?0:vol;$('vol').style.setProperty('--p',(muted?0:vol)+'%');
+  $('volI').innerHTML=(muted||vol===0)?MUTEP:VOLP;
+  if(!ready)return;
+  player.setVolume(vol);if(muted)player.mute();else player.unMute();
+}
+$('shufBtn').onclick=()=>{shuffleOn=!shuffleOn;lsSet('shuf',shuffleOn?'1':'0');backStack=[];drawModes();toast(shuffleOn?'เปิดสุ่มเพลง':'ปิดสุ่มเพลง')};
+$('repBtn').onclick=()=>{repeat=(repeat+1)%3;lsSet('rep',repeat);drawModes();toast(['ไม่วนซ้ำ','วนซ้ำทั้งคิว','วนซ้ำเพลงเดียว'][repeat])};
+$('autoBtn').onclick=()=>{autoplayOn=!autoplayOn;lsSet('auto',autoplayOn?'1':'0');drawModes();toast(autoplayOn?'เปิด: เล่นเพลงแนะนำต่อเองเมื่อคิวหมด':'ปิดการเล่นเพลงแนะนำต่อเอง');if(autoplayOn)ensureUpcoming()};
+$('vol').addEventListener('input',e=>{vol=+e.target.value;muted=false;lsSet('vol',vol);applyVol()});
+$('volBtn').onclick=()=>{muted=!muted;applyVol()};
+$('srchBtn').onclick=()=>{setTab('disc');setTimeout(()=>$('q').focus(),60)};
+drawModes();applyVol();
+
+/* ---------- recommendations / autoplay ---------- */
+const recCache=new Map();
+async function pipedRelated(id){
+  const order=pipedOk?[pipedOk].concat(PIPED.filter(x=>x!==pipedOk)):PIPED;
+  try{
+    return await Promise.any(order.map(async base=>{
+      const j=await tfetch(base+'/streams/'+id,6500);
+      const rel=(j.relatedStreams||[]).filter(x=>x.type==='stream'&&x.url&&x.url.includes('v=')&&x.duration>=90&&x.duration<=540);
+      if(!rel.length)throw new Error('none');
+      pipedOk=base;
+      return rel.map(x=>({id:x.url.split('v=')[1].slice(0,11),title:x.title,author:x.uploaderName,rec:1}));
+    }));
+  }catch(e){return null}
+}
+async function getRecs(it){
+  if(!it)return[];
+  if(recCache.has(it.id))return recCache.get(it.id);
+  let list=await pipedRelated(it.id);
+  if(!list||!list.length){
+    const a=curArtist||it.author||'',q=(a+' '+(curGenre||'')+' music').trim();
+    const r=await ytSearch(q,15);
+    list=(r||[]).filter(x=>x.id!==it.id).map(x=>({id:x.id,title:x.title,author:x.author,rec:1}));
+  }
+  if(list.length)recCache.set(it.id,list);
+  return list;
+}
+async function fillRecs(force){
+  if(recBusy)return;recBusy=true;
+  try{
+    const have=()=>new Set(queue.map(q=>q.id).concat(hist.slice(0,40).map(x=>x.id)));
+    let fresh=[];
+    const cur=queue[idx],last=queue[queue.length-1];
+    for(const src of (cur&&last&&cur.id!==last.id?[cur,last]:[cur])){
+      if(!src)continue;
+      const list=await getRecs(src),hv=have();
+      fresh=list.filter(x=>!hv.has(x.id)).slice(0,8);
+      if(fresh.length)break;
+    }
+    if(fresh.length){fresh.forEach(x=>queue.push(x));save();drawQ()}
+    else if(force)toast('หาเพลงแนะนำต่อไม่ได้ตอนนี้ (ลองใส่ API key ใน ⚙)',4000);
+  }finally{recBusy=false}
+}
+function remaining(){return shuffleOn?queue.filter(q=>q!==queue[idx]&&!playedSet.has(q)).length:queue.length-1-idx}
+function ensureUpcoming(){if(autoplayOn&&repeat===0&&idx>=0&&remaining()<2)fillRecs(false)}
+async function drawRec(){
+  const box=$('rec'),it=queue[idx];box.innerHTML='';if(!it)return;
+  box.innerHTML='<div class="shead"><h3></h3><button class="mini">เล่นต่อจากนี้ทั้งหมด</button></div><div class="msg">กำลังหาเพลงคล้ายกัน…</div>';
+  box.querySelector('h3').textContent='คล้ายกับ “'+(it.title||$('ttl').textContent||'เพลงที่กำลังฟัง')+'”';
+  const list=await getRecs(it);
+  if(queue[idx]!==it)return;
+  const msg=box.querySelector('.msg');
+  if(!list.length){msg.textContent='ยังหาเพลงคล้ายกันไม่ได้ตอนนี้ (ลองใส่ API key ใน ⚙)';box.querySelector('button').remove();return}
+  msg.remove();
+  box.querySelector('button').onclick=()=>{
+    const have=new Set(queue.map(q=>q.id));let n=0;
+    list.forEach(x=>{if(!have.has(x.id)){queue.push(x);n++}});save();drawQ();toast('เพิ่ม '+n+' เพลงต่อจากคิวแล้ว');
+  };
+  list.slice(0,10).forEach(x=>box.appendChild(trackRow(x)));
+}
+
 /* ---------- YouTube ---------- */
 const sc=document.createElement('script');sc.src='https://www.youtube.com/iframe_api';document.head.appendChild(sc);
 window.onYouTubeIframeAPIReady=()=>{
   player=new YT.Player('yt',{width:'100%',height:'100%',
     playerVars:{controls:0,rel:0,modestbranding:1,playsinline:1,iv_load_policy:3,disablekb:1,fs:0},
-    events:{onReady:()=>{ready=true;if(idx>=0){restore=true;player.cueVideoById(queue[idx].id)}},
+    events:{onReady:()=>{ready=true;applyVol();if(idx>=0){restore=true;player.cueVideoById(queue[idx].id)}},
             onStateChange:onState,
-            onError:e=>{toast('เล่นวิดีโอนี้ไม่ได้ (รหัส '+e.data+') ข้ามไปเพลงถัดไป');setTimeout(()=>next(true),900)}}});
+            onError:e=>{toast('เล่นวิดีโอนี้ไม่ได้ (รหัส '+e.data+') ข้ามไปเพลงถัดไป');setTimeout(()=>next(true,true),900)}}});
 };
 function playAt(i){
   if(i<0||i>=queue.length)return;
   idx=i;save();drawQ();$('ph').style.display='none';
-  const it=queue[i];updateHeart();
+  const it=queue[i];updateHeart();playedSet.add(it);curGenre='';curArtist='';
   $('ttl').textContent=it.title||'กำลังโหลด…';$('art').textContent=it.author||'';
   resetLyrics('กำลังหาเนื้อเพลง…');metaFor='';coverSeq++;
   setThumbCover(it.id);
@@ -706,24 +815,45 @@ function onState(e){
   $('ppi').innerHTML=(st===1||st===3)?PAUSE:PLAY;
   $('stage').classList.toggle('pl',st===1||st===3);
   if(st===5){if(pending)finishImport();else{restore=false;$('ph').style.display='none';loadMeta()}}
-  if(st===1)loadMeta();
+  if(st===1){loadMeta();ensureUpcoming()}
   if(st===0)next(true);
 }
 function toggle(){if(!ready)return;player.getPlayerState()===1?player.pauseVideo():player.playVideo()}
-function next(auto){
-  if(idx<queue.length-1)playAt(idx+1);
+function pickNext(auto,skipOne){
+  if(!queue.length)return -1;
+  if(repeat===2&&auto&&!skipOne)return idx;
+  if(shuffleOn&&queue.length>1){
+    let c=[];queue.forEach((q,i)=>{if(i!==idx&&!playedSet.has(q))c.push(i)});
+    if(!c.length&&repeat===1){queue.forEach(q=>playedSet.delete(q));playedSet.add(queue[idx]);queue.forEach((q,i)=>{if(i!==idx)c.push(i)})}
+    return c.length?c[Math.floor(Math.random()*c.length)]:-1;
+  }
+  if(idx<queue.length-1)return idx+1;
+  if(repeat===1)return 0;
+  return -1;
+}
+async function next(auto,skipOne){
+  let i=pickNext(auto,skipOne);
+  if(i<0&&autoplayOn&&idx>=0){await fillRecs(true);i=pickNext(auto,skipOne)}
+  if(i>=0){if(shuffleOn&&queue[idx])backStack.push(queue[idx]);playAt(i)}
   else if(!auto&&ready)player.seekTo(Math.min(player.getCurrentTime()+10,player.getDuration()),true);
 }
 function prev(){
   if(!ready)return;const c=player.getCurrentTime();
-  if(queue.length<=1)player.seekTo(Math.max(c-10,0),true);
-  else if(c>3||idx<=0)player.seekTo(0,true);
-  else playAt(idx-1);
+  if(c>3){player.seekTo(0,true);return}
+  if(shuffleOn&&backStack.length){const it=backStack.pop(),i=queue.indexOf(it);if(i>=0){playAt(i);return}}
+  if(idx>0)playAt(idx-1);
+  else if(repeat===1&&queue.length>1)playAt(queue.length-1);
+  else player.seekTo(0,true);
 }
 $('pp').onclick=toggle;$('next').onclick=()=>next(false);$('prev').onclick=prev;
 document.addEventListener('keydown',e=>{
+  if(document.querySelector('#modal.show,#edModal.show'))return;
   if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;
   if(e.code==='Space'){e.preventDefault();toggle()}
+  if(e.code==='ArrowUp'){e.preventDefault();vol=Math.min(100,vol+5);muted=false;lsSet('vol',vol);applyVol()}
+  if(e.code==='ArrowDown'){e.preventDefault();vol=Math.max(0,vol-5);lsSet('vol',vol);applyVol()}
+  if(e.code==='KeyM')$('volBtn').click();
+  if(e.key==='/'){e.preventDefault();$('srchBtn').click()}
   if(e.code==='ArrowRight'&&ready)player.seekTo(player.getCurrentTime()+5,true);
   if(e.code==='ArrowLeft'&&ready)player.seekTo(player.getCurrentTime()-5,true);
 });
@@ -745,27 +875,55 @@ function loadMeta(){
   const it=queue[idx];if(it&&(!it.title||!it.author)){it.title=d.title;it.author=d.author;save();drawQ()}
   if(it){pushHist(it);updateHeart()}
   $('lh').textContent=p.artist&&p.track?p.artist+' — '+p.track:'เนื้อเพลง';
-  fetchLyrics(p);findCover(p,key);
+  fetchLyrics(p,key);findCover(p,key);
 }
-async function fetchLyrics(p){
+const lyKey=v=>'ly:'+v;
+function loadSaved(v){try{const s=ls(lyKey(v));return s?JSON.parse(s):null}catch(e){return null}}
+function applySaved(sv){if(sv.lrc)setSynced(sv.lrc);else setPlain(sv.plain||'')}
+async function fetchLyrics(p,vid){
   const my=++lyrSeq;
+  const sv=vid&&loadSaved(vid);
+  if(sv){applySaved(sv);return}
+  const dur=(ready&&player.getDuration())||0;
   const get=async u=>{try{const r=await fetch(u);return r.ok?await r.json():[]}catch(e){return null}};
-  let res=await get('https://lrclib.net/api/search?track_name='+enc(p.track)+'&artist_name='+enc(p.artist));
-  if(my!==lyrSeq)return;
-  if(res&&!res.length)res=await get('https://lrclib.net/api/search?q='+enc((p.artist+' '+p.track).trim()));
-  if(my!==lyrSeq)return;
-  if(res===null)return resetLyrics('เชื่อมต่อแหล่งเนื้อเพลงไม่ได้');
-  const syn=(res||[]).find(x=>x.syncedLyrics),pl=(res||[]).find(x=>x.plainLyrics);
-  if(syn)setSynced(syn.syncedLyrics);else if(pl)setPlain(pl.plainLyrics);else resetLyrics('ไม่พบเนื้อเพลงของเพลงนี้');
+  const clean=s=>(s||'').replace(/\b(feat|ft|featuring|with)\b.*$/i,'').replace(/\s+/g,' ').trim();
+  const urls=[
+    'https://lrclib.net/api/search?track_name='+enc(p.track)+'&artist_name='+enc(p.artist),
+    'https://lrclib.net/api/search?q='+enc((p.artist+' '+p.track).trim()),
+    'https://lrclib.net/api/search?q='+enc(clean(p.track)),
+    'https://lrclib.net/api/search?q='+enc((clean(p.track)+' '+clean(p.artist)).trim())
+  ];
+  const all=[],seen={};let anyOk=false;
+  const diff=x=>Math.abs((x.duration||0)-dur);
+  const bySync=()=>all.filter(x=>x.syncedLyrics);
+  const strict=()=>dur?bySync().filter(x=>diff(x)<=4).sort((a,b)=>diff(a)-diff(b))[0]:bySync()[0];
+  for(const u of urls){
+    const res=await get(u);
+    if(my!==lyrSeq)return;
+    if(res===null)continue;
+    anyOk=true;
+    (res||[]).forEach(x=>{if(!seen[x.id]){seen[x.id]=1;all.push(x)}});
+    const s=strict();if(s){setSynced(s.syncedLyrics);return}
+  }
+  if(!anyOk)return resetLyrics('เชื่อมต่อแหล่งเนื้อเพลงไม่ได้');
+  const loose=dur?bySync().filter(x=>diff(x)<=12).sort((a,b)=>diff(a)-diff(b))[0]:null;
+  if(loose){setSynced(loose.syncedLyrics);return}
+  const pl=all.filter(x=>x.plainLyrics).sort((a,b)=>dur?diff(a)-diff(b):0)[0];
+  if(pl){setPlain(pl.plainLyrics);return}
+  resetLyrics('ไม่พบเนื้อเพลงของเพลงนี้<br>กดปุ่ม ✎ ด้านบนเพื่อวางเนื้อเพลงเอง แล้วจับจังหวะให้ขยับตามเพลงได้');
 }
-function resetLyrics(msg){lines=[];actI=-1;const l=$('lin');l.className='lin plain';l.style.removeProperty('--y');$('lbox').classList.add('scroll');l.innerHTML='<div class="lmsg">'+msg+'</div>'}
-function setPlain(txt){lines=[];actI=-1;const l=$('lin');l.className='lin plain';l.style.removeProperty('--y');$('lbox').classList.add('scroll');l.textContent=txt}
+function resetLyrics(msg){lines=[];actI=-1;curPlain='';showAuto(false);const l=$('lin');l.className='lin plain';l.style.removeProperty('--y');$('lbox').classList.add('scroll');l.innerHTML='<div class="lmsg">'+msg+'</div>'}
+function setPlain(txt){lines=[];actI=-1;curPlain=txt;showAuto(true);const l=$('lin');l.className='lin plain';l.style.removeProperty('--y');$('lbox').classList.add('scroll');l.textContent=txt}
 const segr=(typeof Intl!=='undefined'&&Intl.Segmenter)?new Intl.Segmenter('th',{granularity:'word'}):null;
 function segment(s){return segr?[...segr.segment(s)].map(x=>x.segment):s.split(/(\s+)/).filter(Boolean)}
 function setSynced(txt){
   const raw=[];
   txt.split('\n').forEach(l=>{const m=l.match(/^\[(\d+):(\d+(?:\.\d+)?)\](.*)$/);if(m)raw.push({t:+m[1]*60+ +m[2],s:m[3].trim()})});
   if(!raw.length)return setPlain(txt.replace(/\[[^\]]*\]/g,''));
+  buildSynced(raw);
+}
+function buildSynced(raw){
+  curPlain='';showAuto(false);
   lines=raw;actI=-1;
   const lin=$('lin');lin.innerHTML='';lin.className='lin';lin.style.removeProperty('--y');$('lbox').classList.remove('scroll');
   lines.forEach((l,i)=>{
@@ -801,6 +959,80 @@ function scrollTo(i){
 window.addEventListener('resize',()=>scrollTo(actI));
 const setOff=v=>{offset=v;$('offV').textContent=(offset>0?'+':'')+offset.toFixed(1)+'s'};
 $('offM').onclick=()=>setOff(offset-.5);$('offP').onclick=()=>setOff(offset+.5);
+
+/* ---------- auto-sync + manual editor ---------- */
+$('autoSync').onclick=()=>{
+  if(!curPlain||!ready)return;
+  const d=player.getDuration()||0;if(!d){toast('รอให้เพลงโหลดก่อน');return}
+  const items=[];let gap=0;
+  curPlain.split('\n').forEach(s=>{s=s.trim();if(!s)gap++;else{items.push({s,gap});gap=0}});
+  if(!items.length)return;
+  const w=it=>Math.max(10,it.s.length)+it.gap*14;
+  const start=Math.min(14,d*.07),end=d-Math.min(16,d*.08),span=Math.max(10,end-start),tot=items.reduce((a,it)=>a+w(it),0);
+  let c=0;const raw=items.map(it=>{const t=start+span*c/tot;c+=w(it);return{t,s:it.s}});
+  buildSynced(raw);
+  toast('ซิงค์แบบประมาณแล้ว ถ้าเพี้ยนปรับด้วย − / + หรือกด ✎ เพื่อจับจังหวะเอง',5000);
+};
+const fmtLrc=t=>{const m=Math.floor(t/60),s=t-m*60;return String(m).padStart(2,'0')+':'+(s<10?'0':'')+s.toFixed(2)};
+let tap=null;
+function edClose(){$('edModal').classList.remove('show');tap=null}
+function edShow(main){$('edMain').style.display=main?'flex':'none';$('edTapBox').style.display=main?'none':'flex'}
+$('lyEdit').onclick=()=>{
+  if(!queue[idx]){toast('ยังไม่ได้เลือกเพลง');return}
+  $('edTa').value=lines.length?lines.map(l=>l.s).join('\n'):curPlain;
+  edShow(true);$('edModal').classList.add('show');
+};
+$('edClose').onclick=edClose;
+$('edModal').addEventListener('mousedown',e=>{if(e.target.id==='edModal'&&!tap)edClose()});
+$('edFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('edTa').value=String(r.result)};r.readAsText(f);e.target.value=''};
+const hasLrc=t=>/\[\d+:\d+(?:\.\d+)?\]/.test(t);
+function saveLyrics(obj){if(metaFor)lsSet(lyKey(metaFor),JSON.stringify(obj));applySaved(obj)}
+$('edSave').onclick=()=>{
+  const t=$('edTa').value.trim();if(!t)return;
+  saveLyrics(hasLrc(t)?{lrc:t}:{plain:t});edClose();toast('บันทึกเนื้อเพลงแล้ว');
+};
+$('edClear').onclick=()=>{
+  if(metaFor)try{localStorage.removeItem(lyKey(metaFor))}catch(e){}
+  edClose();resetLyrics('กำลังหาเนื้อเพลง…');const k=metaFor;metaFor='';loadMeta();toast('ลบเนื้อเพลงที่บันทึกไว้แล้ว');
+};
+$('edTapStart').onclick=()=>{
+  if(!ready){toast('ตัวเล่นยังไม่พร้อม');return}
+  const L=$('edTa').value.split('\n').map(s=>s.replace(/^\s*\[[^\]]*\]\s*/,'').trim()).filter(Boolean);
+  if(!L.length){toast('วางเนื้อเพลงก่อน');return}
+  tap={L,T:[],i:0};edShow(false);renderTap();
+  if(document.activeElement)document.activeElement.blur();
+  player.seekTo(0,true);player.playVideo();
+};
+function renderTap(){
+  const box=$('edTapList');box.innerHTML='';
+  tap.L.forEach((s,k)=>{
+    const d=document.createElement('div');d.className=k<tap.i?'done':(k===tap.i?'cur':'');
+    const a=document.createElement('span');a.textContent=s;const b=document.createElement('small');b.textContent=k<tap.i?fmtLrc(tap.T[k]):'';
+    d.append(a,b);box.appendChild(d);
+  });
+  const c=box.querySelector('.cur');if(c)c.scrollIntoView({block:'center'});
+  $('edTapBtn').textContent=tap.i>=tap.L.length-1?'บรรทัดสุดท้าย แล้วบันทึก (Space)':'เริ่มบรรทัดนี้ (Space)';
+}
+function tapNow(){
+  if(!tap||!ready)return;
+  tap.T[tap.i]=Math.max(0,player.getCurrentTime()-.2);tap.i++;
+  if(tap.i>=tap.L.length){
+    const lrc=tap.L.map((s,k)=>'['+fmtLrc(tap.T[k])+']'+s).join('\n');
+    saveLyrics({lrc});edClose();toast('บันทึกแล้ว เนื้อเพลงจะขยับตามเพลงนี้');
+  }else renderTap();
+}
+function tapUndo(){
+  if(!tap||tap.i===0)return;
+  tap.i--;renderTap();if(ready)player.seekTo(Math.max(0,(tap.T[tap.i-1]||0)),true);
+}
+$('edTapBtn').addEventListener('mousedown',e=>{e.preventDefault();tapNow()});
+$('edUndo').onclick=tapUndo;
+$('edTapCancel').onclick=()=>{tap=null;edShow(true)};
+document.addEventListener('keydown',e=>{
+  if(!tap||!$('edModal').classList.contains('show'))return;
+  if(e.code==='Space'||e.code==='Enter'){e.preventDefault();tapNow()}
+  else if(e.code==='Backspace'){e.preventDefault();tapUndo()}
+});
 
 /* ---------- frame loop ---------- */
 const fmt=t=>{t=Math.max(0,Math.floor(t));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')};

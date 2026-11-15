@@ -292,16 +292,57 @@ function themeFrom(url){
   im.onerror=resetTheme;im.src=url;
 }
 function setCover(url){$('cover').src=url;themeFrom(url)}
-async function findCover(p,id){
-  const my=++coverSeq;let url=null;
+let thumbSeq=0,coverArt=false;
+const BLANK='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+function loadImg(url){return new Promise((res,rej)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>res(im);im.onerror=()=>rej(new Error('img'));im.src=url})}
+function squareFrom(im){
+  const W=im.naturalWidth,H=im.naturalHeight,sw=96,sh=Math.max(1,Math.round(96*H/W));
+  const c=document.createElement('canvas');c.width=sw;c.height=sh;
+  const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,sw,sh);
+  const d=x.getImageData(0,0,sw,sh).data;
+  const dark=(px,py)=>{const i=(py*sw+px)*4;return d[i]+d[i+1]+d[i+2]<60};
+  let y0=0,y1=sh-1,x0=0,x1=sw-1;
+  const rowB=y=>{let n=0;for(let i=0;i<sw;i++)if(dark(i,y))n++;return n/sw>.97};
+  while(y0<y1&&rowB(y0))y0++;while(y1>y0&&rowB(y1))y1--;
+  const colB=i=>{let n=0;for(let y=y0;y<=y1;y++)if(dark(i,y))n++;return n/(y1-y0+1)>.97};
+  while(x0<x1&&colB(x0))x0++;while(x1>x0&&colB(x1))x1--;
+  let cw=x1-x0+1,ch=y1-y0+1;
+  if(cw*ch<sw*sh*.35){x0=0;y0=0;cw=sw;ch=sh}
+  const k=W/sw,sx=x0*k,sy=y0*k,sW=cw*k,sH=ch*k,side=Math.min(sW,sH);
+  const out=document.createElement('canvas');out.width=out.height=640;
+  out.getContext('2d').drawImage(im,sx+(sW-side)/2,sy+(sH-side)/2,side,side,0,0,640,640);
+  return out.toDataURL('image/jpeg',.9);
+}
+async function setThumbCover(id){
+  const my=++thumbSeq;coverArt=false;$('cover').src=BLANK;
+  let url=null;
   try{
-    const r=await fetch('https://itunes.apple.com/search?media=music&entity=song&limit=5&term='+enc((p.artist+' '+p.track).trim()));
-    const j=await r.json(),t=norm(p.track).slice(0,8);
-    const hit=(j.results||[]).find(x=>t&&norm(x.trackName).includes(t));
-    if(hit)url=hit.artworkUrl100.replace(/\d+x\d+bb/,'1000x1000bb');
-  }catch(e){}
-  if(my!==coverSeq||!url)return;
-  setCover(url);
+    let im=null;
+    try{im=await loadImg('https://i.ytimg.com/vi/'+id+'/maxresdefault.jpg');if(im.naturalWidth<640)im=null}catch(e){}
+    if(!im)im=await loadImg('https://i.ytimg.com/vi/'+id+'/hqdefault.jpg');
+    url=squareFrom(im);
+  }catch(e){url='https://i.ytimg.com/vi/'+id+'/mqdefault.jpg'}
+  if(my===thumbSeq&&!coverArt)setCover(url);
+}
+const itunesJ=term=>jsonp('https://itunes.apple.com/search?media=music&entity=song&limit=10&term='+enc(term));
+async function findCover(p,id){
+  const my=++coverSeq,T=norm(p.track),A=norm(p.artist);
+  const score=x=>{
+    const t=norm(x.trackName),a=norm(x.artistName);let s=0;
+    if(T&&t===T)s+=3;else if(T&&(t.includes(T)||T.includes(t)))s+=2;
+    if(A&&(a.includes(A)||A.includes(a)))s+=2;
+    return s;
+  };
+  const need=A?4:3;
+  for(const term of [(p.artist+' '+p.track).trim(),p.track]){
+    if(!term)continue;
+    try{
+      const j=await itunesJ(term);
+      if(my!==coverSeq)return;
+      const best=(j.results||[]).filter(x=>x.trackName&&x.artworkUrl100).map(x=>({x,s:score(x)})).sort((a,b)=>b.s-a.s)[0];
+      if(best&&best.s>=need){coverArt=true;setCover(best.x.artworkUrl100.replace(/\d+x\d+bb/,'1000x1000bb'));return}
+    }catch(e){}
+  }
 }
 
 /* ---------- view (MV / cover) ---------- */
@@ -485,18 +526,48 @@ async function resolveSong(title,artist){
 function initDiscover(){
   const chips=['เพลงไทยฮิต','Lo-fi chill','Hip hop','R&B','Pop hits','Indie','Acoustic','K-pop','Workout','Jazz'];
   chips.forEach(c=>{const b=document.createElement('button');b.className='chip';b.textContent=c;b.onclick=()=>doSearch(c+' music');$('chips').appendChild(b)});
-  const defs=[['th','ยอดนิยมในไทย'],['us','ยอดนิยมทั่วโลก (US)']];
-  defs.forEach(([cc,name])=>{
+  [['th','ยอดนิยมในไทย','ไทย'],['us','ยอดนิยมทั่วโลก (US)','สากล']].forEach(d=>{
     const sec=document.createElement('div');
-    sec.innerHTML='<h3></h3><div class="row"><div class="msg">กำลังโหลด…</div></div>';
-    sec.querySelector('h3').textContent=name;$('charts').appendChild(sec);
-    tfetch('https://rss.applemarketingtools.com/api/v2/'+cc+'/music/most-played/25/songs.json',9000).then(j=>{
-      const row=sec.querySelector('.row');row.innerHTML='';
-      ((j.feed&&j.feed.results)||[]).forEach(r=>{
-        const c=songCard(r.artworkUrl100.replace(/\d+x\d+bb/,'300x300bb'),r.name,r.artistName);
-        c.onclick=()=>resolveSong(r.name,r.artistName);row.appendChild(c);
-      });
-    }).catch(()=>{sec.querySelector('.row').innerHTML='<div class="msg">โหลดชาร์ตไม่ได้ตอนนี้</div>'});
+    sec.innerHTML='<h3></h3><div class="row"></div>';
+    sec.querySelector('h3').textContent=d[1];$('charts').appendChild(sec);
+    loadChart(d[0],d[2],sec);
+  });
+}
+function jsonp(url){
+  return new Promise((res,rej)=>{
+    const cb='jp'+Math.random().toString(36).slice(2),s=document.createElement('script');
+    const done=()=>{clearTimeout(t);delete window[cb];s.remove()};
+    const t=setTimeout(()=>{done();rej(new Error('timeout'))},9000);
+    window[cb]=d=>{done();res(d)};s.onerror=()=>{done();rej(new Error('script'))};
+    s.src=url+(url.includes('?')?'&':'?')+'callback='+cb;document.head.appendChild(s);
+  });
+}
+const nRss=j=>((j.feed&&j.feed.results)||[]).map(r=>({name:r.name,artist:r.artistName,art:r.artworkUrl100}));
+const nLegacy=j=>((j.feed&&j.feed.entry)||[]).map(e=>({name:e['im:name'].label,artist:e['im:artist'].label,art:(e['im:image'][2]||e['im:image'][0]).label}));
+const nSearch=j=>{const seen={};return (j.results||[]).filter(r=>r.trackName&&!seen[r.trackName]&&(seen[r.trackName]=1)).map(r=>({name:r.trackName,artist:r.artistName,art:r.artworkUrl100}))};
+async function getChart(cc){
+  const rss='https://rss.applemarketingtools.com/api/v2/'+cc+'/music/most-played/25/songs.json';
+  const tries=[
+    ()=>tfetch(rss,8000).then(nRss),
+    ()=>tfetch('https://itunes.apple.com/'+cc+'/rss/topsongs/limit=25/json',8000).then(nLegacy),
+    ()=>tfetch('https://api.allorigins.win/raw?url='+enc(rss),10000).then(nRss),
+    ()=>jsonp('https://itunes.apple.com/search?media=music&entity=song&limit=30&country='+cc+'&term='+enc(cc==='th'?'เพลงไทย':'top hits')).then(nSearch).then(a=>{a.fallback=true;return a})
+  ];
+  for(const f of tries){try{const a=await f();if(a&&a.length)return a}catch(e){}}
+  return null;
+}
+async function loadChart(cc,label,sec){
+  const row=sec.querySelector('.row');row.innerHTML='<div class="msg">กำลังโหลด…</div>';
+  const list=await getChart(cc);
+  row.innerHTML='';
+  if(!list){
+    const m=document.createElement('div');m.className='msg';m.textContent='โหลดชาร์ตไม่ได้ (เช็กอินเทอร์เน็ตแล้วลองใหม่) ';
+    const b=document.createElement('button');b.className='mini';b.textContent='ลองใหม่';b.onclick=()=>loadChart(cc,label,sec);m.appendChild(b);row.appendChild(m);return;
+  }
+  if(list.fallback)sec.querySelector('h3').textContent='เพลงแนะนำจาก Apple Music ('+label+')';
+  list.forEach(r=>{
+    const c=songCard((r.art||'').replace(/\d+x\d+bb/,'300x300bb'),r.name,r.artist);
+    c.onclick=()=>resolveSong(r.name,r.artist);row.appendChild(c);
   });
 }
 function pushHist(it){
@@ -626,7 +697,7 @@ function playAt(i){
   const it=queue[i];updateHeart();
   $('ttl').textContent=it.title||'กำลังโหลด…';$('art').textContent=it.author||'';
   resetLyrics('กำลังหาเนื้อเพลง…');metaFor='';coverSeq++;
-  setCover('https://i.ytimg.com/vi/'+it.id+'/hqdefault.jpg');
+  setThumbCover(it.id);
   if(ready)player.loadVideoById(it.id);
 }
 function onState(e){
@@ -769,7 +840,7 @@ $('seek').addEventListener('input',e=>{dragging=true;e.target.style.setProperty(
 $('seek').addEventListener('change',e=>{if(ready)player.seekTo(player.getDuration()*e.target.value/1000,true);dragging=false});
 
 drawQ();
-if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'พร้อมเล่น';$('art').textContent=queue[idx].author||'';setCover('https://i.ytimg.com/vi/'+queue[idx].id+'/hqdefault.jpg');fetchTitles()}
+if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'พร้อมเล่น';$('art').textContent=queue[idx].author||'';setThumbCover(queue[idx].id);fetchTitles()}
 </script>
 </body>
 </html>

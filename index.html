@@ -14,7 +14,7 @@
 :root{--fg:#e8f1ff;--dim:rgba(235,243,255,.5);--glass:rgba(255,255,255,.09);--line:rgba(255,255,255,.15)}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%}
-body{font-family:-apple-system,"SF Pro Text","Segoe UI","Noto Sans Thai",system-ui,sans-serif;color:var(--fg);
+body{font-family:var(--ff,"IBM Plex Sans Thai"),"Segoe UI","Noto Sans Thai",system-ui,sans-serif;color:var(--fg);
   background:radial-gradient(120% 90% at 70% 0%,var(--c1) 0%,var(--c3) 45%,var(--c2) 100%);
   transition:--c1 1.6s ease,--c2 1.6s ease,--c3 1.6s ease;overflow:hidden}
 #app{display:grid;grid-template-columns:minmax(0,1fr) 0;height:100%;gap:26px;padding:26px 30px;transition:grid-template-columns .4s ease}
@@ -230,10 +230,82 @@ body.idle .viztools,body.idle .lychoice{opacity:0;pointer-events:none}
 .panel label{display:flex;gap:10px;align-items:center;font-size:14px;cursor:pointer}
 .panel .row{display:flex;gap:10px;justify-content:flex-end}
 .panel .btn{padding:9px 18px}
+
+/* ---------- v12: พื้นหลังเบลอ + มินิมอล ---------- */
+#app{position:relative;z-index:1}
+#bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;opacity:0;transition:opacity 1s}
+body[data-bg="still"] #bg,body[data-bg="live"] #bg{opacity:1}
+#bgimg{position:absolute;inset:-14%;background:center/cover no-repeat;filter:blur(64px) saturate(1.5);opacity:.62;animation:bgdrift 46s ease-in-out infinite alternate;transition:opacity .8s}
+@keyframes bgdrift{from{transform:scale(1.04) translate(-2%,-1%)}to{transform:scale(1.18) translate(2%,2%)}}
+#bgv{position:absolute;inset:0;opacity:0;transition:opacity 1.4s;display:none}
+body[data-bg="live"] #bgv{display:block}
+#bgv.on{opacity:.7}
+#bgv iframe,#bgv #yt2{position:absolute;left:50%;top:50%;width:max(100vw,177.78vh);height:max(56.25vw,100vh);transform:translate(-50%,-50%) scale(1.12);filter:blur(34px) saturate(1.45);border:0}
+#bgdim{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.26),rgba(0,0,0,.46))}
+
+:root{--glass:rgba(255,255,255,.07);--line:rgba(255,255,255,.1);--r:999px}
+/* top bar */
+.bar{align-items:stretch;gap:10px;margin-bottom:12px}
+.sbox input{height:42px;border-radius:var(--r);padding:0 20px;font-size:14.5px;background:rgba(255,255,255,.07);border-color:transparent}
+.sbox input:focus{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)}
+.seg{height:42px;border-radius:var(--r);padding:3px;border-color:transparent}
+.seg button{border-radius:var(--r);padding:0 16px;font-size:13.5px;font-weight:500;color:var(--dim);transition:background .2s,color .2s}
+.seg button.on{background:rgba(255,255,255,.92);color:#111}
+.btn{height:42px;border-radius:var(--r);border-color:transparent;padding:0 18px;font-size:13.5px;font-weight:500;color:var(--dim);display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:background .2s,color .2s}
+.btn:hover{background:rgba(255,255,255,.14);color:var(--fg)}
+.btn.on{background:rgba(255,255,255,.92);color:#111}
+.btn.ico{width:42px;padding:0}
+.btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+/* tabs: ขีดเส้นใต้ */
+.tabs{gap:4px;margin-bottom:12px}
+.tabs button{border-radius:var(--r);padding:7px 16px;font-size:14px;font-weight:500;position:relative}
+.tabs button.on{background:none;color:#fff}
+.tabs button.on::after{content:'';position:absolute;left:50%;bottom:0;width:18px;height:2px;border-radius:2px;background:#fff;transform:translateX(-50%)}
+.mini,.chip{border-color:transparent;border-radius:var(--r);background:rgba(255,255,255,.09)}
+.mini{padding:4px 11px;font-size:12px}
+.chip{padding:8px 16px;font-size:13.5px}
+/* การ์ดควบคุม */
+.card{border-radius:28px;border-color:rgba(255,255,255,.08);padding:16px 22px 10px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.card .title{font-size:18px;font-weight:600}
+.card .artist{font-size:15px;font-weight:400}
+.cactL button,.cact button{width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;opacity:.6;font-size:0}
+.cactL button:hover,.cact button:hover{opacity:1;background:rgba(255,255,255,.1)}
+.cactL button.on,.cact button.on{opacity:1}
+.cactL button svg,.cact button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cact button.on{color:#ff6b8a}.cact button.on svg{fill:#ff6b8a;stroke:#ff6b8a}
+.cactL button.on{background:rgba(255,255,255,.12)}
+.cact{top:12px;right:16px;gap:2px}.cactL{top:12px;left:16px;gap:2px}
+.ctl{gap:34px;margin-top:4px}
+.ctl button{transition:transform .15s,opacity .2s}
+.ctl button:active{transform:scale(.92)}
+.ctl .pp{background:rgba(255,255,255,.95);color:#111;width:56px;height:56px;padding:0;align-items:center;justify-content:center}
+.ctl .pp:hover{opacity:1;transform:scale(1.06)}
+.ctl .pp svg{width:28px;height:28px}
+.ctl svg{width:28px;height:28px}
+.ctl .sm svg{width:20px;height:20px}
+.ctl .sm.on::after{bottom:2px}
+input[type=range]{height:4px;transition:height .15s}
+input[type=range]:hover{height:6px}
+.prog{margin-top:10px;font-size:11.5px}
+.vol{margin-top:2px}.vol input{width:120px}
+/* เนื้อเพลง */
+.lyrics header{gap:4px;font-size:12.5px;margin-bottom:8px}
+.lyrics header button{background:none;border:0;color:var(--dim);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;padding:0;transition:background .2s,color .2s}
+.lyrics header button:hover{background:rgba(255,255,255,.1);color:#fff}
+.lyrics header #autoSync{width:auto;border-radius:var(--r);background:rgba(255,255,255,.09);padding:0 12px!important;height:28px}
+#offV{font-size:12px;min-width:34px;text-align:center}
+.ln{font-weight:700;letter-spacing:-.2px}
+.lychoice{border-color:transparent;border-radius:18px;background:rgba(255,255,255,.07)}
+.video{border-radius:22px}
+.panel{background:rgba(16,22,40,.96);backdrop-filter:blur(30px);border-color:rgba(255,255,255,.1)}
+.panel select{width:100%;background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px 12px;font-size:14px;font-family:inherit;outline:none}
+.panel select option{background:#16203a;color:#fff}
+.panel .lab{font-size:13px;color:var(--fg);font-weight:600;margin-bottom:6px;display:block}
 @media (max-width:1000px){#app.lyr{grid-template-columns:minmax(0,1fr) 340px}}
 </style>
 </head>
 <body>
+<div id="bg"><div id="bgimg"></div><div id="bgv"><div id="yt2"></div></div><div id="bgdim"></div></div>
 <div id="app" class="lyr nosearch">
   
 
@@ -242,7 +314,7 @@ body.idle .viztools,body.idle .lychoice{opacity:0;pointer-events:none}
       <div class="sbox"><input id="q" placeholder="ค้นหาเพลง ศิลปิน หรือวางลิงก์ YouTube / เพลย์ลิสต์ แล้วกด Enter" autocomplete="off" spellcheck="false"></div>
       <div class="seg"><button id="mvBtn" class="on">MV</button><button id="cvBtn">ปก</button></div>
       <button class="btn on" id="lyBtn">เนื้อเพลง</button>
-      <button class="btn" id="setBtn" title="ตั้งค่า">⚙</button>
+      <button class="btn ico" id="setBtn" title="ตั้งค่า"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
     </div>
     <div class="tabs"><button id="tnow" class="on">กำลังเล่น</button><button id="tdisc">ค้นพบ</button><button id="tlib">เพลย์ลิสต์</button></div></div>
     <div class="stage" id="stage">
@@ -258,8 +330,8 @@ body.idle .viztools,body.idle .lychoice{opacity:0;pointer-events:none}
     </div>
     <div class="page" id="vlib"></div>
     <div class="card">
-      <div class="cactL"><button id="qBtn" title="คิวเพลง (Q)"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg></button><button id="srchBtn" title="ค้นหาเพลง ( / )"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button><button id="autoBtn" title="เล่นเพลงแนะนำต่ออัตโนมัติเมื่อคิวหมด">∞</button></div>
-      <div class="cact"><button id="likeBtn" title="ถูกใจ">♡</button><button id="plBtn" data-pick="1" title="เพิ่มเข้าเพลย์ลิสต์">♫+</button></div>
+      <div class="cactL"><button id="qBtn" title="คิวเพลง (Q)"><svg viewBox="0 0 24 24"><path d="M4 6h12M4 12h12M4 18h8M18 15v6M18 15l4-1v5"/></svg></button><button id="srchBtn" title="ค้นหาเพลง ( / )"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button><button id="autoBtn" title="เล่นเพลงแนะนำต่ออัตโนมัติเมื่อคิวหมด"><svg viewBox="0 0 24 24"><path d="M12 12c-1.6-2.4-3.2-4-5-4a4 4 0 000 8c1.8 0 3.4-1.6 5-4zm0 0c1.6 2.4 3.2 4 5 4a4 4 0 000-8c-1.8 0-3.4 1.6-5 4z"/></svg></button></div>
+      <div class="cact"><button id="likeBtn" title="ถูกใจ"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9.2C1.8 7.6 3.6 4.5 6.8 4.5c2 0 3.5 1.1 5.2 3 1.7-1.9 3.2-3 5.200-3 3.2 0 5 3.100 3.800 6.300C19 15.600 12 20 12 20z"/></svg></button><button id="plBtn" data-pick="1" title="เพิ่มเข้าเพลย์ลิสต์"><svg viewBox="0 0 24 24"><path d="M4 7h11M4 12h11M4 17h6M18 11v8M14 15h8"/></svg></button></div>
       <div class="title" id="ttl">ยังไม่ได้เลือกเพลง</div>
       <div class="artist" id="art">&nbsp;</div>
       <div class="prog"><span id="cur">0:00</span><input type="range" id="seek" min="0" max="1000" value="0"><span id="rem">-0:00</span></div>
@@ -291,6 +363,10 @@ body.idle .viztools,body.idle .lychoice{opacity:0;pointer-events:none}
 <div id="modal"><div class="panel">
   <h3>ตั้งค่า</h3>
   <label><input type="checkbox" id="themeChk"> ให้สีพื้นหลังเปลี่ยนตามปกเพลง</label>
+  <div><span class="lab">พื้นหลัง</span>
+    <select id="bgSel"><option value="color">สีไล่เฉดอย่างเดียว</option><option value="still">ภาพเบลอจากปก/MV (เบา)</option><option value="live">MV เบลอเล่นจริง (กินเน็ตและเครื่องมากขึ้น)</option></select></div>
+  <div><span class="lab">ฟอนต์</span>
+    <select id="ffSel"><option value="IBM Plex Sans Thai">IBM Plex Sans Thai (สะอาด ทันสมัย)</option><option value="Anuphan">Anuphan (กลม อ่านง่าย)</option><option value="Noto Sans Thai">Noto Sans Thai (กลาง ๆ)</option><option value="Prompt">Prompt (เรขาคณิต หนาชัด)</option><option value="Kanit">Kanit (เด่น ดุดัน)</option><option value="Sarabun">Sarabun (ทางการ)</option></select></div>
   <div>
     <p style="margin-bottom:6px"><b style="color:var(--fg)">YouTube API key</b> (ไม่บังคับ ใส่แล้วการค้นหาเพลงจะเสถียรที่สุด ฟรี ทำครั้งเดียว)</p>
     <input type="text" id="keyIn" placeholder="AIza..." autocomplete="off" spellcheck="false">
@@ -361,7 +437,22 @@ function themeFrom(url){
   }catch(e){resetTheme()}};
   im.onerror=resetTheme;im.src=url;
 }
-function setCover(url){$('cover').src=url;themeFrom(url)}
+let artUrl=null,mvUrl=null;
+let bgMode=ls('bg')||'still',ffName=ls('ff')||'IBM Plex Sans Thai';
+document.body.dataset.bg=bgMode;
+function applyFont(){
+  let l=document.getElementById('ffl');
+  if(!l){l=document.createElement('link');l.id='ffl';l.rel='stylesheet';document.head.appendChild(l)}
+  l.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(ffName).replace(/%20/g,'+')+':wght@400;500;600;700&display=swap';
+  document.documentElement.style.setProperty('--ff','"'+ffName+'"');
+}
+applyFont();
+function applyTheme(){
+  const u=view==='mv'?(mvUrl||artUrl):(artUrl||mvUrl);
+  if(u){themeFrom(u);$('bgimg').style.backgroundImage='url("'+u+'")'}
+  else{if(!useTheme)resetTheme();$('bgimg').style.backgroundImage='none'}
+}
+function setCover(url){$('cover').src=url}
 let thumbSeq=0,coverArt=false,curPlain='';
 const showAuto=on=>{$('autoSync').style.display=on?'':'none'};
 const BLANK='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
@@ -384,8 +475,8 @@ function squareFrom(im){
   out.getContext('2d').drawImage(im,sx+(sW-side)/2,sy+(sH-side)/2,side,side,0,0,640,640);
   return out.toDataURL('image/jpeg',.9);
 }
-async function setThumbCover(id){
-  const my=++thumbSeq;coverArt=false;$('cover').src=BLANK;
+async function setThumbCover(id,keep){
+  const my=++thumbSeq;mvUrl=null;if(!keep){coverArt=false;artUrl=null;$('cover').src=BLANK}
   let url=null;
   try{
     let im=null;
@@ -393,7 +484,7 @@ async function setThumbCover(id){
     if(!im)im=await loadImg('https://i.ytimg.com/vi/'+id+'/hqdefault.jpg');
     url=squareFrom(im);
   }catch(e){url='https://i.ytimg.com/vi/'+id+'/mqdefault.jpg'}
-  if(my===thumbSeq&&!coverArt)setCover(url);
+  if(my===thumbSeq){mvUrl=url;if(!coverArt)setCover(url);applyTheme()}
 }
 const itunesJ=term=>jsonp('https://itunes.apple.com/search?media=music&entity=song&limit=10&term='+enc(term));
 async function findCover(p,id){
@@ -411,14 +502,14 @@ async function findCover(p,id){
       const j=await itunesJ(term);
       if(my!==coverSeq)return;
       const best=(j.results||[]).filter(x=>x.trackName&&x.artworkUrl100).map(x=>({x,s:score(x)})).sort((a,b)=>b.s-a.s)[0];
-      if(best&&best.s>=need){coverArt=true;curGenre=best.x.primaryGenreName||'';curArtist=best.x.artistName||'';setCover(best.x.artworkUrl100.replace(/\d+x\d+bb/,'1000x1000bb'));return}
+      if(best&&best.s>=need){coverArt=true;curGenre=best.x.primaryGenreName||'';curArtist=best.x.artistName||'';artUrl=best.x.artworkUrl100.replace(/\d+x\d+bb/,'1000x1000bb');setCover(artUrl);applyTheme();return}
     }catch(e){}
   }
   try{
     const j=await dz('/search?limit=6&q='+enc((p.artist+' '+p.track).trim()));
     if(my!==coverSeq)return;
     const hit=((j&&j.data)||[]).find(x=>{const t=norm(x.title),a=norm(x.artist&&x.artist.name);return T&&t.includes(T.slice(0,10))&&(!A||a.includes(A)||A.includes(a))});
-    if(hit&&hit.album&&hit.album.cover_xl){coverArt=true;setCover(hit.album.cover_xl)}
+    if(hit&&hit.album&&hit.album.cover_xl){coverArt=true;artUrl=hit.album.cover_xl;setCover(artUrl);applyTheme()}
   }catch(e){}
 }
 
@@ -427,6 +518,7 @@ function setView(v){
   view=v;lsSet('view',v);
   $('stage').classList.toggle('cv',v==='cover');
   $('mvBtn').classList.toggle('on',v==='mv');$('cvBtn').classList.toggle('on',v==='cover');
+  applyTheme();
 }
 $('mvBtn').onclick=()=>setView('mv');$('cvBtn').onclick=()=>setView('cover');setView(view);
 $('lyBtn').onclick=()=>{const on=$('app').classList.toggle('lyr');$('lyBtn').classList.toggle('on',on);setTimeout(()=>scrollTo(actI),450)};
@@ -501,14 +593,16 @@ function finishImport(){
 }
 
 /* ---------- settings ---------- */
-function openSettings(msg){$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
+function openSettings(msg){$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
 $('setBtn').onclick=()=>openSettings();
 $('setCancel').onclick=()=>$('modal').classList.remove('show');
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('show')});
 $('setSave').onclick=()=>{
   apiKey=$('keyIn').value.trim();lsSet('key',apiKey);wk=$('wkIn').value.trim().replace(/\/+$/,'');lsSet('wk',wk);
+  bgMode=$('bgSel').value;lsSet('bg',bgMode);document.body.dataset.bg=bgMode;bgSync();
+  ffName=$('ffSel').value;lsSet('ff',ffName);applyFont();
   useTheme=$('themeChk').checked;lsSet('theme',useTheme?'1':'0');
-  if(useTheme&&$('cover').src)themeFrom($('cover').src);else if(!useTheme)resetTheme();
+  if(useTheme)applyTheme();else resetTheme();
   $('modal').classList.remove('show');toast('บันทึกแล้ว');
 };
 
@@ -742,7 +836,7 @@ function drawPl(v,pl){
 }
 function updateHeart(){
   const it=queue[idx],on=!!(it&&likedPl().items.some(x=>x.id===it.id));
-  $('likeBtn').textContent=on?'♥':'♡';$('likeBtn').classList.toggle('on',on);
+  $('likeBtn').classList.toggle('on',on);
 }
 $('likeBtn').onclick=()=>{
   const it=queue[idx];if(!it)return;
@@ -927,15 +1021,43 @@ window.onYouTubeIframeAPIReady=()=>{
     events:{onReady:()=>{ready=true;applyVol();if(idx>=0&&!queue[idx].pend){restore=true;player.cueVideoById(queue[idx].id)}},
             onStateChange:onState,
             onError:e=>{toast('เล่นวิดีโอนี้ไม่ได้ (รหัส '+e.data+') ข้ามไปเพลงถัดไป');setTimeout(()=>next(true,true),900)}}});
+  if(bgMode==='live')bgLiveStart();
 };
+let bgp=null,bgReady=false,bgId=null;
+function bgLiveStart(){
+  if(bgp||!window.YT||!YT.Player)return;
+  bgp=new YT.Player('yt2',{width:'100%',height:'100%',
+    playerVars:{controls:0,rel:0,modestbranding:1,playsinline:1,iv_load_policy:3,disablekb:1,fs:0,mute:1},
+    events:{onReady:()=>{bgReady=true;try{bgp.mute()}catch(e){}bgSync()}}});
+}
+function bgSync(){
+  const bv=$('bgv');
+  if(bgMode!=='live'){if(bgReady&&bgp){try{bgp.pauseVideo()}catch(e){}}bv.classList.remove('on');return}
+  if(!bgp){bgLiveStart();return}
+  if(!bgReady||!ready)return;
+  try{
+    const it=queue[idx],id=(it&&!it.pend&&!String(it.id).startsWith('dz:'))?it.id:null;
+    bgp.mute();
+    if(!id||inAd){bgp.pauseVideo();bv.classList.remove('on');return}
+    const ct=player.getCurrentTime()||0;
+    if(bgId!==id){bgId=id;bgp.loadVideoById({videoId:id,startSeconds:ct});bgp.mute();try{bgp.setPlaybackQuality('small')}catch(e){}bv.classList.remove('on');return}
+    const st=bgp.getPlayerState(),vd=bgp.getVideoData&&bgp.getVideoData();
+    if(playing&&st!==1&&st!==3)bgp.playVideo();
+    if(!playing&&st===1)bgp.pauseVideo();
+    if(playing&&Math.abs((bgp.getCurrentTime()||0)-ct)>1.2)bgp.seekTo(ct,true);
+    const adBg=vd&&vd.video_id&&vd.video_id!==id;
+    bv.classList.toggle('on',st===1&&!adBg);
+  }catch(e){}
+}
+setInterval(bgSync,1000);
 function playAt(i){
   if(i<0||i>=queue.length)return;
   idx=i;save();drawQ();$('ph').style.display='none';
   const it=queue[i];updateHeart();playedSet.add(it);curGenre='';curArtist='';vizSet(false);
   if(it.pend){
     $('ttl').textContent=it.title||'';$('art').textContent=it.author||'';
-    resetLyrics('กำลังหาเพลง…');metaFor='';coverSeq++;thumbSeq++;
-    if(it.artXL||it.art){coverArt=true;setCover(it.artXL||it.art)}
+    resetLyrics('กำลังหาเพลง…');metaFor='';coverSeq++;thumbSeq++;mvUrl=null;artUrl=null;
+    if(it.artXL||it.art){coverArt=true;artUrl=it.artXL||it.art;setCover(artUrl);applyTheme()}
     toast('กำลังหา “'+it.title+'” ใน YouTube…',3000);
     resolveItem(it).then(ok=>{
       if(queue[idx]!==it)return;
@@ -946,7 +1068,7 @@ function playAt(i){
   }
   $('ttl').textContent=it.title||'กำลังโหลด…';$('art').textContent=it.author||'';
   resetLyrics('กำลังหาเนื้อเพลง…');metaFor='';coverSeq++;
-  if(it.artXL||it.art){thumbSeq++;coverArt=true;setCover(it.artXL||it.art)}else setThumbCover(it.id);
+  if(it.artXL||it.art){thumbSeq++;coverArt=true;artUrl=it.artXL||it.art;mvUrl=null;setCover(artUrl);applyTheme();if(!String(it.id).startsWith('dz:'))setThumbCover(it.id,true)}else setThumbCover(it.id);
   if(ready)player.loadVideoById(it.id);
 }
 function onState(e){
@@ -1002,11 +1124,12 @@ document.addEventListener('keydown',e=>{
 
 /* ---------- title / lyrics ---------- */
 function parse(title,author){
-  let t=title.replace(/[\(\[【][^\)\]】]*[\)\]】]/g,' ').replace(/\b(official|music video|lyric video|lyrics?|audio|video|mv|hd|4k)\b/ig,' ').replace(/\s+/g,' ').trim();
+  let t=title.replace(/[\(\[【][^\)\]】]*[\)\]】]/g,' ').replace(/\bm\/v\b/ig,' ').replace(/\b(official|music video|lyric video|lyrics?|audio|video|mv|hd|4k|performance|visualizer|dance practice|teaser|live clip)\b/ig,' ').replace(/\s+/g,' ').trim();
   const a=(author||'').replace(/\s*-\s*Topic$/i,'').replace(/VEVO$/i,'').trim();
   const m=t.split(/\s+[-–—|]\s+/);
-  if(m.length>=2)return{artist:m[0].trim(),track:m.slice(1).join(' ').trim(),fromTitle:true};
-  return{artist:a,track:t,fromTitle:false};
+  const q=x=>x.replace(/["'“”‘’「」『』]/g,' ').replace(/\s+/g,' ').trim();
+  if(m.length>=2)return{artist:q(m[0]),track:q(m.slice(1).join(' ')),fromTitle:true};
+  return{artist:a,track:q(t),fromTitle:false};
 }
 function loadMeta(){
   if(!ready)return;
@@ -1041,7 +1164,7 @@ function lyScore(x,p,dur){
     else if(p.fromTitle)return -1;
     else if(!(t===T&&d!==null&&d<=4))return -1;
   }
-  if(d!==null){if(d<=3)s+=3;else if(d<=8)s+=1;else if(d>20)s-=3}
+  if(d!==null){if(d<=3)s+=3;else if(d<=8)s+=1;else if(d>20)s-=(s>=10?1:3)}
   return s;
 }
 function lyRank(all,p,dur){

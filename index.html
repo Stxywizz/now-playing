@@ -295,6 +295,10 @@ body.idle .viztools,body.idle .lychoice{opacity:0;pointer-events:none}
     <p style="margin-bottom:6px"><b style="color:var(--fg)">YouTube API key</b> (ไม่บังคับ ใส่แล้วการค้นหาเพลงจะเสถียรที่สุด ฟรี ทำครั้งเดียว)</p>
     <input type="text" id="keyIn" placeholder="AIza..." autocomplete="off" spellcheck="false">
   </div>
+  <div>
+    <p style="margin:10px 0 6px"><b style="color:var(--fg)">ลิงก์ตัวกลางเนื้อเพลง NetEase</b> (ไม่บังคับ เพิ่มโอกาสเจอเนื้อแบบมีเวลา โดยเฉพาะเพลงไทย/เอเชีย)</p>
+    <input type="text" id="wkIn" placeholder="https://xxxx.workers.dev" autocomplete="off" spellcheck="false">
+  </div>
   <p id="keyMsg" style="color:#ffb4b4"></p>
   <ol>
     <li>เปิด <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">console.cloud.google.com</a> แล้วล็อกอินบัญชี Google</li>
@@ -332,7 +336,7 @@ const dec=s=>{const t=document.createElement('textarea');t.innerHTML=s;return t.
 let player,ready=false,pending=null,queue=[],idx=-1,lines=[],actI=-1,offset=0,metaFor='',lyrSeq=0,coverSeq=0,dragging=false,playing=false;
 let pls=[];try{pls=JSON.parse(ls('pls')||'[]')}catch(e){}
 let hist=[];try{hist=JSON.parse(ls('hist')||'[]')}catch(e){}
-let view=ls('view')||'mv',useTheme=ls('theme')!=='0',apiKey=ls('key')||'',restore=false;
+let view=ls('view')||'mv',useTheme=ls('theme')!=='0',apiKey=ls('key')||'',wk=ls('wk')||'',restore=false;
 try{queue=JSON.parse(ls('q')||'[]');idx=+ls('idx');if(!(idx>=0&&idx<queue.length))idx=queue.length?0:-1}catch(e){queue=[];idx=-1}
 
 function toast(m,ms=2600){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),ms)}
@@ -497,12 +501,12 @@ function finishImport(){
 }
 
 /* ---------- settings ---------- */
-function openSettings(msg){$('keyIn').value=apiKey;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
+function openSettings(msg){$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
 $('setBtn').onclick=()=>openSettings();
 $('setCancel').onclick=()=>$('modal').classList.remove('show');
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('show')});
 $('setSave').onclick=()=>{
-  apiKey=$('keyIn').value.trim();lsSet('key',apiKey);
+  apiKey=$('keyIn').value.trim();lsSet('key',apiKey);wk=$('wkIn').value.trim().replace(/\/+$/,'');lsSet('wk',wk);
   useTheme=$('themeChk').checked;lsSet('theme',useTheme?'1':'0');
   if(useTheme&&$('cover').src)themeFrom($('cover').src);else if(!useTheme)resetTheme();
   $('modal').classList.remove('show');toast('บันทึกแล้ว');
@@ -1108,6 +1112,21 @@ async function ovhLyrics(p){
     return t.length>=80?t:null;
   }catch(e){return null}
 }
+async function neLyrics(p,dur){
+  if(!wk||!/^https:\/\//.test(wk))return null;
+  const get=async u=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),8000);try{const r=await fetch(u,{signal:c.signal});return r.ok?await r.json():null}catch(e){return null}finally{clearTimeout(t)}};
+  const qs=[(p.artist+' '+p.track).trim(),p.track];
+  for(const q of qs){
+    const list=await get(wk+'/search?q='+enc(q));
+    if(!list||!list.length)continue;
+    const best=list.map(x=>({x:x,s:lyScore({trackName:x.name,artistName:(x.artists||[]).join(' '),duration:(x.duration||0)/1000},p,dur)}))
+      .filter(o=>o.s>=8).sort((a,b)=>b.s-a.s)[0];
+    if(!best)continue;
+    const j=await get(wk+'/lyric?id='+best.x.id);
+    if(j&&/\[\d+:\d+(\.\d+)?\]/.test(j.lrc||''))return {lrc:j.lrc,h:(best.x.artists||[]).join(', ')+' — '+best.x.name};
+  }
+  return null;
+}
 async function fetchLyrics(p,vid){
   const my=++lyrSeq;
   const sv=vid&&loadSaved(vid);
@@ -1135,6 +1154,9 @@ async function fetchLyrics(p,vid){
   if(list[0]&&list[0].s>=8){lyList=list;lyPos=0;applyCand(list[0]);return}
   // ไม่เจอใน LRCLIB → ลองแหล่งสำรอง
   const prevLh=$('lh').textContent;$('lh').textContent='กำลังหาจากแหล่งอื่น…';
+  const ne=await neLyrics(p,dur);
+  if(my!==lyrSeq)return;
+  if(ne){lyList=[];lyPos=-1;$('lh').textContent=ne.h+' · NetEase';setSynced(ne.lrc);return}
   const cap=await capLyrics(vid);
   if(my!==lyrSeq)return;
   if(cap){lyList=[];lyPos=-1;$('lh').textContent=p.track+' · คำบรรยาย YouTube (อาจไม่แม่น)';buildSynced(cap);toast('ใช้คำบรรยาย YouTube เป็นเนื้อเพลง');return}

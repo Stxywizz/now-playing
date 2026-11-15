@@ -952,26 +952,59 @@ async function dzRecs(it){
   tops.forEach(o=>{shuf(o.d.filter(t=>t&&t.artist)).slice(0,2).forEach(t=>out.push(mkDz(t,o.a.id)))});
   return shuf(out);
 }
+const BADREC=/\b(live|cover|reaction|react|mashup|nonstop|non-stop|playlist|compilation|karaoke|instrumental|slowed|sped up|nightcore|shorts?|trailer|teaser|behind the scenes|making film|interview|fancam|podcast|hour|hours|full album|medley|ep\.?\s?\d)\b|ชั่วโมง|รวมเพลง|คาราโอเกะ/i;
+const isThai=x=>/[฀-๿]/.test(x||'');
+async function pipedJson(path,ms){
+  const order=pipedOk?[pipedOk].concat(PIPED.filter(x=>x!==pipedOk)):PIPED;
+  return await Promise.any(order.map(async base=>{const j=await tfetch(base+path,ms||6500);pipedOk=base;return j}));
+}
+function pipedMap(arr){
+  return (arr||[]).filter(x=>x&&(x.type==='stream'||!x.type)&&x.url&&x.url.includes('v=')&&x.duration>=90&&x.duration<=540&&!BADREC.test(x.title||''))
+    .map(x=>({id:x.url.split('v=')[1].slice(0,11),title:x.title,author:(x.uploaderName||'').replace(/\s*-\s*Topic$/i,''),rec:1}));
+}
 async function pipedRelated(id){
   if(!id||id.startsWith('dz:'))return null;
-  const order=pipedOk?[pipedOk].concat(PIPED.filter(x=>x!==pipedOk)):PIPED;
-  try{
-    return await Promise.any(order.map(async base=>{
-      const j=await tfetch(base+'/streams/'+id,6500);
-      const rel=(j.relatedStreams||[]).filter(x=>x.type==='stream'&&x.url&&x.url.includes('v=')&&x.duration>=90&&x.duration<=540);
-      if(!rel.length)throw new Error('none');
-      pipedOk=base;
-      return rel.map(x=>({id:x.url.split('v=')[1].slice(0,11),title:x.title,author:x.uploaderName,rec:1}));
-    }));
-  }catch(e){return null}
+  try{const j=await pipedJson('/streams/'+id);const l=pipedMap(j.relatedStreams);return l.length?l:null}catch(e){return null}
+}
+async function pipedMix(id){
+  if(!id||id.startsWith('dz:'))return null;
+  try{const j=await pipedJson('/playlists/RD'+id,7000);const l=pipedMap(j.relatedStreams);return l.length?l:null}catch(e){return null}
 }
 async function getRecs(it){
   if(!it)return[];
   if(recCache.has(it.id))return recCache.get(it.id);
-  let list=null;
-  try{list=await dzRecs(it)}catch(e){}
-  if(!list||!list.length)list=await pipedRelated(it.id);
-  if(!list||!list.length){
+  const curTitle=(it.title||'')+' '+(it.author||'')+' '+((curP&&curP.track)||'');
+  const thai=isThai(curTitle),selfArtist=norm((curP&&curP.artist)||it.author||'');
+  const yid=it.id&&!it.id.startsWith('dz:')?it.id:null;
+  // ดึงพร้อมกัน: YouTube Mix + เพลงที่ YouTube แนะนำ + ศิลปินใกล้เคียง (Deezer)
+  const [mix,rel,dzl]=await Promise.all([
+    pipedMix(yid).catch(()=>null),
+    pipedRelated(yid).catch(()=>null),
+    dzRecs(it).catch(()=>null)
+  ]);
+  const pool=[];
+  const add=(arr,base,step,jit)=>{(arr||[]).forEach((x,i)=>pool.push({x:x,s:base-i*step+Math.random()*jit}))};
+  add(mix,12,.2,1);add(rel,10,.25,1);
+  // ขยาย 2 ชั้น: เอาเพลงอันดับต้น ๆ ไปขอเพลงแนะนำต่ออีกชั้น เพื่อให้ได้แนวเดียวกันกว้างขึ้น
+  const seeds=[].concat((mix||[]).slice(0,2),(rel||[]).slice(0,2)).filter((x,i,a)=>a.findIndex(y=>y.id===x.id)===i).slice(0,3);
+  if(seeds.length){
+    const hop=await Promise.all(seeds.map(x=>pipedRelated(x.id).catch(()=>null)));
+    hop.forEach(l=>add(l&&l.slice(0,10),6,.2,1.5));
+  }
+  add(dzl,thai?2.5:5.5,.1,3);
+  if(thai)pool.forEach(o=>{const t=(o.x.title||'')+(o.x.author||'');if(isThai(t))o.s+=1.5});
+  pool.sort((a,b)=>b.s-a.s);
+  const seen=new Set([it.id,tkey(it)]),per={},out=[];
+  for(const o of pool){
+    const x=o.x,k=tkey(x),a=norm(x.author||'');
+    if(seen.has(x.id)||seen.has(k))continue;
+    if(BADREC.test(x.title||''))continue;
+    per[a]=(per[a]||0)+1;
+    if(per[a]>(a&&a===selfArtist?2:3))continue;
+    seen.add(x.id);seen.add(k);out.push(x);
+  }
+  let list=out;
+  if(!list.length){
     const a=curArtist||it.author||'',q=(a+' '+(curGenre||'')+' music').trim();
     const r=await ytSearch(q,15);
     list=(r||[]).filter(x=>x.id!==it.id).map(x=>({id:x.id,title:x.title,author:x.author,rec:1}));

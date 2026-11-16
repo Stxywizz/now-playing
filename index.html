@@ -626,6 +626,9 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 .rchrs{display:flex;align-items:flex-end;gap:3px;height:70px;margin:8px 0 18px}.rchrs i{flex:1;background:linear-gradient(#fff,rgba(255,255,255,.3));border-radius:3px 3px 1px 1px;min-height:2px;opacity:.85}
 .rcpers{border-radius:16px;padding:14px;background:rgba(255,255,255,.07);font-size:14px;margin-top:12px}.rcpers b{font-size:16px}
 .rcgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.rcgrid div{background:rgba(255,255,255,.07);border-radius:14px;padding:10px;text-align:center}.rcgrid b{display:block;font-size:18px}.rcgrid span{font-size:11.5px;opacity:.65}
+
+.goalcard{padding:14px 16px;border-radius:18px;margin:0 0 16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);cursor:pointer}
+.goalcard .gh{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}.goalcard b{font-size:15px}.goalcard span{margin-left:auto;font-size:13px;opacity:.75}
 </style>
 </head>
 <body>
@@ -663,7 +666,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
     </div>
     <div class="page" id="vlib"></div>
     <div class="card">
-      <div class="cactL"><button id="qBtn" title="คิวเพลง (Q)"><svg viewBox="0 0 24 24"><path d="M4 6h12M4 12h12M4 18h8M18 15v6M18 15l4-1v5"/></svg></button><button id="srchBtn" title="ค้นหาเพลง ( / )"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button><button id="autoBtn" title="เล่นเพลงแนะนำต่ออัตโนมัติเมื่อคิวหมด"><svg viewBox="0 0 24 24"><path d="M12 12c-1.6-2.4-3.2-4-5-4a4 4 0 000 8c1.8 0 3.4-1.6 5-4zm0 0c1.6 2.4 3.2 4 5 4a4 4 0 000-8c-1.8 0-3.4 1.6-5 4z"/></svg></button></div>
+      <div class="cactL"><button id="qBtn" title="คิวเพลง (Q)"><svg viewBox="0 0 24 24"><path d="M4 6h12M4 12h12M4 18h8M18 15v6M18 15l4-1v5"/></svg></button><button id="srchBtn" title="ค้นหาเพลง ( / )"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button><button id="blkBtn" title="ไม่อยากฟังอีก (บล็อกเพลง/ศิลปิน)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M6.3 6.3l11.4 11.4"/></svg></button><button id="autoBtn" title="เล่นเพลงแนะนำต่ออัตโนมัติเมื่อคิวหมด"><svg viewBox="0 0 24 24"><path d="M12 12c-1.6-2.4-3.2-4-5-4a4 4 0 000 8c1.8 0 3.4-1.6 5-4zm0 0c1.6 2.4 3.2 4 5 4a4 4 0 000-8c-1.8 0-3.4 1.6-5 4z"/></svg></button></div>
       <div class="cact"><button id="abBtn" title="วนซ้ำท่อนที่ชอบ (B)" style="font-size:12.5px;font-weight:700;letter-spacing:.3px">A-B</button><button id="likeBtn" title="ถูกใจ"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9.2C1.8 7.6 3.6 4.5 6.8 4.5c2 0 3.5 1.1 5.2 3 1.7-1.9 3.2-3 5.200-3 3.2 0 5 3.100 3.800 6.300C19 15.600 12 20 12 20z"/></svg></button><button id="plBtn" data-pick="1" title="เพิ่มเข้าเพลย์ลิสต์"><svg viewBox="0 0 24 24"><path d="M4 7h11M4 12h11M4 17h6M18 11v8M14 15h8"/></svg></button></div>
       <div class="title" id="ttl">ยังไม่ได้เลือกเพลง</div>
       <div class="artist" id="art">&nbsp;</div>
@@ -744,6 +747,8 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
     <select id="lzSel"><option value="0.85">เล็ก</option><option value="1">กลาง</option><option value="1.2">ใหญ่</option><option value="1.45">ใหญ่มาก</option></select></div>
   <div><span class="lab">หน้าแรกเมื่อเปิดแอป</span>
       <select id="stSel"><option value="disc">ค้นพบ (แนะนำสำหรับคุณ)</option><option value="now">กำลังเล่น</option><option value="last">หน้าล่าสุดที่เปิดไว้</option></select></div>
+  <div><span class="lab">เป้าหมายการฟังต่อวัน</span>
+      <select id="goalSel"><option value="0">ไม่ตั้ง</option><option value="15">15 นาที</option><option value="30">30 นาที</option><option value="60">1 ชั่วโมง</option><option value="90">1.5 ชั่วโมง</option><option value="120">2 ชั่วโมง</option><option value="180">3 ชั่วโมง</option></select></div>
   <div><span class="lab">ภาษาที่ใช้แปลเนื้อเพลง</span>
       <select id="trlSel"><option value="th">ไทย</option><option value="en">English</option></select>
       <p class="note">กดปุ่ม 文 บนแผงเนื้อเพลงเพื่อเปิด/ปิดคำแปล แปลอัตโนมัติผ่านบริการแปลของ Google (ไม่เป็นทางการ ความแม่นยำอาจไม่เท่าคนแปล และอาจใช้ไม่ได้บางช่วง)</p></div>
@@ -756,6 +761,8 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
       <select id="spSel"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1">1× (ปกติ)</option><option value="1.1">1.1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select></div>
     <div><span class="lab">ตั้งเวลาปิดเพลง</span>
     <select id="slSel"><option value="0">ไม่ตั้ง</option><option value="15">อีก 15 นาที</option><option value="30">อีก 30 นาที</option><option value="45">อีก 45 นาที</option><option value="60">อีก 1 ชั่วโมง</option><option value="end">เมื่อจบเพลงนี้</option></select></div>
+    <label><input type="checkbox" id="fadeChk"> ค่อยๆ เฟดเสียงลงก่อนหยุด (ตอนตั้งเวลาปิดเพลง)</label>
+    <div><span class="lab">รายการที่บล็อก (จะไม่ถูกเติมอัตโนมัติ)</span><div id="blkList" class="note" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
     <p class="note">เพลงที่ข้ามเร็วๆ ระบบจะจำและไม่เติมซ้ำให้ <button class="mini" id="skClr">ล้างรายการที่ข้าม</button></p>
   </div>
   <div class="sec" data-s="con">
@@ -824,7 +831,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 <script>
 let pipWin=null;
 const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document.getElementById(id):null);
-const BUILD='2026-11-16.16';
+const BUILD='2026-11-16.17';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
@@ -836,6 +843,10 @@ let pls=[];try{pls=JSON.parse(ls('pls')||'[]')}catch(e){}
 let skips=new Set();try{skips=new Set(JSON.parse(ls('skips')||'[]'))}catch(e){}
 let divMode=ls('div')==='1';
 let trOn=ls('tr')==='1',trLang=ls('trl')||'th',trArr=[],trTok=0,karOn=false,karI=-2,karWords=[],karT='';
+let blk={s:[],a:[]};try{const o=JSON.parse(ls('blk')||'{}');blk={s:o.s||[],a:o.a||[]}}catch(e){}
+const saveBlk=()=>lsSet('blk',JSON.stringify(blk));
+const artNorm=a=>norm((a||'').replace(/\s*-\s*Topic$/i,''));
+const isBlocked=x=>!!x&&((x.id&&blk.s.includes(x.id))||(x.author&&blk.a.includes(artNorm(x.author))));
 const saveSkips=()=>{lsSet('skips',JSON.stringify([...skips].slice(-300)))};
 let hist=[];try{hist=JSON.parse(ls('hist')||'[]')}catch(e){}
 let view=ls('view')||'mv',useTheme=ls('theme')!=='0',apiKey=ls('key')||'',wk=ls('wk')||'',restore=false;
@@ -1077,10 +1088,17 @@ function finishImport(){
 }
 
 /* ---------- settings ---------- */
-function openSettings(msg){$('syncChk').checked=ls('syncon')==='1';$('syncCode').value=ls('synccode')||'';$('syncSt').textContent=ls('syncst')||'';$('syncSt').className='tres';$('trlSel').value=trLang;$('stSel').value=ls('start')||'disc';$('autoPlChk').checked=(ls('autopl')||'1')==='1';$('dcChk').checked=dcOn;$('dcRes').textContent='';setSecTab('gen');$('spSel').value=String(spd);updChips();$('keyRes').textContent='';$('wkRes').textContent='';$('divSel').value=divMode?'1':'0';$('lzSel').value=String(lz);$('slSel').value='0';$('miniChk').checked=miniOn;$('pipedChk').checked=usePiped;$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
+function openSettings(msg){$('syncChk').checked=ls('syncon')==='1';$('syncCode').value=ls('synccode')||'';$('syncSt').textContent=ls('syncst')||'';$('syncSt').className='tres';$('trlSel').value=trLang;$('stSel').value=ls('start')||'disc';$('autoPlChk').checked=(ls('autopl')||'1')==='1';$('fadeChk').checked=ls('fade')!=='0';$('goalSel').value=ls('goal')||'0';drawBlkList();$('dcChk').checked=dcOn;$('dcRes').textContent='';setSecTab('gen');$('spSel').value=String(spd);updChips();$('keyRes').textContent='';$('wkRes').textContent='';$('divSel').value=divMode?'1':'0';$('lzSel').value=String(lz);$('slSel').value='0';$('miniChk').checked=miniOn;$('pipedChk').checked=usePiped;$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
 let spd=+(ls('spd')||1)||1;
 const DC='http://127.0.0.1:6742';let dcOn=ls('dc')==='1',dcSig='',dcStart=0,dcFail=0;
 function dcPost(path,obj){return fetch(DC+path,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(obj)}).then(r=>{dcFail=0;return r}).catch(()=>{dcFail++})}
+function drawBlkList(){
+  const b=$('blkList');if(!b)return;b.innerHTML='';
+  if(!blk.s.length&&!blk.a.length){b.textContent='ยังไม่มี กดปุ่ม 🚫 ที่การ์ดเพลงเพื่อบล็อก';return}
+  const chip=(txt,fn)=>{const c=document.createElement('button');c.className='chip';c.textContent=txt+' ✕';c.onclick=fn;b.appendChild(c)};
+  blk.a.forEach(a=>chip('ศิลปิน: '+a,()=>{blk.a=blk.a.filter(x=>x!==a);saveBlk();drawBlkList()}));
+  blk.s.forEach(id=>{const n=(queue.concat(hist).find(x=>x.id===id)||{}).title||id;chip('เพลง: '+n,()=>{blk.s=blk.s.filter(x=>x!==id);saveBlk();drawBlkList()})});
+}
 function setSecTab(t){$('setTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));document.querySelectorAll('#modal .sec').forEach(x=>x.classList.toggle('on',x.dataset.s===t))}
 $('setTabs').onclick=e=>{const b=e.target.closest('button');if(b)setSecTab(b.dataset.t)};
 function updChips(){
@@ -1129,7 +1147,7 @@ $('setCancel').onclick=()=>$('modal').classList.remove('show');
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('show')});
 $('setSave').onclick=()=>{
   {const on=$('syncChk').checked,c=$('syncCode').value.trim();const chg=(ls('synccode')||'')!==c||(ls('syncon')==='1')!==on;lsSet('syncon',on?'1':'0');lsSet('synccode',c);if(chg){lsSet('syncbase','');setTimeout(()=>window.syncCycle&&syncCycle(true),600)}}
-  lsSet('start',$('stSel').value);{const a=$('autoPlChk').checked;lsSet('autopl',a?'1':'0');if(a)setTimeout(()=>window.autoPls&&autoPls(),500)}
+  lsSet('start',$('stSel').value);lsSet('fade',$('fadeChk').checked?'1':'0');lsSet('goal',$('goalSel').value);window.goalTick&&goalTick();window.goalPlace&&goalPlace();{const a=$('autoPlChk').checked;lsSet('autopl',a?'1':'0');if(a)setTimeout(()=>window.autoPls&&autoPls(),500)}
   {const nl=$('trlSel').value;if(nl!==trLang){trLang=nl;lsSet('trl',nl);if(trOn)loadTrans()}}
   dcOn=$('dcChk').checked;lsSet('dc',dcOn?'1':'0');if(!dcOn)dcPost('/clear',{});dcSig='';
   divMode=$('divSel').value==='1';lsSet('div',divMode?'1':'0');
@@ -1601,7 +1619,7 @@ async function getRecs(it){
   for(const o of pool){
     const x=o.x,k=tkey(x),a=norm(x.author||'');
     if(seen.has(x.id)||seen.has(k))continue;
-    if(BADREC.test(x.title||''))continue;
+    if(BADREC.test(x.title||'')||isBlocked(x))continue;
     per[a]=(per[a]||0)+1;
     if(per[a]>(a&&a===selfArtist?2:3))continue;
     seen.add(x.id);seen.add(k);out.push(x);
@@ -1618,7 +1636,7 @@ async function getRecs(it){
 let artistTried=new Map();
 async function endlessMore(hv,want){
   // ระดับสำรอง: ไม่ให้คิวหมดจริง ๆ
-  const ok=x=>x&&x.id&&!hv.has(x.id)&&!hv.has(tkey(x))&&!skips.has(x.id)&&!BADREC.test(x.title||'');
+  const ok=x=>x&&x.id&&!hv.has(x.id)&&!hv.has(tkey(x))&&!skips.has(x.id)&&!isBlocked(x)&&!BADREC.test(x.title||'');
   const cur=queue[idx]||{};
   const likedItems=(pls.find(x=>x.id==='liked')||{items:[]}).items;
   // 1) ศิลปินที่ฟัง: เพลงปัจจุบัน + เพลงที่ถูกใจ + ประวัติล่าสุด (สุ่ม)
@@ -1641,7 +1659,7 @@ async function endlessMore(hv,want){
   // 3) เพลงจากประวัติที่เก่ากว่า 12 เพลงล่าสุด
   if(!pool.length)pool=shuf(hist.slice(12)).filter(ok);
   // 4) ไม่เหลือจริง ๆ: เล่นวนเพลงที่ถูกใจ/ประวัติ (ไม่เอาเพลงที่กำลังเล่น)
-  if(!pool.length){const hv2=new Set([cur.id]);pool=shuf(likedItems.concat(hist.slice(0,60))).filter(x=>x&&x.id&&!hv2.has(x.id)&&!skips.has(x.id))}
+  if(!pool.length){const hv2=new Set([cur.id]);pool=shuf(likedItems.concat(hist.slice(0,60))).filter(x=>x&&x.id&&!hv2.has(x.id)&&!skips.has(x.id)&&!isBlocked(x))}
   return pool.slice(0,want).map(x=>({id:x.id,title:x.title,author:x.author,rec:1}));
 }
 async function fillRecs(force){
@@ -1653,7 +1671,7 @@ async function fillRecs(force){
     for(const src of (cur&&last&&cur.id!==last.id?[cur,last]:[cur])){
       if(!src)continue;
       const list=await getRecs(src),hv=have();
-      fresh=list.filter(x=>!hv.has(x.id)&&!hv.has(tkey(x))&&!skips.has(x.id)).slice(0,8);
+      fresh=list.filter(x=>!hv.has(x.id)&&!hv.has(tkey(x))&&!skips.has(x.id)&&!isBlocked(x)).slice(0,8);
       if(fresh.length)break;
     }
     // โหมดหลากหลาย: ผสมเพลงจากศิลปินที่ชอบ
@@ -1702,7 +1720,19 @@ function setSleep(v){
   if(v==='end'){sleepAfterSong=true;toast('จะหยุดเมื่อจบเพลงนี้')}
   else if(+v>0){sleepEnd=Date.now()+(+v)*60000;toast('จะหยุดเล่นใน '+v+' นาที')}
 }
-setInterval(()=>{if(sleepEnd&&Date.now()>=sleepEnd){sleepEnd=0;try{player.pauseVideo()}catch(e){}toast('หยุดเล่นตามเวลาที่ตั้งไว้ ราตรีสวัสดิ์',6000)}},1000);
+let fading=false;
+function fadeTo(f){try{if(ready&&!muted)player.setVolume(Math.max(1,Math.round(vol*f)));fading=true}catch(e){}}
+function fadeEnd(){if(fading){fading=false;try{applyVol()}catch(e){}}}
+setInterval(()=>{
+  const fadeOn=ls('fade')!=='0',W=45000;
+  if(sleepEnd){
+    const left=sleepEnd-Date.now();
+    if(left<=0){sleepEnd=0;try{player.pauseVideo()}catch(e){}fadeEnd();toast('หยุดเล่นตามเวลาที่ตั้งไว้ ราตรีสวัสดิ์',6000);return}
+    if(fadeOn&&left<W)fadeTo(left/W);else fadeEnd();
+  }else if(sleepAfterSong&&fadeOn&&ready&&playing){
+    try{const d=player.getDuration()||0,c=player.getCurrentTime()||0,left=(d-c)*1000;if(d>0&&left<20000)fadeTo(Math.max(.05,left/20000));else fadeEnd()}catch(e){}
+  }else fadeEnd();
+},1000);
 /* ---------- resume position ---------- */
 setInterval(()=>{try{if(ready&&!inAd&&playing&&queue[idx]){lsSet('t',JSON.stringify({id:queue[idx].id,t:Math.floor(player.getCurrentTime())}))}}catch(e){}},4000);
 function resumeT(id){try{const o=JSON.parse(ls('t')||'null');return o&&o.id===id&&o.t>3?o.t:0}catch(e){return 0}}
@@ -1733,7 +1763,7 @@ function toggleFS(){try{document.fullscreenElement?document.exitFullscreen():doc
 $('fsBtn').onclick=toggleFS;
 if(!(document.fullscreenEnabled||document.webkitFullscreenEnabled))$('fsBtn').style.display='none';
 const helpEl=$('help');helpEl.onclick=e=>{if(e.target===helpEl)helpEl.classList.remove('show')};
-const BK=/^(tr|trl|dc|spd|lyon|stats|shopt|skips|div|pls|hist|q|idx|view|theme|shuf|rep|auto|vol|bg|mini|ff|lz|wk|piped|off:.*|ly:.*|viz:.*|bpmu:.*)$/;
+const BK=/^(tr|trl|dc|spd|lyon|stats|shopt|skips|blk|fade|goal|div|pls|hist|q|idx|view|theme|shuf|rep|auto|vol|bg|mini|ff|lz|wk|piped|off:.*|ly:.*|viz:.*|bpmu:.*)$/;
 $('expBtn').onclick=()=>{
   const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(BK.test(k))d[k]=localStorage.getItem(k)}}catch(e){}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({v:1,data:d})],{type:'application/json'}));
@@ -2131,7 +2161,7 @@ function onState(e){
   if(st===5){if(pending)finishImport();else{restore=false;$('ph').style.display='none';loadMeta()}}
   if(st===1||st===3){try{player.unloadModule('captions')}catch(e){}}
   if(st===1){loadMeta();ensureUpcoming();applySpeed()}
-  if(st===0){if(sleepAfterSong){sleepAfterSong=false;toast('หยุดเล่นตามเวลาที่ตั้งไว้',5000);return}next(true)}
+  if(st===0){if(sleepAfterSong){sleepAfterSong=false;fadeEnd();toast('หยุดเล่นตามเวลาที่ตั้งไว้',5000);return}next(true)}
 }
 function toggle(){if(!ready)return;player.getPlayerState()===1?player.pauseVideo():player.playVideo()}
 function pickNext(auto,skipOne){
@@ -3108,9 +3138,9 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
   const payload=()=>{
     let x={};try{x=JSON.parse(ls('statsx')||'{}')}catch(e){}
     const own=ownStats(),m=Object.assign({},x);if(own.u)m[devId()]=own;
-    return {pls:ls('pls')||'[]',hist:ls('hist')||'[]',skips:ls('skips')||'[]',stats:JSON.stringify(m)};
+    return {pls:ls('pls')||'[]',hist:ls('hist')||'[]',skips:ls('skips')||'[]',blk:ls('blk')||'{}',stats:JSON.stringify(m)};
   };
-  const coreOf=p=>hashOf({pls:p.pls,hist:p.hist,skips:p.skips});
+  const coreOf=p=>hashOf({pls:p.pls,hist:p.hist,skips:p.skips,blk:p.blk});
   const hashOf=p=>sha(JSON.stringify(p));
   function merge(a,b){
     const P=x=>{try{return JSON.parse(x)}catch(e){return[]}};
@@ -3119,10 +3149,11 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
     const u=(x,y,cap)=>{const out=[],seen=new Set();x.concat(y).forEach(v=>{const k=typeof v==='string'?v:v.id;if(!seen.has(k)){seen.add(k);out.push(v)}});return out.slice(0,cap)};
     const M=x=>{try{const o=JSON.parse(x||'{}');return o&&typeof o==='object'&&!Array.isArray(o)?o:{}}catch(e){return{}}};
     const sa=M(a.stats),sb=M(b.stats);Object.keys(sb).forEach(k=>{if(!sa[k]||(sb[k].u||0)>(sa[k].u||0))sa[k]=sb[k]});
-    return {pls:JSON.stringify(pa),hist:JSON.stringify(u(P(a.hist),P(b.hist),30)),skips:JSON.stringify(u(P(a.skips),P(b.skips),300)),stats:JSON.stringify(sa)};
+    return {pls:JSON.stringify(pa),hist:JSON.stringify(u(P(a.hist),P(b.hist),30)),skips:JSON.stringify(u(P(a.skips),P(b.skips),300)),blk:(()=>{const B=x=>{try{const o=JSON.parse(x||'{}');return{s:o.s||[],a:o.a||[]}}catch(e){return{s:[],a:[]}}},x=B(a.blk),y=B(b.blk);return JSON.stringify({s:[...new Set(x.s.concat(y.s))],a:[...new Set(x.a.concat(y.a))]})})(),stats:JSON.stringify(sa)};
   }
   function applyLocal(p){
     lsSet('pls',p.pls);lsSet('hist',p.hist);lsSet('skips',p.skips);
+    if(p.blk){lsSet('blk',p.blk);try{const o=JSON.parse(p.blk);blk={s:o.s||[],a:o.a||[]}}catch(e){}}
     if(p.stats){try{const m=JSON.parse(p.stats);if(m&&typeof m==='object'){delete m[devId()];lsSet('statsx',JSON.stringify(m))}}catch(e){}}
     try{pls=JSON.parse(p.pls)}catch(e){}
     try{hist=JSON.parse(p.hist)}catch(e){}
@@ -3241,7 +3272,7 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
         const rl=((rel&&rel.data)||[]).slice(0,3);
         const rt=await Promise.all(rl.map(r=>dz('/artist/'+r.id+'/top?limit=4')));
         rt.forEach((x,i)=>((x&&x.data)||[]).forEach(t=>tr.push(mkDz(t,rl[i].id))));
-        const seen=new Set();tr=tr.filter(t=>{const k=norm(t.title);if(heard.has(k)||seen.has(k))return false;seen.add(k);return true});
+        const seen=new Set();tr=tr.filter(t=>{const k=norm(t.title);if(heard.has(k)||seen.has(k)||isBlocked(t))return false;seen.add(k);return true});
         if(tr.length>=4)rows.push({a,items:tr.slice(0,18)});
       }catch(e){}
     }
@@ -3285,7 +3316,7 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
     const ta=artists(wk)[0];
     ban.innerHTML='<div><b>รีแคปการฟังของคุณ</b><span></span></div><div class="go">ดูเลย</div>';
     ban.querySelector('span').textContent=all.length?('7 วันที่ผ่านมา '+hm(w7)+(ta?' · ศิลปินอันดับ 1: '+ta.a:'')):'ฟังเพลงสักพัก แล้วมาดูสรุปว่าคุณฟังอะไรมากที่สุด';
-    ban.onclick=()=>openRecap();box.appendChild(ban);
+    ban.onclick=()=>openRecap();box.appendChild(ban);{const ge=window.goalEl&&window.goalEl();if(ge)box.appendChild(ge)}
     if(all.filter(x=>okId(x.id)).length<3){
       const h=document.createElement('div');h.className='fyhint';h.textContent='ยังไม่มีข้อมูลการฟังพอ ลองฟังเพลงสัก 3-5 เพลง ที่นี่จะมีเพลย์ลิสต์ที่ทำให้คุณและเพลงแนะนำจากสิ่งที่คุณฟัง';box.appendChild(h);return;
     }
@@ -3453,7 +3484,7 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
         const pl=((r&&r.data)||[]).filter(x=>x.nb_tracks>=15).sort((a,b)=>(b.fans||0)-(a.fans||0)||(b.nb_tracks-a.nb_tracks))[0];
         if(!pl)continue;
         const t=await dz('/playlist/'+pl.id+'/tracks?limit=40');
-        const seen=new Set(),items=((t&&t.data)||[]).filter(x=>x&&x.artist&&x.title).map(x=>mkDz(x,x.artist.id)).filter(x=>{const k=tkey(x);if(seen.has(k))return false;seen.add(k);return true}).slice(0,30);
+        const seen=new Set(),items=((t&&t.data)||[]).filter(x=>x&&x.artist&&x.title).map(x=>mkDz(x,x.artist.id)).filter(x=>{const k=tkey(x);if(seen.has(k)||isBlocked(x))return false;seen.add(k);return true}).slice(0,30);
         if(items.length>=8){lsSet(key,JSON.stringify({t:Date.now(),items}));return items}
       }catch(e){}
     }
@@ -3539,6 +3570,66 @@ window.mergedStats=function(){
   document.addEventListener('keydown',e=>{
     if((e.key==='b'||e.key==='B')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes((e.target||{}).tagName)&&!document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show'))abPress();
   });
+})();
+
+/* ---------- บล็อกเพลง/ศิลปิน ---------- */
+(function(){
+  function close(){const p=$('blkpop');if(p)p.remove()}
+  document.addEventListener('mousedown',e=>{if(!e.target.closest('#blkpop')&&!e.target.closest('#blkBtn'))close()});
+  function doBlock(kind){
+    const it=queue[idx];if(!it)return;
+    if(kind==='song'){if(!blk.s.includes(it.id))blk.s.push(it.id)}
+    else{const a=artNorm((curP&&curP.artist)||it.author);if(a&&!blk.a.includes(a))blk.a.push(a)}
+    saveBlk();close();
+    // เอาที่บล็อกออกจากคิวที่ยังไม่ได้เล่น
+    const cur=queue[idx];queue=queue.filter((x,i)=>i<=idx||!isBlocked(x));idx=queue.indexOf(cur);save();drawQ();
+    toast(kind==='song'?'บล็อกเพลงนี้แล้ว (ยกเลิกได้ที่ ⚙ → เพลง)':'บล็อกศิลปินนี้แล้ว (ยกเลิกได้ที่ ⚙ → เพลง)',4000);
+    next(true,true);
+  }
+  $('blkBtn').onclick=e=>{
+    e.stopPropagation();if($('blkpop')){close();return}
+    const it=queue[idx];if(!it){toast('ยังไม่ได้เลือกเพลง');return}
+    const art=((curP&&curP.artist)||it.author||'').replace(/\s*-\s*Topic$/i,'');
+    const pop=document.createElement('div');pop.id='blkpop';pop.className='';
+    pop.style.cssText='position:fixed;z-index:80;background:rgba(18,24,44,.97);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:6px;min-width:230px;box-shadow:0 10px 36px rgba(0,0,0,.5)';
+    const row=(t,f)=>{const r=document.createElement('div');r.textContent=t;r.style.cssText='padding:10px 12px;border-radius:9px;cursor:pointer;font-size:14px';r.onmouseenter=()=>r.style.background='rgba(255,255,255,.1)';r.onmouseleave=()=>r.style.background='';r.onclick=f;pop.appendChild(r)};
+    row('🚫 ไม่อยากฟังเพลงนี้อีก',()=>doBlock('song'));
+    if(art)row('🚫 ไม่อยากฟัง “'+art.slice(0,28)+'” อีก',()=>doBlock('artist'));
+    document.body.appendChild(pop);
+    const r=$('blkBtn').getBoundingClientRect();
+    pop.style.left=Math.max(8,Math.min(r.left,innerWidth-250))+'px';pop.style.bottom=(innerHeight-r.top+8)+'px';
+  };
+})();
+
+/* ---------- เป้าหมายการฟังรายวัน ---------- */
+(function(){
+  const dk=t=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+  function info(){
+    const g=+ls('goal')||0;if(!g)return null;
+    const st=window.mergedStats(),need=g*60,today=st.d[dk(Date.now())]||0;
+    let streak=0,t=Date.now();
+    if(today<need)t-=86400000;
+    for(let i=0;i<400;i++){if((st.d[dk(t)]||0)>=need){streak++;t-=86400000}else break}
+    return{g,today,need,streak,done:today>=need};
+  }
+  window.goalEl=function(){
+    const i=info();if(!i)return null;
+    const pct=Math.min(100,Math.round(i.today/i.need*100)),m=Math.round(i.today/60);
+    const d=document.createElement('div');d.className='goalcard';
+    d.innerHTML='<div class="gh"><b></b><span></span></div><div class="rcbar" style="height:8px"><i></i></div>';
+    d.querySelector('b').textContent=i.done?'ถึงเป้าวันนี้แล้ว 🎉':'เป้าหมายวันนี้';
+    d.querySelector('span').textContent=m+' / '+i.g+' นาที'+(i.streak?' · ต่อเนื่อง '+i.streak+' วัน 🔥':'');
+    d.querySelector('i').style.width=pct+'%';
+    d.onclick=()=>openSettings();return d;
+  };
+  window.goalTick=function(){
+    const i=info();
+    if(i&&i.done&&ls('goaldone')!==dk(Date.now())){lsSet('goaldone',dk(Date.now()));toast('ถึงเป้าหมายการฟังวันนี้แล้ว 🎉'+(i.streak>1?' ต่อเนื่อง '+i.streak+' วัน 🔥':''),6000)}
+    if(curTab==='disc')place();
+  };
+  function place(){const fy=$('fy'),ban=fy&&fy.querySelector('.rcban');if(!ban)return;const old=fy.querySelector('.goalcard'),n=window.goalEl();if(old){if(n)old.replaceWith(n);else old.remove()}else if(n)ban.after(n)}
+  window.goalPlace=place;place();
+  setInterval(goalTick,30000);
 })();
 </script>
 </body>

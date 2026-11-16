@@ -664,7 +664,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
     <div class="page" id="vlib"></div>
     <div class="card">
       <div class="cactL"><button id="qBtn" title="คิวเพลง (Q)"><svg viewBox="0 0 24 24"><path d="M4 6h12M4 12h12M4 18h8M18 15v6M18 15l4-1v5"/></svg></button><button id="srchBtn" title="ค้นหาเพลง ( / )"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button><button id="autoBtn" title="เล่นเพลงแนะนำต่ออัตโนมัติเมื่อคิวหมด"><svg viewBox="0 0 24 24"><path d="M12 12c-1.6-2.4-3.2-4-5-4a4 4 0 000 8c1.8 0 3.4-1.6 5-4zm0 0c1.6 2.4 3.2 4 5 4a4 4 0 000-8c-1.8 0-3.4 1.6-5 4z"/></svg></button></div>
-      <div class="cact"><button id="likeBtn" title="ถูกใจ"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9.2C1.8 7.6 3.6 4.5 6.8 4.5c2 0 3.5 1.1 5.2 3 1.7-1.9 3.2-3 5.200-3 3.2 0 5 3.100 3.800 6.300C19 15.600 12 20 12 20z"/></svg></button><button id="plBtn" data-pick="1" title="เพิ่มเข้าเพลย์ลิสต์"><svg viewBox="0 0 24 24"><path d="M4 7h11M4 12h11M4 17h6M18 11v8M14 15h8"/></svg></button></div>
+      <div class="cact"><button id="abBtn" title="วนซ้ำท่อนที่ชอบ (B)" style="font-size:12.5px;font-weight:700;letter-spacing:.3px">A-B</button><button id="likeBtn" title="ถูกใจ"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9.2C1.8 7.6 3.6 4.5 6.8 4.5c2 0 3.5 1.1 5.2 3 1.7-1.9 3.2-3 5.200-3 3.2 0 5 3.100 3.800 6.300C19 15.600 12 20 12 20z"/></svg></button><button id="plBtn" data-pick="1" title="เพิ่มเข้าเพลย์ลิสต์"><svg viewBox="0 0 24 24"><path d="M4 7h11M4 12h11M4 17h6M18 11v8M14 15h8"/></svg></button></div>
       <div class="title" id="ttl">ยังไม่ได้เลือกเพลง</div>
       <div class="artist" id="art">&nbsp;</div>
       <div class="prog"><span id="cur">0:00</span><input type="range" id="seek" min="0" max="1000" value="0"><span id="rem">-0:00</span></div>
@@ -729,7 +729,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 <div id="help"><div class="box"><h3>คีย์ลัด</h3><div class="kv">
 <kbd>Space</kbd><span>เล่น / หยุด</span><kbd>← →</kbd><span>ย้อน / ข้าม 5 วินาที</span><kbd>↑ ↓</kbd><span>เสียง</span><kbd>N / P</kbd><span>เพลงถัดไป / ก่อนหน้า</span>
 <kbd>L</kbd><span>เปิด/ปิดเนื้อเพลง</span><kbd>[ ]</kbd><span>ปรับดีเลย์เนื้อเพลง ±0.1 วิ</span><kbd>S / R</kbd><span>สุ่ม / วนซ้ำ</span><kbd>M</kbd><span>ปิดเสียง</span>
-<kbd>Ctrl K</kbd><span>เมนูคำสั่ง/ค้นหาเร็ว</span><kbd>K</kbd><span>โหมดคาราโอเกะ</span><kbd>F</kbd><span>เต็มจอ</span><kbd>Q</kbd><span>คิวเพลง</span><kbd>/</kbd><span>ค้นหา</span><kbd>?</kbd><span>หน้าต่างนี้</span></div></div></div>
+<kbd>Ctrl K</kbd><span>เมนูคำสั่ง/ค้นหาเร็ว</span><kbd>K</kbd><span>โหมดคาราโอเกะ</span><kbd>F</kbd><span>เต็มจอ</span><kbd>Q</kbd><span>คิวเพลง</span><kbd>B</kbd><span>วนซ้ำท่อน A-B</span><kbd>/</kbd><span>ค้นหา</span><kbd>?</kbd><span>หน้าต่างนี้</span></div></div></div>
 <div id="modal"><div class="panel">
   <h3>ตั้งค่า</h3>
   <div class="seg stabs" id="setTabs"><button data-t="gen" class="on">ทั่วไป</button><button data-t="mus">เพลง</button><button data-t="con">การเชื่อมต่อ</button><button data-t="dat">ข้อมูล</button></div>
@@ -751,6 +751,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
   <div class="sec" data-s="mus">
     <div><span class="lab">เพลงที่ต่อให้อัตโนมัติ</span>
     <select id="divSel"><option value="0">ใกล้เคียงกับเพลงที่ฟัง</option><option value="1">หลากหลายขึ้น (ผสมศิลปินที่ชอบ)</option></select></div>
+    <label><input type="checkbox" id="autoPlChk"> สร้างเพลย์ลิสต์ให้อัตโนมัติ (Top 50 ของคุณ / ฟังบ่อยช่วงนี้) อัปเดตทุกสัปดาห์</label>
     <div><span class="lab">ความเร็วในการเล่น</span>
       <select id="spSel"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1">1× (ปกติ)</option><option value="1.1">1.1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select></div>
     <div><span class="lab">ตั้งเวลาปิดเพลง</span>
@@ -823,7 +824,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 <script>
 let pipWin=null;
 const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document.getElementById(id):null);
-const BUILD='2026-11-16.15';
+const BUILD='2026-11-16.16';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
@@ -1076,7 +1077,7 @@ function finishImport(){
 }
 
 /* ---------- settings ---------- */
-function openSettings(msg){$('syncChk').checked=ls('syncon')==='1';$('syncCode').value=ls('synccode')||'';$('syncSt').textContent=ls('syncst')||'';$('syncSt').className='tres';$('trlSel').value=trLang;$('stSel').value=ls('start')||'disc';$('dcChk').checked=dcOn;$('dcRes').textContent='';setSecTab('gen');$('spSel').value=String(spd);updChips();$('keyRes').textContent='';$('wkRes').textContent='';$('divSel').value=divMode?'1':'0';$('lzSel').value=String(lz);$('slSel').value='0';$('miniChk').checked=miniOn;$('pipedChk').checked=usePiped;$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
+function openSettings(msg){$('syncChk').checked=ls('syncon')==='1';$('syncCode').value=ls('synccode')||'';$('syncSt').textContent=ls('syncst')||'';$('syncSt').className='tres';$('trlSel').value=trLang;$('stSel').value=ls('start')||'disc';$('autoPlChk').checked=(ls('autopl')||'1')==='1';$('dcChk').checked=dcOn;$('dcRes').textContent='';setSecTab('gen');$('spSel').value=String(spd);updChips();$('keyRes').textContent='';$('wkRes').textContent='';$('divSel').value=divMode?'1':'0';$('lzSel').value=String(lz);$('slSel').value='0';$('miniChk').checked=miniOn;$('pipedChk').checked=usePiped;$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
 let spd=+(ls('spd')||1)||1;
 const DC='http://127.0.0.1:6742';let dcOn=ls('dc')==='1',dcSig='',dcStart=0,dcFail=0;
 function dcPost(path,obj){return fetch(DC+path,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(obj)}).then(r=>{dcFail=0;return r}).catch(()=>{dcFail++})}
@@ -1128,7 +1129,7 @@ $('setCancel').onclick=()=>$('modal').classList.remove('show');
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('show')});
 $('setSave').onclick=()=>{
   {const on=$('syncChk').checked,c=$('syncCode').value.trim();const chg=(ls('synccode')||'')!==c||(ls('syncon')==='1')!==on;lsSet('syncon',on?'1':'0');lsSet('synccode',c);if(chg){lsSet('syncbase','');setTimeout(()=>window.syncCycle&&syncCycle(true),600)}}
-  lsSet('start',$('stSel').value);
+  lsSet('start',$('stSel').value);{const a=$('autoPlChk').checked;lsSet('autopl',a?'1':'0');if(a)setTimeout(()=>window.autoPls&&autoPls(),500)}
   {const nl=$('trlSel').value;if(nl!==trLang){trLang=nl;lsSet('trl',nl);if(trOn)loadTrans()}}
   dcOn=$('dcChk').checked;lsSet('dc',dcOn?'1':'0');if(!dcOn)dcPost('/clear',{});dcSig='';
   divMode=$('divSel').value==='1';lsSet('div',divMode?'1':'0');
@@ -2103,7 +2104,7 @@ $('shShare').onclick=async()=>{
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('shModal').classList.remove('show')});
 function playAt(i){
   if(i<0||i>=queue.length)return;
-  idx=i;save();drawQ();$('ph').style.display='none';
+  idx=i;save();drawQ();$('ph').style.display='none';window.abClear&&abClear(true);
   const it=queue[i];updateHeart();playedSet.add(it);curGenre='';curArtist='';vizSet(false);
   if(it.pend){
     $('ttl').textContent=it.title||'';$('art').textContent=it.author||'';
@@ -2784,7 +2785,7 @@ if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'
   function saveSt(){
     const ks=Object.keys(st.d).sort();while(ks.length>400)delete st.d[ks.shift()];
     const pk=Object.keys(st.p);if(pk.length>500){pk.sort((a,b)=>st.p[a].s-st.p[b].s).slice(0,pk.length-500).forEach(k=>delete st.p[k])}
-    lsSet('stats',JSON.stringify(st));
+    st.u=Date.now();lsSet('stats',JSON.stringify(st));
   }
   setInterval(()=>{
     try{
@@ -2804,6 +2805,7 @@ if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'
   },5000);
   const hm=sec=>{sec=Math.round(sec/60);if(sec<60)return sec+' นาที';return Math.floor(sec/60)+' ชม. '+(sec%60)+' น.'};
   function openStats(){
+    const st=window.mergedStats?window.mergedStats():window._st0||{d:{},p:{}};
     const now=Date.now(),days=[];
     for(let i=13;i>=0;i--)days.push(dayKey(now-i*86400000));
     const today=st.d[dayKey()]||0;
@@ -2825,7 +2827,7 @@ if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'
   window.openStats=openStats;
   $('stClose').onclick=()=>$('statModal').classList.remove('show');
   $('statModal').onclick=e=>{if(e.target===$('statModal'))$('statModal').classList.remove('show')};
-  $('stClear').onclick=()=>{if(!confirm('ล้างสถิติการฟังทั้งหมด?'))return;st={d:{},p:{},w:{},hw:{},h:[]};saveSt();openStats()};
+  $('stClear').onclick=()=>{if(!confirm('ล้างสถิติการฟังทั้งหมด?'))return;st={d:{},p:{},w:{},hw:{},h:[]};lsSet('statsx','{}');saveSt();openStats()};
   $('stBtn').onclick=()=>{$('modal').classList.remove('show');openStats()};
 
   // ----- เมนูคำสั่ง -----
@@ -2835,7 +2837,7 @@ if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'
     return [
       act('เล่น / หยุด',toggle,'Space'),act('เพลงถัดไป',()=>next(false),'N'),act('เพลงก่อนหน้า',prev,'P'),
       act('เปิด/ปิดเนื้อเพลง',()=>$('lyBtn').click(),'L'),act('แชร์เพลง / เนื้อเพลงเป็นรูป',shOpen),
-      act('รีแคปการฟังของฉัน',()=>openRecap()),act('ไปหน้า: กำลังเล่น',()=>setTab('now')),act('ไปหน้า: ค้นพบ',()=>setTab('disc')),act('ไปหน้า: ค้นหา',()=>setTab('srch')),act('ไปหน้า: เพลย์ลิสต์',()=>setTab('lib')),
+      act('รีแคปการฟังของฉัน',()=>openRecap()),act('วนซ้ำท่อน A-B (ตั้งจุด A/B/ยกเลิก)',()=>abPress(),'B'),act('ไปหน้า: กำลังเล่น',()=>setTab('now')),act('ไปหน้า: ค้นพบ',()=>setTab('disc')),act('ไปหน้า: ค้นหา',()=>setTab('srch')),act('ไปหน้า: เพลย์ลิสต์',()=>setTab('lib')),
       act('เปิด/ปิดคิวเพลง',()=>$('qBtn').click(),'Q'),act('สลับสุ่มเพลง',()=>$('shufBtn').click(),'S'),act('สลับวนซ้ำ',()=>$('repBtn').click(),'R'),
       act('สลับเล่นเพลงแนะนำต่ออัตโนมัติ',()=>$('autoBtn').click()),act('โหมดภาพ: MV',()=>$('mvBtn').click()),act('โหมดภาพ: ปก',()=>$('cvBtn').click()),
       act('ถูกใจ / เลิกถูกใจเพลงนี้',()=>$('likeBtn').click()),act('บันทึกคิวเป็นเพลย์ลิสต์',()=>$('svBtn').click()),
@@ -3096,17 +3098,32 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
     const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(doc.iv)},key,unb64(doc.ct));
     return JSON.parse(td.decode(pt));
   }
-  const payload=()=>({pls:ls('pls')||'[]',hist:ls('hist')||'[]',skips:ls('skips')||'[]'});
+  const devId=()=>{let d=ls('devid');if(!d){d=Math.random().toString(36).slice(2,10);lsSet('devid',d)}return d};
+  function ownStats(){
+    let s={};try{s=JSON.parse(ls('stats')||'{}')}catch(e){}
+    const pe=Object.entries(s.p||{}).sort((a,b)=>b[1].s-a[1].s).slice(0,300),p={};pe.forEach(([k,v])=>p[k]=v);
+    const w={};Object.entries(s.w||{}).forEach(([d,m])=>{const o={};Object.entries(m).forEach(([id,v])=>{if(p[id])o[id]=v});w[d]=o});
+    return{u:s.u||0,d:s.d||{},p,w,hw:s.hw||{},h:s.h||[]};
+  }
+  const payload=()=>{
+    let x={};try{x=JSON.parse(ls('statsx')||'{}')}catch(e){}
+    const own=ownStats(),m=Object.assign({},x);if(own.u)m[devId()]=own;
+    return {pls:ls('pls')||'[]',hist:ls('hist')||'[]',skips:ls('skips')||'[]',stats:JSON.stringify(m)};
+  };
+  const coreOf=p=>hashOf({pls:p.pls,hist:p.hist,skips:p.skips});
   const hashOf=p=>sha(JSON.stringify(p));
   function merge(a,b){
     const P=x=>{try{return JSON.parse(x)}catch(e){return[]}};
     const pa=P(a.pls),pb=P(b.pls);
     pb.forEach(rp=>{const lp=pa.find(x=>x.id===rp.id);if(!lp)pa.push(rp);else{const seen=new Set((lp.items||[]).map(x=>x.id));(rp.items||[]).forEach(x=>{if(!seen.has(x.id)){lp.items=(lp.items||[]).concat([x]);seen.add(x.id)}})}});
     const u=(x,y,cap)=>{const out=[],seen=new Set();x.concat(y).forEach(v=>{const k=typeof v==='string'?v:v.id;if(!seen.has(k)){seen.add(k);out.push(v)}});return out.slice(0,cap)};
-    return {pls:JSON.stringify(pa),hist:JSON.stringify(u(P(a.hist),P(b.hist),30)),skips:JSON.stringify(u(P(a.skips),P(b.skips),300))};
+    const M=x=>{try{const o=JSON.parse(x||'{}');return o&&typeof o==='object'&&!Array.isArray(o)?o:{}}catch(e){return{}}};
+    const sa=M(a.stats),sb=M(b.stats);Object.keys(sb).forEach(k=>{if(!sa[k]||(sb[k].u||0)>(sa[k].u||0))sa[k]=sb[k]});
+    return {pls:JSON.stringify(pa),hist:JSON.stringify(u(P(a.hist),P(b.hist),30)),skips:JSON.stringify(u(P(a.skips),P(b.skips),300)),stats:JSON.stringify(sa)};
   }
   function applyLocal(p){
     lsSet('pls',p.pls);lsSet('hist',p.hist);lsSet('skips',p.skips);
+    if(p.stats){try{const m=JSON.parse(p.stats);if(m&&typeof m==='object'){delete m[devId()];lsSet('statsx',JSON.stringify(m))}}catch(e){}}
     try{pls=JSON.parse(p.pls)}catch(e){}
     try{hist=JSON.parse(p.hist)}catch(e){}
     try{skips=new Set(JSON.parse(p.skips))}catch(e){}
@@ -3120,7 +3137,7 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
     const doc=await enc(p,key);doc.h=h;doc.ts=Date.now();
     const r=await fetch(wk+'/sync?id='+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(doc)});
     if(!r.ok)throw new Error('push '+r.status);
-    lastPush=Date.now();lsSet('syncbase',h);
+    lastPush=Date.now();lsSet('syncbase',h);lsSet('synccore',await coreOf(p));
   }
   window.syncCycle=async function(force){
     if(busy||ls('syncon')!=='1')return;
@@ -3141,9 +3158,9 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
       if(rem.h===lh){lsSet('syncbase',lh);setSt('ซิงก์แล้ว '+hm(),'ok');return}
       let remote;try{remote=await dec(rem,key)}catch(e){setSt('ถอดรหัสไม่ได้ ข้อมูลบนเซิร์ฟเวอร์อาจเสีย','bad');return}
       if(lh===base){ // เครื่องนี้ไม่ได้แก้ => รับของใหม่
-        applyLocal(remote);lsSet('syncbase',await hashOf(payload()));setSt('อัปเดตจากเครื่องอื่นแล้ว '+hm(),'ok');
+        applyLocal(remote);{const np=payload();lsSet('syncbase',await hashOf(np));lsSet('synccore',await coreOf(np))}setSt('อัปเดตจากเครื่องอื่นแล้ว '+hm(),'ok');
       }else if(rem.h===base){ // อีกฝั่งไม่ได้แก้ => ส่งของเรา
-        if(!force&&Date.now()-lastPush<120000)return;
+        {const cc=await coreOf(lp);const th=cc!==(ls('synccore')||'')?120000:600000;if(!force&&Date.now()-lastPush<th)return}
         await push(lp,lh,id,key);setSt('ซิงก์แล้ว '+hm(),'ok');
       }else{ // แก้ทั้งคู่ => รวม
         applyLocal(merge(lp,remote));const np=payload(),nh=await hashOf(np);
@@ -3169,7 +3186,7 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
 
 /* ---------- สำหรับคุณ / ชาร์ตส่วนตัว / รีแคป ---------- */
 (function(){
-  const getSt=()=>{try{return Object.assign({d:{},p:{},w:{},hw:{},h:[]},JSON.parse(ls('stats')||'{}'))}catch(e){return{d:{},p:{},w:{},hw:{},h:[]}}};
+  const getSt=()=>{try{return window.mergedStats()}catch(e){return{d:{},p:{},w:{},hw:{},h:[]}}};
   const dk=t=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
   const okId=id=>/^[\w-]{11}$/.test(String(id||''));
   const mins=sec=>Math.round(sec/60);
@@ -3465,6 +3482,63 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
   }
   window.drawGen=drawGen;
   if(curTab==='disc')drawGen();
+})();
+
+/* ---------- สถิติรวมทุกเครื่อง / เพลย์ลิสต์อัตโนมัติ / A-B loop ---------- */
+window.mergedStats=function(){
+  let own={},x={};try{own=JSON.parse(ls('stats')||'{}')}catch(e){}try{x=JSON.parse(ls('statsx')||'{}')}catch(e){}
+  const out={d:{},p:{},w:{},hw:{},h:new Array(24).fill(0)};
+  [own].concat(Object.values(x)).forEach(s=>{
+    if(!s||typeof s!=='object')return;
+    Object.entries(s.d||{}).forEach(([k,v])=>out.d[k]=(out.d[k]||0)+v);
+    Object.entries(s.p||{}).forEach(([id,e])=>{const o=out.p[id]||(out.p[id]={t:e.t,a:e.a,n:0,s:0,l:0});o.n+=e.n||0;o.s+=e.s||0;o.l=Math.max(o.l,e.l||0);if(!o.t)o.t=e.t;if(!o.a)o.a=e.a});
+    Object.entries(s.w||{}).forEach(([k,m])=>{const o=out.w[k]||(out.w[k]={});Object.entries(m).forEach(([id,v])=>o[id]=(o[id]||0)+v)});
+    Object.entries(s.hw||{}).forEach(([k,arr])=>{const o=out.hw[k]||(out.hw[k]=new Array(24).fill(0));(arr||[]).forEach((v,i)=>o[i]+=v)});
+    (s.h||[]).forEach((v,i)=>out.h[i]+=v);
+  });
+  return out;
+};
+(function(){
+  // เพลย์ลิสต์อัตโนมัติ
+  const okId=id=>/^[\w-]{11}$/.test(String(id||''));
+  function rk(days){
+    const st=window.mergedStats(),m={};
+    if(!days){Object.keys(st.p).forEach(id=>{const e=st.p[id];m[id]={id,t:e.t,a:e.a,s:e.s||0}})}
+    else{const d0=new Date(Date.now()-(days-1)*86400000),lim=d0.getFullYear()+'-'+String(d0.getMonth()+1).padStart(2,'0')+'-'+String(d0.getDate()).padStart(2,'0');
+      Object.keys(st.w).forEach(k=>{if(k<lim)return;Object.keys(st.w[k]).forEach(id=>{const e=st.p[id]||{};const r=m[id]||(m[id]={id,t:e.t,a:e.a,s:0});r.s+=st.w[k][id]})})}
+    return Object.values(m).filter(x=>x.s>=20&&x.t&&okId(x.id)).sort((a,b)=>b.s-a.s);
+  }
+  function autoPls(){
+    if((ls('autopl')||'1')!=='1')return;
+    const defs=[['auto-top50','Top 50 ของคุณ',rk(0).slice(0,50)],['auto-recent','ฟังบ่อยช่วงนี้',rk(30).slice(0,30)]];
+    let did=false;
+    defs.forEach(([id,name,list])=>{
+      if(list.length<8)return;const fk='autopl_'+id,t=+ls(fk)||0;let pl=pls.find(x=>x.id===id);
+      if(!pl){if(t)return;pl={id,name,items:[]};pls.push(pl)}else if(Date.now()-t<7*86400000)return;
+      pl.items=list.map(x=>({id:x.id,title:x.t,author:x.a,rec:0}));lsSet(fk,String(Date.now()));did=true;
+    });
+    if(did){savePls();if(curTab==='lib')drawLib()}
+  }
+  setTimeout(autoPls,6000);setInterval(autoPls,6*3600*1000);
+  window.autoPls=autoPls;
+
+  // A-B loop
+  let st=0,A=0,B=0;
+  const fmt=t=>Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0');
+  function paint(){const b=$('abBtn');b.classList.toggle('on',st===2);b.textContent=st===1?'A…':'A-B';b.style.opacity=st?1:'';b.title=st===2?('วนซ้ำ '+fmt(A)+' → '+fmt(B)+' (กด B เพื่อยกเลิก)'):'วนซ้ำท่อนที่ชอบ (B)'}
+  function abClear(silent){if(!st)return;st=0;paint();if(!silent)toast('ยกเลิกการวนซ้ำท่อนแล้ว')}
+  function abPress(){
+    if(!ready||!queue[idx]){toast('เริ่มเล่นเพลงก่อน');return}
+    const t=player.getCurrentTime()||0;
+    if(st===0){A=t;st=1;paint();toast('ตั้งจุด A ที่ '+fmt(A)+' กด B อีกครั้งตรงจุดสิ้นสุด',3500)}
+    else if(st===1){if(t<=A+1){toast('จุด B ต้องอยู่หลังจุด A อย่างน้อย 1 วินาที');return}B=t;st=2;paint();player.seekTo(A,true);toast('วนซ้ำ '+fmt(A)+' → '+fmt(B),3000)}
+    else abClear();
+  }
+  $('abBtn').onclick=abPress;window.abClear=abClear;window.abPress=abPress;
+  setInterval(()=>{if(st===2&&ready&&playing){try{if((player.getCurrentTime()||0)>=B-0.05)player.seekTo(A,true)}catch(e){}}},150);
+  document.addEventListener('keydown',e=>{
+    if((e.key==='b'||e.key==='B')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes((e.target||{}).tagName)&&!document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show'))abPress();
+  });
 })();
 </script>
 </body>

@@ -533,6 +533,40 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 .qsep::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.12)}
 @media (hover:none){.queue li .up{opacity:.7}}
 .queue h4 span:first-child,.mini{white-space:nowrap}.queue h4 .sp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.shg{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.shg .lab{font-size:12px;color:var(--dim)}
+.shg .seg{flex-wrap:wrap;height:auto;max-width:100%}
+.shg .seg button{white-space:nowrap}
+.shchk{flex-direction:row;gap:16px;flex-wrap:wrap}
+.shchk label{display:flex;align-items:center;gap:6px;font-size:13.5px;cursor:pointer}
+.shl{overflow:auto;max-height:86dvh;padding-right:4px}
+
+#seekTip{position:fixed;z-index:80;pointer-events:none;opacity:0;transform:translate(-50%,-100%);background:rgba(18,22,38,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:7px 11px;font-size:12.5px;max-width:min(300px,80vw);text-align:center;transition:opacity .12s;line-height:1.35}
+#seekTip.show{opacity:1}#seekTip b{display:block;font-variant-numeric:tabular-nums;font-size:13px}#seekTip i{display:block;font-style:normal;opacity:.75;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#statModal,#cmdk{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#statModal.show,#cmdk.show{display:flex}
+#cmdk{align-items:flex-start;padding-top:12vh}
+.cbox{width:min(560px,92vw);background:rgba(18,24,42,.96);border:1px solid rgba(255,255,255,.12);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden}
+#cmdIn{width:100%;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.1);color:#fff;font:inherit;font-size:17px;padding:18px 20px;outline:none}
+#cmdList{max-height:50dvh;overflow:auto;padding:6px}
+#cmdList div{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;cursor:pointer;font-size:14.5px}
+#cmdList div.on{background:rgba(255,255,255,.12)}
+#cmdList div small{margin-left:auto;opacity:.5;font-size:12px;white-space:nowrap}
+#cmdList div span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chint{padding:8px 16px;font-size:11.5px;opacity:.5;border-top:1px solid rgba(255,255,255,.08)}
+.stp{width:min(640px,94vw);max-height:90dvh;overflow:auto}
+.stcards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0 14px}
+.stcards div{background:rgba(255,255,255,.07);border-radius:14px;padding:12px;text-align:center}
+.stcards b{display:block;font-size:20px}.stcards span{font-size:12px;opacity:.65}
+.stsub{font-size:12.5px;opacity:.65;margin:10px 0 6px}
+.stbars{display:flex;align-items:flex-end;gap:5px;height:90px;padding-bottom:16px;position:relative}
+.stbars i{flex:1;background:linear-gradient(#fff,rgba(255,255,255,.35));border-radius:5px 5px 2px 2px;min-height:2px;position:relative;opacity:.85}
+.stbars i em{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-style:normal;font-size:9.5px;opacity:.6}
+.stcols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.stcols .r{display:flex;gap:8px;padding:6px 0;font-size:13.5px;border-bottom:1px solid rgba(255,255,255,.06);cursor:default}
+.stcols .r span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.stcols .r small{opacity:.55;white-space:nowrap}
+.stcols .r.go{cursor:pointer}
+@media (max-width:560px){.stcols{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -594,20 +628,32 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
     </div>
   </aside>
 <div id="shModal"><div class="shbox">
-  <div class="shl"><h3>แชร์เนื้อเพลงลงสตอรี่</h3>
-    <div class="seg" id="shStyle" style="align-self:flex-start"><button data-s="lyrics" class="on">เนื้อเพลง</button><button data-s="card">การ์ดเพลง (ไม่มีเนื้อ)</button></div>
+  <div class="shl"><h3>แชร์เพลง</h3>
+    <div class="shg"><span class="lab">สไตล์</span><div class="seg" id="shStyle"><button data-s="lyrics" class="on">เนื้อเพลง</button><button data-s="poster">โปสเตอร์</button><button data-s="card">การ์ดเพลง</button><button data-s="vinyl">แผ่นเสียง</button></div></div>
     <p class="note" id="shNote">แตะเลือกบรรทัดที่อยากแชร์ (สูงสุด 6 บรรทัด แนะนำท่อนสั้นๆ)</p>
     <div id="shLines"></div>
-    <div class="seg" id="shSeg" style="align-self:flex-start"><button data-r="story" class="on">สตอรี่ 9:16</button><button data-r="square">โพสต์ 1:1</button></div>
+    <div class="shg"><span class="lab">ขนาดภาพ</span><div class="seg" id="shSeg"><button data-r="story" class="on">สตอรี่ 9:16</button><button data-r="portrait">โพสต์ 4:5</button><button data-r="square">สี่เหลี่ยม 1:1</button></div></div>
+    <div class="shg"><span class="lab">ธีม</span><div class="seg" id="shTheme"><button data-t="cover" class="on">ตามปก</button><button data-t="grad">ไล่สี</button><button data-t="dark">ดำ</button><button data-t="light">ขาว</button></div></div>
+    <div class="shg" id="shAlRow"><span class="lab">จัดข้อความ</span><div class="seg" id="shAlign"><button data-a="center" class="on">กลาง</button><button data-a="left">ชิดซ้าย</button></div></div>
+    <div class="shg shchk"><label><input type="checkbox" id="shCover" checked> แสดงปก</label><label><input type="checkbox" id="shCred" checked> แสดงชื่อเพลง/ศิลปิน</label></div>
   </div>
   <div class="shr"><canvas id="shCv" width="1080" height="1920"></canvas>
     <div class="row"><button class="btn" id="shClose" style="height:40px">ปิด</button><button class="btn" id="shShare" style="height:40px;display:none">แชร์</button><button class="btn on" id="shSave" style="height:40px">ดาวน์โหลดภาพ</button></div>
   </div>
 </div></div>
+<div id="seekTip"></div>
+<div id="statModal"><div class="panel stp">
+  <h3>สถิติการฟัง</h3>
+  <div class="stcards" id="stCards"></div>
+  <div class="stsub">14 วันที่ผ่านมา</div><div class="stbars" id="stBars"></div>
+  <div class="stcols"><div><div class="stsub">ศิลปินที่ฟังบ่อย</div><div id="stArt"></div></div><div><div class="stsub">เพลงที่ฟังบ่อย</div><div id="stSong"></div></div></div>
+  <div class="row"><button class="btn" id="stClear" style="height:38px">ล้างสถิติ</button><button class="btn on" id="stClose" style="height:38px">ปิด</button></div>
+</div></div>
+<div id="cmdk"><div class="cbox"><input id="cmdIn" type="text" placeholder="พิมพ์คำสั่ง หรือชื่อเพลง/ศิลปิน…" autocomplete="off" spellcheck="false"><div id="cmdList"></div><div class="chint">↑↓ เลือก · Enter ใช้งาน · Esc ปิด</div></div></div>
 <div id="help"><div class="box"><h3>คีย์ลัด</h3><div class="kv">
 <kbd>Space</kbd><span>เล่น / หยุด</span><kbd>← →</kbd><span>ย้อน / ข้าม 5 วินาที</span><kbd>↑ ↓</kbd><span>เสียง</span><kbd>N / P</kbd><span>เพลงถัดไป / ก่อนหน้า</span>
 <kbd>L</kbd><span>เปิด/ปิดเนื้อเพลง</span><kbd>[ ]</kbd><span>ปรับดีเลย์เนื้อเพลง ±0.1 วิ</span><kbd>S / R</kbd><span>สุ่ม / วนซ้ำ</span><kbd>M</kbd><span>ปิดเสียง</span>
-<kbd>F</kbd><span>เต็มจอ</span><kbd>Q</kbd><span>คิวเพลง</span><kbd>/</kbd><span>ค้นหา</span><kbd>?</kbd><span>หน้าต่างนี้</span></div></div></div>
+<kbd>Ctrl K</kbd><span>เมนูคำสั่ง/ค้นหาเร็ว</span><kbd>F</kbd><span>เต็มจอ</span><kbd>Q</kbd><span>คิวเพลง</span><kbd>/</kbd><span>ค้นหา</span><kbd>?</kbd><span>หน้าต่างนี้</span></div></div></div>
 <div id="modal"><div class="panel">
   <h3>ตั้งค่า</h3>
   <label><input type="checkbox" id="themeChk"> ให้สีพื้นหลังเปลี่ยนตามปกเพลง</label>
@@ -632,6 +678,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
     <input type="text" id="wkIn" placeholder="https://xxxx.workers.dev" autocomplete="off" spellcheck="false">
   </div>
   <div><span class="lab">สำรอง / กู้ข้อมูล</span>
+    <div class="row"><button class="btn" id="stBtn" style="height:38px">สถิติการฟัง</button><button class="btn" id="cmdBtn" style="height:38px">เมนูคำสั่ง (Ctrl+K)</button></div>
     <div class="row"><button class="btn" id="expBtn" style="height:38px">ส่งออกไฟล์สำรอง</button><button class="btn" id="impBtn" style="height:38px">นำเข้า</button><input type="file" id="impFile" accept="application/json" style="display:none"></div>
     <p class="note">เพลย์ลิสต์ เพลงที่ถูกใจ ประวัติ ค่าดีเลย์ที่จำไว้ และการตั้งค่า (ไม่รวม API key)</p></div>
   <p class="note">โปรเจกต์ส่วนตัวเพื่อการทดลองและการศึกษา ไม่ได้เกี่ยวข้องหรือได้รับการรับรองจาก YouTube/Google วิดีโอเล่นผ่านเครื่องเล่นฝังอย่างเป็นทางการของ YouTube กด <b>?</b> เพื่อดูคีย์ลัดทั้งหมด</p>
@@ -664,7 +711,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 <script>
 let pipWin=null;
 const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document.getElementById(id):null);
-const BUILD='2026-11-16.5';
+const BUILD='2026-11-16.7';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
@@ -1512,7 +1559,7 @@ function toggleFS(){try{document.fullscreenElement?document.exitFullscreen():doc
 $('fsBtn').onclick=toggleFS;
 if(!(document.fullscreenEnabled||document.webkitFullscreenEnabled))$('fsBtn').style.display='none';
 const helpEl=$('help');helpEl.onclick=e=>{if(e.target===helpEl)helpEl.classList.remove('show')};
-const BK=/^(skips|div|pls|hist|q|idx|view|theme|shuf|rep|auto|vol|bg|mini|ff|lz|wk|piped|off:.*|ly:.*|viz:.*|bpmu:.*)$/;
+const BK=/^(stats|shopt|skips|div|pls|hist|q|idx|view|theme|shuf|rep|auto|vol|bg|mini|ff|lz|wk|piped|off:.*|ly:.*|viz:.*|bpmu:.*)$/;
 $('expBtn').onclick=()=>{
   const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(BK.test(k))d[k]=localStorage.getItem(k)}}catch(e){}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({v:1,data:d})],{type:'application/json'}));
@@ -1596,7 +1643,9 @@ setTimeout(checkUpdate,8000);setInterval(checkUpdate,10*60*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()});
 
 /* ---------- แชร์เนื้อเพลงเป็นภาพ ---------- */
-let shSel=[],shRatio='story',shStyle='lyrics',shLinesTxt=[];
+let shSel=[],shRatio='story',shStyle='lyrics',shLinesTxt=[],shTheme='cover',shAlign='center',shShowCover=true,shShowCred=true;
+try{const o=JSON.parse(ls('shopt')||'{}');shRatio=o.r||shRatio;shTheme=o.t||shTheme;shAlign=o.a||shAlign;shShowCover=o.c!==false;shShowCred=o.m!==false;if(o.s)shStyle=o.s}catch(e){}
+const shSaveOpt=()=>lsSet('shopt',JSON.stringify({r:shRatio,t:shTheme,a:shAlign,c:shShowCover,m:shShowCred,s:shStyle}));
 function shSource(){
   if(lines.length)return lines.map(l=>(l.s||'').trim());
   return (curPlain||'').split(/\n+/).map(x=>x.trim());
@@ -1621,8 +1670,8 @@ function shOpen(){
   if(a>=0&&src[a]){shSel.push(a);if(src[a+1])shSel.push(a+1)}
   box.querySelectorAll('div').forEach(d=>d.classList.toggle('on',shSel.includes(+d.dataset.i)));
   const first=box.querySelector('div.on');if(first)setTimeout(()=>first.scrollIntoView({block:'center'}),0);
-  if(!src.some(Boolean)){shStyle='card'}
-  shSetStyle(shStyle);
+  if(!src.some(Boolean)&&(shStyle==='lyrics'||shStyle==='poster'))shStyle='card';
+  shSyncUI();
   $('shShare').style.display=(navigator.canShare&&navigator.share)?'':'none';
   $('shModal').classList.add('show');shDraw();
 }
@@ -1641,19 +1690,29 @@ function shWrap(ctx,text,maxW){
 }
 let shSeq=0;
 
-function shSetStyle(st){
-  shStyle=st;
-  $('shStyle').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.s===st));
-  $('shLines').style.display=st==='lyrics'?'':'none';
-  $('shNote').style.display=st==='lyrics'?'':'none';
-  shDraw();
+function shSyncUI(){
+  const seg=(id,attr,val)=>$(id).querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset[attr]===val));
+  seg('shStyle','s',shStyle);seg('shSeg','r',shRatio);seg('shTheme','t',shTheme);seg('shAlign','a',shAlign);
+  const lyr=shStyle==='lyrics'||shStyle==='poster';
+  $('shLines').style.display=lyr?'':'none';$('shNote').style.display=lyr?'':'none';
+  $('shAlRow').style.display=lyr?'':'none';
+  $('shCover').checked=shShowCover;$('shCred').checked=shShowCred;
+  $('shCover').parentElement.style.display=(shStyle==='lyrics'||shStyle==='poster')?'':'none';
+  $('shCred').parentElement.style.display=lyr?'':'none';
+  $('shTheme').parentElement.style.display=(shStyle==='card')?'none':'';
 }
+function shSetStyle(st){shStyle=st;shSyncUI();shSaveOpt();shDraw()}
 $('shStyle').onclick=e=>{const b=e.target.closest('button');if(b)shSetStyle(b.dataset.s)};
-function shMark(ctx,W,H,ff){
-  ctx.save();ctx.textAlign='center';ctx.textBaseline='alphabetic';
-  ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='500 24px '+ff;
+$('shSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;shRatio=b.dataset.r;shSyncUI();shSaveOpt();shDraw()};
+$('shTheme').onclick=e=>{const b=e.target.closest('button');if(!b)return;shTheme=b.dataset.t;shSyncUI();shSaveOpt();shDraw()};
+$('shAlign').onclick=e=>{const b=e.target.closest('button');if(!b)return;shAlign=b.dataset.a;shSyncUI();shSaveOpt();shDraw()};
+$('shCover').onchange=()=>{shShowCover=$('shCover').checked;shSaveOpt();shDraw()};
+$('shCred').onchange=()=>{shShowCred=$('shCred').checked;shSaveOpt();shDraw()};
+function shMark(ctx,W,H,ff,col,al){
+  ctx.save();ctx.textAlign=al==='left'?'left':'center';ctx.textBaseline='alphabetic';
+  ctx.fillStyle=col||'rgba(255,255,255,.5)';ctx.font='500 24px '+ff;
   try{ctx.letterSpacing='3px'}catch(e){}
-  ctx.fillText('Now-Playing by ppozx',W/2,H-(H>1500?78:44));
+  ctx.fillText('Now-Playing by ppozx',al==='left'?90:W/2,H-(H>1500?72:50));
   ctx.restore();
 }
 function shGrain(ctx,W,H){
@@ -1725,8 +1784,96 @@ function shCard(ctx,W,H,img,ff){
   ctx.fillRect(mid-170-36,cyy-34,7,68);ctx.fillRect(mid+170+29,cyy-34,7,68);
   ctx.fillRect(mid-24,cyy-38,17,76);ctx.fillRect(mid+7,cyy-38,17,76);
 }
+const SHT={
+  cover:{fg:'#fff',sub:'rgba(255,255,255,.72)',mark:'rgba(255,255,255,.5)',acc:'rgba(255,255,255,.9)'},
+  grad:{fg:'#fff',sub:'rgba(255,255,255,.72)',mark:'rgba(255,255,255,.5)',acc:'rgba(255,255,255,.9)'},
+  dark:{fg:'#fff',sub:'rgba(255,255,255,.6)',mark:'rgba(255,255,255,.4)',acc:'rgba(255,255,255,.9)'},
+  light:{fg:'#17171e',sub:'rgba(23,23,30,.62)',mark:'rgba(23,23,30,.45)',acc:'rgba(23,23,30,.85)'}
+};
+function shTitleText(){
+  return (curP&&curP.track&&curP.fromTitle?curP.track:($('ttl').textContent||'')).replace(/\s*[\(\[【][^\)\]】]*(official|mv|m\/v|lyric|audio|video)[^\)\]】]*[\)\]】]/ig,'').trim();
+}
+function shEll(ctx,t,maxW){if(ctx.measureText(t).width<=maxW)return t;while(t.length>3&&ctx.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t.trim()+'…'}
+function shBg(ctx,W,H,img,c,theme){
+  if(theme==='dark'){
+    ctx.fillStyle='#0a0a0f';ctx.fillRect(0,0,W,H);
+    const g=ctx.createRadialGradient(W*.8,H*.1,0,W*.8,H*.1,W*1.1);g.addColorStop(0,c[0]);g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=.55;ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;shGrain(ctx,W,H);return}
+  if(theme==='light'){
+    const g=ctx.createLinearGradient(0,0,W*.5,H);g.addColorStop(0,'#f7f3eb');g.addColorStop(1,'#ece7dd');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    const r=ctx.createRadialGradient(W*.15,H*.9,0,W*.15,H*.9,W*.9);r.addColorStop(0,c[0]);r.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.globalAlpha=.28;ctx.fillStyle=r;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;return}
+  const g=ctx.createLinearGradient(0,0,W*.6,H);g.addColorStop(0,c[0]);g.addColorStop(.55,c[1]);g.addColorStop(1,c[2]);
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  if(theme==='cover'&&img){
+    try{ctx.save();ctx.filter='blur(70px) saturate(1.5)';ctx.globalAlpha=.55;
+      const sc=Math.max(W,H)/Math.min(img.width,img.height)*1.25;
+      ctx.drawImage(img,W/2-img.width*sc/2,H/2-img.height*sc/2,img.width*sc,img.height*sc);ctx.restore()}catch(e){ctx.restore()}
+  }
+  ctx.fillStyle='rgba(0,0,0,.30)';ctx.fillRect(0,0,W,H);
+}
+function shCoverBox(ctx,img,x,y,sz,rad,light){
+  ctx.save();ctx.shadowColor=light?'rgba(0,0,0,.25)':'rgba(0,0,0,.5)';ctx.shadowBlur=60;ctx.shadowOffsetY=24;
+  ctx.beginPath();ctx.roundRect(x,y,sz,sz,rad);ctx.fillStyle=light?'rgba(0,0,0,.08)':'rgba(255,255,255,.12)';ctx.fill();ctx.restore();
+  if(img){ctx.save();ctx.beginPath();ctx.roundRect(x,y,sz,sz,rad);ctx.clip();
+    const s=Math.max(sz/img.width,sz/img.height);ctx.drawImage(img,x+sz/2-img.width*s/2,y+sz/2-img.height*s/2,img.width*s,img.height*s);ctx.restore()}
+}
+// ส่วนท้าย: ชื่อเพลง/ศิลปิน/ลายน้ำ จัดตำแหน่งแยกกัน ไม่ทับกัน คืนค่า y ที่ว่างสุดของเนื้อหา
+function shFooter(ctx,W,H,ff,T,al,cred){
+  const story=H>1500,M=90,x=al==='left'?M:W/2,markY=H-(story?72:50);
+  ctx.save();ctx.textBaseline='alphabetic';ctx.textAlign=al==='left'?'left':'center';
+  let top=markY-60;
+  if(cred){
+    const tsz=story?46:40,asz=story?33:29,aY=markY-70,tY=aY-asz-16;
+    ctx.fillStyle=T.sub;ctx.font='500 '+asz+'px '+ff;ctx.fillText(shEll(ctx,$('art').textContent||'',W-M*2),x,aY);
+    ctx.fillStyle=T.fg;ctx.font='700 '+tsz+'px '+ff;ctx.fillText(shEll(ctx,shTitleText(),W-M*2),x,tY);
+    top=tY-tsz-26;
+    ctx.globalAlpha=.25;ctx.fillStyle=T.fg;
+    ctx.fillRect(al==='left'?M:W/2-30,top+8,60,3);ctx.globalAlpha=1;
+  }
+  ctx.restore();
+  shMark(ctx,W,H,ff,T.mark,al);
+  return top;
+}
+function shFit(ctx,txt,ff,maxW,maxH,start,min,weight,lh){
+  let fs=start,wrapped=[],total=0;
+  for(;fs>=min;fs-=4){
+    ctx.font=weight+' '+fs+'px '+ff;wrapped=[];
+    txt.forEach(t=>{wrapped.push(...shWrap(ctx,t,maxW));wrapped.push(null)});wrapped.pop();
+    total=wrapped.reduce((a,x)=>a+(x===null?fs*.45:fs*lh),0);
+    if(total<=maxH)break;
+  }
+  return{fs,wrapped,total};
+}
+function shVinyl(ctx,W,H,img,ff,T,al){
+  const story=H>1500,sq=H<=1080;
+  const R=story?430:(sq?300:360),cx=W/2,cy=(story?330:(sq?120:170))+R;
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=70;ctx.shadowOffsetY=26;
+  ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fillStyle='#0c0c10';ctx.fill();ctx.restore();
+  ctx.save();ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.clip();
+  for(let r=R*.42;r<R-6;r+=7){ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.strokeStyle='rgba(255,255,255,'+(.035+((r*13)%5)/180).toFixed(3)+')';ctx.lineWidth=1.2;ctx.stroke()}
+  for(const a0 of [-.6,2.54]){ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0,a0+.5);ctx.closePath();
+    const g=ctx.createRadialGradient(cx,cy,0,cx,cy,R);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(.6,'rgba(255,255,255,.07)');g.addColorStop(1,'rgba(255,255,255,.02)');ctx.fillStyle=g;ctx.fill()}
+  ctx.restore();
+  const L=R*.4;
+  ctx.save();ctx.beginPath();ctx.arc(cx,cy,L,0,7);ctx.clip();
+  if(img){const s=Math.max(L*2/img.width,L*2/img.height);ctx.drawImage(img,cx-img.width*s/2,cy-img.height*s/2,img.width*s,img.height*s)}else{ctx.fillStyle='#444';ctx.fillRect(cx-L,cy-L,L*2,L*2)}
+  ctx.restore();
+  ctx.beginPath();ctx.arc(cx,cy,L,0,7);ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=3;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,R*.045,0,7);ctx.fillStyle=T.fg==='#fff'?'#0c0c10':'#e9e4d8';ctx.fill();
+  // ชื่อเพลง
+  const title=shTitleText(),art=$('art').textContent||'',x=W/2,M=90;
+  ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  const ty=cy+R+(story?140:(sq?90:110));
+  let fs=story?68:(sq?50:58);ctx.font='800 '+fs+'px '+ff;
+  while(ctx.measureText(title).width>W-M*2&&fs>30){fs-=3;ctx.font='800 '+fs+'px '+ff}
+  ctx.fillStyle=T.fg;ctx.fillText(shEll(ctx,title,W-M*2),x,ty);
+  ctx.fillStyle=T.sub;ctx.font='500 '+(story?38:32)+'px '+ff;ctx.fillText(shEll(ctx,art,W-M*2),x,ty+(story?64:52));
+  shMark(ctx,W,H,ff,T.mark,'center');
+}
 async function shDraw(){
-  const my=++shSeq,cv=$('shCv'),W=1080,H=shRatio==='story'?1920:1080;
+  const my=++shSeq,cv=$('shCv'),W=1080,H=shRatio==='story'?1920:(shRatio==='portrait'?1350:1080);
   cv.width=W;cv.height=H;
   const ctx=cv.getContext('2d');
   const cs=getComputedStyle(document.body),c=['--c1','--c2','--c3'].map(k=>cs.getPropertyValue(k).trim()||'#26356b');
@@ -1734,53 +1881,42 @@ async function shDraw(){
   const ff='"'+ffName+'","Noto Sans Thai","Segoe UI",system-ui,sans-serif';
   try{await document.fonts.load('700 60px '+ff,'สวัสดี Abc')}catch(e){}
   if(my!==shSeq)return;
-  // พื้นหลัง
-  const g=ctx.createLinearGradient(0,0,W*.6,H);g.addColorStop(0,c[0]);g.addColorStop(.55,c[1]);g.addColorStop(1,c[2]);
-  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  if(img){
-    try{ctx.save();ctx.filter='blur(70px) saturate(1.5)';ctx.globalAlpha=.55;
-      const sc=Math.max(W,H)/Math.min(img.width,img.height)*1.25;
-      ctx.drawImage(img,W/2-img.width*sc/2,H/2-img.height*sc/2,img.width*sc,img.height*sc);ctx.restore()}catch(e){ctx.restore()}
-  }
-  ctx.fillStyle=shStyle==='card'?'rgba(0,0,0,.22)':'rgba(0,0,0,.30)';ctx.fillRect(0,0,W,H);
-  if(shStyle==='card'){shCard(ctx,W,H,img,ff);shMark(ctx,W,H,ff);return}
-  const story=shRatio==='story',cover=story?520:300,cx=W/2-cover/2,cy=story?230:96;
-  // ปก
-  ctx.save();ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=60;ctx.shadowOffsetY=24;
-  ctx.beginPath();ctx.roundRect(cx,cy,cover,cover,38);ctx.fillStyle='rgba(255,255,255,.12)';ctx.fill();ctx.restore();
-  if(img){ctx.save();ctx.beginPath();ctx.roundRect(cx,cy,cover,cover,38);ctx.clip();
-    const s=Math.max(cover/img.width,cover/img.height);ctx.drawImage(img,cx+cover/2-img.width*s/2,cy+cover/2-img.height*s/2,img.width*s,img.height*s);ctx.restore()}
-  // เนื้อเพลง
+  const theme=shStyle==='card'?(shTheme==='dark'||shTheme==='light'?'cover':shTheme):shTheme;
+  const T=SHT[shStyle==='card'?'cover':theme]||SHT.cover;
+  shBg(ctx,W,H,img,c,shStyle==='card'?'cover':theme);
+  if(shStyle==='card'){ctx.fillStyle='rgba(0,0,0,.0)';shCard(ctx,W,H,img,ff);shMark(ctx,W,H,ff);return}
+  if(shStyle==='vinyl'){shVinyl(ctx,W,H,img,ff,T,'center');return}
+  const story=H>1500,al=shAlign,M=90,x=al==='left'?M:W/2;
+  const footTop=shFooter(ctx,W,H,ff,T,al,shShowCred);
   const txt=shSel.map(i=>shLinesTxt[i]).filter(Boolean);
-  const top=cy+cover+(story?90:60),bottom=H-(story?250:210),maxW=W-170;
-  let fs=story?74:60,wrapped=[];
-  for(;fs>=30;fs-=4){
-    ctx.font='700 '+fs+'px '+ff;wrapped=[];
-    txt.forEach(t=>{wrapped.push(...shWrap(ctx,t,maxW));wrapped.push(null)});
-    wrapped.pop();
-    const hh=wrapped.reduce((a,x)=>a+(x===null?fs*.45:fs*1.34),0);
-    if(hh<=bottom-top)break;
+  const light=theme==='light';
+  let top=story?150:80;
+  if(shStyle==='lyrics'){
+    if(shShowCover){
+      const cover=story?460:(H>1200?300:250),cxp=al==='left'?M:W/2-cover/2;
+      shCoverBox(ctx,img,cxp,top,cover,38,light);top+=cover+(story?90:56);
+    }
+    const bottom=footTop-24,maxW=W-M*2;
+    const r=shFit(ctx,txt,ff,maxW,Math.max(120,bottom-top),story?76:62,30,'700',1.34);
+    ctx.textAlign=al==='left'?'left':'center';ctx.textBaseline='top';ctx.fillStyle=T.fg;
+    ctx.shadowColor=light?'rgba(0,0,0,0)':'rgba(0,0,0,.35)';ctx.shadowBlur=24;
+    let y=top+Math.max(0,(bottom-top-r.total)/2);
+    r.wrapped.forEach(w=>{if(w===null){y+=r.fs*.45;return}ctx.fillText(w,x,y);y+=r.fs*1.34});
+    ctx.shadowBlur=0;
+  }else{ // poster
+    if(shShowCover){shCoverBox(ctx,img,M,top,story?150:120,24,light);top+=(story?150:120)+(story?70:40)}
+    // เครื่องหมายคำพูดใหญ่
+    ctx.save();ctx.globalAlpha=.16;ctx.fillStyle=T.fg;ctx.font='800 '+(story?340:240)+'px Georgia,serif';ctx.textAlign=al==='left'?'left':'center';ctx.textBaseline='top';ctx.fillText('“',al==='left'?M-10:W/2,top-(story?70:50));ctx.restore();
+    const bottom=footTop-24,maxW=W-M*2;
+    const r=shFit(ctx,txt,ff,maxW,Math.max(160,bottom-top),story?132:104,40,'800',1.2);
+    ctx.textAlign=al==='left'?'left':'center';ctx.textBaseline='top';ctx.fillStyle=T.fg;
+    let y=top+Math.max(0,(bottom-top-r.total)/2);
+    r.wrapped.forEach(w=>{if(w===null){y+=r.fs*.45;return}ctx.fillText(w,x,y);y+=r.fs*1.2});
   }
-  ctx.textAlign='center';ctx.textBaseline='top';ctx.fillStyle='#fff';
-  ctx.shadowColor='rgba(0,0,0,.35)';ctx.shadowBlur=24;
-  const total=wrapped.reduce((a,x)=>a+(x===null?fs*.45:fs*1.34),0);
-  let y=top+Math.max(0,(bottom-top-total)/2);
-  wrapped.forEach(x=>{if(x===null){y+=fs*.45;return}ctx.fillText(x,W/2,y);y+=fs*1.34});
-  ctx.shadowBlur=0;
-  // ชื่อเพลง
-  const title=(curP&&curP.track&&curP.fromTitle?curP.track:($('ttl').textContent||'')).replace(/\s*[\(\[【][^\)\]】]*(official|mv|m\/v|lyric|audio|video)[^\)\]】]*[\)\]】]/ig,'').trim();
-  const art=$('art').textContent||'';
-  ctx.fillStyle='#fff';ctx.font='700 '+(story?46:38)+'px '+ff;
-  let tt=title;while(ctx.measureText(tt).width>W-140&&tt.length>4)tt=tt.slice(0,-2);if(tt!==title)tt+='…';
-  const by=H-(story?190:170);
-  ctx.fillText(tt,W/2,by);
-  ctx.fillStyle='rgba(255,255,255,.72)';ctx.font='500 '+(story?38:32)+'px '+ff;ctx.fillText(art,W/2,by+(story?66:54));
-  shMark(ctx,W,H,ff);
 }
 $('shBtn').onclick=shOpen;
 $('shClose').onclick=()=>$('shModal').classList.remove('show');
 $('shModal').onclick=e=>{if(e.target===$('shModal'))$('shModal').classList.remove('show')};
-$('shSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;shRatio=b.dataset.r;$('shSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));shDraw()};
 function shBlob(){return new Promise(res=>{try{$('shCv').toBlob(b=>res(b),'image/png')}catch(e){res(null)}})}
 $('shSave').onclick=async()=>{
   const b=await shBlob();if(!b){toast('สร้างภาพไม่ได้ (ปกเพลงอาจถูกบล็อก ลองเปลี่ยนเพลงอื่น)',4500);return}
@@ -1854,7 +1990,7 @@ function prev(){
 }
 $('pp').onclick=toggle;$('next').onclick=()=>next(false);$('prev').onclick=prev;
 document.addEventListener('keydown',e=>{
-  if(document.querySelector('#modal.show,#edModal.show,#shModal.show'))return;
+  if(document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show'))return;
   if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;
   if(e.code==='Space'){e.preventDefault();toggle()}
   if(e.code==='ArrowUp'){e.preventDefault();vol=Math.min(100,vol+5);muted=false;lsSet('vol',vol);applyVol()}
@@ -2435,6 +2571,126 @@ if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'
   document.addEventListener('visibilitychange',()=>document.visibilityState==='visible'?wlOn():wl=null);
   // หมุนจอ/ปรับขนาด: จัดเนื้อเพลงใหม่
   addEventListener('orientationchange',()=>setTimeout(()=>{scrollTo(actI)},350));
+})();
+
+/* ---------- v25: พรีวิวแถบเวลา / สถิติการฟัง / เมนูคำสั่ง ---------- */
+(function(){
+  const seek=$('seek'),tip=$('seekTip');
+  const fmt=t=>{t=Math.max(0,Math.round(t));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')};
+  function showTip(clientX){
+    let dur=0;try{dur=ready?player.getDuration()||0:0}catch(e){}
+    if(!dur){tip.classList.remove('show');return}
+    const r=seek.getBoundingClientRect(),f=Math.min(1,Math.max(0,(clientX-r.left)/r.width)),t=f*dur;
+    let ly='';
+    if(lines&&lines.length){let k=-1;for(let i=0;i<lines.length;i++){if(lines[i].t+offset<=t)k=i;else break}if(k>=0)ly=(lines[k].s||'').trim()}
+    tip.innerHTML='<b>'+fmt(t)+'</b>'+(ly?'<i></i>':'');if(ly)tip.querySelector('i').textContent=ly;
+    tip.style.left=Math.min(innerWidth-100,Math.max(100,clientX))+'px';tip.style.top=(r.top-8)+'px';tip.classList.add('show');
+  }
+  seek.addEventListener('mousemove',e=>showTip(e.clientX));
+  seek.addEventListener('mouseleave',()=>tip.classList.remove('show'));
+  seek.addEventListener('input',e=>{const r=seek.getBoundingClientRect();showTip(r.left+r.width*seek.value/1000)});
+  seek.addEventListener('change',()=>setTimeout(()=>tip.classList.remove('show'),700));
+  seek.addEventListener('touchend',()=>setTimeout(()=>tip.classList.remove('show'),700),{passive:true});
+
+  // ----- สถิติ -----
+  let st={d:{},p:{}};try{st=Object.assign(st,JSON.parse(ls('stats')||'{}'))}catch(e){}
+  const dayKey=(t=Date.now())=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+  const acc={};let accId='';
+  function saveSt(){
+    const ks=Object.keys(st.d).sort();while(ks.length>400)delete st.d[ks.shift()];
+    const pk=Object.keys(st.p);if(pk.length>500){pk.sort((a,b)=>st.p[a].s-st.p[b].s).slice(0,pk.length-500).forEach(k=>delete st.p[k])}
+    lsSet('stats',JSON.stringify(st));
+  }
+  setInterval(()=>{
+    try{
+      if(!ready||inAd||!playing||!queue[idx]||document.visibilityState==='hidden')return;
+      const it=queue[idx];st.d[dayKey()]=(st.d[dayKey()]||0)+5;
+      const e=st.p[it.id]||(st.p[it.id]={t:it.title||'',a:(it.author||'').replace(/\s*-\s*Topic$/i,''),n:0,s:0});
+      e.s+=5;e.t=it.title||e.t;e.a=(it.author||e.a||'').replace(/\s*-\s*Topic$/i,'');
+      acc[it.id]=(acc[it.id]||0)+5;if(acc[it.id]===30)e.n++;
+      saveSt();
+    }catch(e){}
+  },5000);
+  const hm=sec=>{sec=Math.round(sec/60);if(sec<60)return sec+' นาที';return Math.floor(sec/60)+' ชม. '+(sec%60)+' น.'};
+  function openStats(){
+    const now=Date.now(),days=[];
+    for(let i=13;i>=0;i--)days.push(dayKey(now-i*86400000));
+    const today=st.d[dayKey()]||0;
+    let w=0,all=0;days.slice(7).forEach(k=>w+=st.d[k]||0);Object.keys(st.d).forEach(k=>all+=st.d[k]);
+    $('stCards').innerHTML='<div><b>'+hm(today)+'</b><span>วันนี้</span></div><div><b>'+hm(w)+'</b><span>7 วันล่าสุด</span></div><div><b>'+hm(all)+'</b><span>ทั้งหมด</span></div>';
+    const mx=Math.max(60,...days.map(k=>st.d[k]||0));
+    $('stBars').innerHTML=days.map(k=>'<i style="height:'+Math.max(2,Math.round((st.d[k]||0)/mx*74))+'px" title="'+k+': '+hm(st.d[k]||0)+'"><em>'+(+k.slice(8))+'</em></i>').join('');
+    const ar={};Object.values(st.p).forEach(e=>{const a=e.a||'ไม่ทราบ';ar[a]=(ar[a]||0)+e.s});
+    const row=(l,r,go)=>{const d=document.createElement('div');d.className='r'+(go?' go':'');const a=document.createElement('span');a.textContent=l;const b=document.createElement('small');b.textContent=r;d.append(a,b);if(go)d.onclick=go;return d};
+    const A=$('stArt');A.innerHTML='';
+    Object.entries(ar).sort((a,b)=>b[1]-a[1]).slice(0,6).forEach(([a,v],i)=>A.appendChild(row((i+1)+'. '+a,hm(v))));
+    if(!A.children.length)A.textContent='ยังไม่มีข้อมูล เริ่มฟังเพลงได้เลย';
+    const S=$('stSong');S.innerHTML='';
+    Object.entries(st.p).filter(([k,e])=>e.n>0).sort((a,b)=>b[1].n-a[1].n||b[1].s-a[1].s).slice(0,6).forEach(([id,e],i)=>
+      S.appendChild(row((i+1)+'. '+(e.t||id),e.n+' ครั้ง',()=>{$('statModal').classList.remove('show');playNow({id:id,title:e.t,author:e.a});setTab('now')})));
+    if(!S.children.length)S.textContent='ยังไม่มีข้อมูล';
+    $('statModal').classList.add('show');
+  }
+  window.openStats=openStats;
+  $('stClose').onclick=()=>$('statModal').classList.remove('show');
+  $('statModal').onclick=e=>{if(e.target===$('statModal'))$('statModal').classList.remove('show')};
+  $('stClear').onclick=()=>{if(!confirm('ล้างสถิติการฟังทั้งหมด?'))return;st={d:{},p:{}};saveSt();openStats()};
+  $('stBtn').onclick=()=>{$('modal').classList.remove('show');openStats()};
+
+  // ----- เมนูคำสั่ง -----
+  const K=$('cmdk'),inp=$('cmdIn'),list=$('cmdList');let items=[],sel=0;
+  const act=(t,f,k)=>({t,f,k});
+  function baseActions(){
+    return [
+      act('เล่น / หยุด',toggle,'Space'),act('เพลงถัดไป',()=>next(false),'N'),act('เพลงก่อนหน้า',prev,'P'),
+      act('เปิด/ปิดเนื้อเพลง',()=>$('lyBtn').click(),'L'),act('แชร์เพลง / เนื้อเพลงเป็นรูป',shOpen),
+      act('ไปหน้า: กำลังเล่น',()=>setTab('now')),act('ไปหน้า: ค้นพบ',()=>setTab('disc')),act('ไปหน้า: เพลย์ลิสต์',()=>setTab('lib')),
+      act('เปิด/ปิดคิวเพลง',()=>$('qBtn').click(),'Q'),act('สลับสุ่มเพลง',()=>$('shufBtn').click(),'S'),act('สลับวนซ้ำ',()=>$('repBtn').click(),'R'),
+      act('สลับเล่นเพลงแนะนำต่ออัตโนมัติ',()=>$('autoBtn').click()),act('โหมดภาพ: MV',()=>$('mvBtn').click()),act('โหมดภาพ: ปก',()=>$('cvBtn').click()),
+      act('ถูกใจ / เลิกถูกใจเพลงนี้',()=>$('likeBtn').click()),act('บันทึกคิวเป็นเพลย์ลิสต์',()=>$('svBtn').click()),
+      act('ตั้งเวลาปิดเพลง: 15 นาที',()=>setSleep('15')),act('ตั้งเวลาปิดเพลง: 30 นาที',()=>setSleep('30')),act('ตั้งเวลาปิดเพลง: 1 ชั่วโมง',()=>setSleep('60')),act('ตั้งเวลาปิดเพลง: เมื่อจบเพลงนี้',()=>setSleep('end')),
+      act('สถิติการฟัง',openStats),act('ตั้งค่า',()=>$('setBtn').click()),act('เต็มจอ',()=>$('fsBtn').click(),'F'),act('คีย์ลัดทั้งหมด',()=>helpEl.classList.add('show'),'?')
+    ];
+  }
+  function build(qs){
+    const q=qs.trim().toLowerCase();
+    let out=baseActions();
+    if(q){out=out.filter(a=>a.t.toLowerCase().includes(q))}
+    const songs=[];
+    if(q){
+      queue.forEach((it,i)=>{if(((it.title||'')+' '+(it.author||'')).toLowerCase().includes(q))songs.push(act('เล่นจากคิว: '+(it.title||it.id),()=>{playAt(i);setTab('now')},it.author||''))});
+      (hist||[]).forEach(it=>{if(((it.title||'')+' '+(it.author||'')).toLowerCase().includes(q)&&!songs.some(x=>x.t.endsWith(it.title||'')))songs.push(act('เล่น: '+(it.title||it.id),()=>{playNow({id:it.id,title:it.title,author:it.author});setTab('now')},'ประวัติ'))});
+      (pls||[]).forEach(p=>p.items.forEach(it=>{if(((it.title||'')+' '+(it.author||'')).toLowerCase().includes(q)&&songs.length<12&&!songs.some(x=>x.t.endsWith(it.title||'')))songs.push(act('เล่น: '+(it.title||it.id),()=>{playNow({id:it.id,title:it.title,author:it.author});setTab('now')},p.name))}));
+      out=songs.slice(0,8).concat(out);
+      out.push(act('ค้นหา “'+qs.trim()+'” ใน YouTube',()=>{$('q').value=qs.trim();submit()},'↵'));
+    }
+    return out;
+  }
+  function draw(){
+    list.innerHTML='';
+    items.forEach((a,i)=>{const d=document.createElement('div');if(i===sel)d.className='on';const s=document.createElement('span');s.textContent=a.t;d.appendChild(s);
+      if(a.k){const k=document.createElement('small');k.textContent=a.k;d.appendChild(k)}
+      d.onmousemove=()=>{if(sel!==i){sel=i;[...list.children].forEach((x,j)=>x.classList.toggle('on',j===i))}};
+      d.onclick=()=>run(i);list.appendChild(d)});
+    const on=list.querySelector('.on');if(on)on.scrollIntoView({block:'nearest'});
+  }
+  function run(i){const a=items[i];if(!a)return;closeK();try{a.f()}catch(e){}}
+  function openK(){K.classList.add('show');inp.value='';items=build('');sel=0;draw();setTimeout(()=>inp.focus(),30)}
+  function closeK(){K.classList.remove('show');inp.blur()}
+  inp.addEventListener('input',()=>{items=build(inp.value);sel=0;draw()});
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'){e.preventDefault();sel=Math.min(items.length-1,sel+1);draw()}
+    else if(e.key==='ArrowUp'){e.preventDefault();sel=Math.max(0,sel-1);draw()}
+    else if(e.key==='Enter'){e.preventDefault();run(sel)}
+    else if(e.key==='Escape'){e.preventDefault();closeK()}
+    e.stopPropagation();
+  });
+  K.addEventListener('mousedown',e=>{if(e.target===K)closeK()});
+  document.addEventListener('keydown',e=>{
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();K.classList.contains('show')?closeK():openK()}
+    else if(e.key==='Escape'&&$('statModal').classList.contains('show'))$('statModal').classList.remove('show');
+  },true);
+  $('cmdBtn').onclick=()=>{$('modal').classList.remove('show');openK()};
 })();
 </script>
 </body>

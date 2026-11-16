@@ -2,6 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
 <title>Now Playing</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="manifest" href="manifest.json">
@@ -71,6 +72,13 @@ main{display:flex;flex-direction:column;align-items:center;min-width:0;min-heigh
 .coverwrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s}
 .cover{height:100%;max-height:520px;aspect-ratio:1;max-width:100%;object-fit:cover;border-radius:22px;background:rgba(255,255,255,.08);box-shadow:0 30px 70px rgba(0,0,0,.55);transform:scale(.86);transition:transform .7s cubic-bezier(.2,.9,.25,1)}
 .stage.cv .video{opacity:0;pointer-events:none}
+body[data-mini="1"] .stage.cv .video{opacity:1;pointer-events:auto;position:absolute;right:2px;bottom:2px;width:360px;height:203px;max-width:calc(100% - 4px);max-height:none;aspect-ratio:auto;z-index:6;border-radius:18px;box-shadow:0 14px 40px rgba(0,0,0,.55)}
+body[data-mini="1"] .stage.cv .video iframe{pointer-events:auto}
+@media (min-width:1250px){
+  body[data-mini="1"] .stage.cv .coverwrap{right:376px}
+  body[data-mini="1"] .stage.cv:not(.adshow) .video{bottom:auto;top:50%;transform:translateY(-50%)}
+}
+body[data-mini="1"] .stage.cv.adshow .video{width:min(100%,640px);height:auto;aspect-ratio:16/9;right:50%;bottom:50%;transform:translate(50%,50%)}
 .stage.cv:not(.adshow) .video iframe{pointer-events:none}
 .stage.cv.adshow .video{opacity:1;pointer-events:auto}
 .stage.cv.adshow .coverwrap{opacity:0}
@@ -234,14 +242,10 @@ body.idle .viztools,body.idle .lychoice{opacity:0;pointer-events:none}
 /* ---------- v12: พื้นหลังเบลอ + มินิมอล ---------- */
 #app{position:relative;z-index:1}
 #bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;opacity:0;transition:opacity 1s}
-body[data-bg="still"] #bg,body[data-bg="live"] #bg{opacity:1}
+body[data-bg="still"] #bg{opacity:1}
 #bgimg{position:absolute;inset:-14%;background:center/cover no-repeat;filter:blur(64px) saturate(1.5);opacity:.62;animation:bgdrift 46s ease-in-out infinite alternate;transition:opacity .8s}
 @keyframes bgdrift{from{transform:scale(1.04) translate(-2%,-1%)}to{transform:scale(1.18) translate(2%,2%)}}
-#bgv{position:absolute;inset:0;opacity:0;transition:opacity 1.4s;display:none}
-body[data-bg="live"] #bgv{display:block}
-#bgv.on{opacity:.7}
-#bgv iframe,#bgv #yt2{position:absolute;left:50%;top:50%;width:max(100vw,177.78vh);height:max(56.25vw,100vh);transform:translate(-50%,-50%) scale(1.12);filter:blur(34px) saturate(1.45);border:0}
-#bgdim{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.26),rgba(0,0,0,.46))}
+body[data-bg="live"] #bgdim{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.26),rgba(0,0,0,.46))}
 
 :root{--glass:rgba(255,255,255,.07);--line:rgba(255,255,255,.1);--r:999px}
 /* top bar */
@@ -301,11 +305,26 @@ input[type=range]:hover{height:6px}
 .panel select{width:100%;background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px 12px;font-size:14px;font-family:inherit;outline:none}
 .panel select option{background:#16203a;color:#fff}
 .panel .lab{font-size:13px;color:var(--fg);font-weight:600;margin-bottom:6px;display:block}
+
+/* ---------- v13 ---------- */
+.ln{font-size:calc(31px*var(--lz,1))}.ln.gap{font-size:calc(24px*var(--lz,1))}.lin.plain{font-size:calc(20px*var(--lz,1))}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes cin{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.card .title.swap,.card .artist.swap{animation:tin .55s cubic-bezier(.2,.9,.25,1)}
+.cover.swap{animation:cin .7s cubic-bezier(.2,.9,.25,1)}
+#help{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);backdrop-filter:blur(8px)}
+#help.show{display:flex}
+#help .box{background:rgba(16,22,40,.96);border:1px solid var(--line);border-radius:22px;padding:22px 26px;min-width:320px;max-width:92vw}
+#help h3{margin:0 0 12px;font-size:17px}
+#help .kv{display:grid;grid-template-columns:auto 1fr;gap:7px 18px;font-size:14px;color:var(--dim)}
+#help kbd{background:rgba(255,255,255,.12);border-radius:7px;padding:2px 9px;color:#fff;font-family:inherit;font-size:13px;justify-self:start}
+.panel .note{font-size:12px;color:var(--dim);line-height:1.6;margin:4px 0}
+.panel .row{display:flex;gap:8px}
 @media (max-width:1000px){#app.lyr{grid-template-columns:minmax(0,1fr) 340px}}
 </style>
 </head>
 <body>
-<div id="bg"><div id="bgimg"></div><div id="bgv"><div id="yt2"></div></div><div id="bgdim"></div></div>
+<div id="bg"><div id="bgimg"></div><div id="bgdim"></div></div>
 <div id="app" class="lyr nosearch">
   
 
@@ -314,6 +333,7 @@ input[type=range]:hover{height:6px}
       <div class="sbox"><input id="q" placeholder="ค้นหาเพลง ศิลปิน หรือวางลิงก์ YouTube / เพลย์ลิสต์ แล้วกด Enter" autocomplete="off" spellcheck="false"></div>
       <div class="seg"><button id="mvBtn" class="on">MV</button><button id="cvBtn">ปก</button></div>
       <button class="btn on" id="lyBtn">เนื้อเพลง</button>
+      <button class="btn ico" id="fsBtn" title="เต็มจอ (F)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
       <button class="btn ico" id="setBtn" title="ตั้งค่า"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
     </div>
     <div class="tabs"><button id="tnow" class="on">กำลังเล่น</button><button id="tdisc">ค้นพบ</button><button id="tlib">เพลย์ลิสต์</button></div></div>
@@ -347,7 +367,7 @@ input[type=range]:hover{height:6px}
   </main>
 
   <section class="lyrics">
-    <header><b id="lh">เนื้อเพลง</b><button id="autoSync" style="display:none;width:auto;padding:0 10px;font-size:12px" title="เนื้อเพลงนี้ไม่มีเวลา ให้แอปประมาณเวลาให้">ซิงค์อัตโนมัติ</button><button id="vizBtn" title="แอนิเมชันตามจังหวะเพลง">♫</button><button id="lyNext" title="เนื้อเพลงไม่ตรง? ลองเวอร์ชันอื่น">⟳</button><button id="lyEdit" title="ใส่/แก้เนื้อเพลงเอง">✎</button><button id="offM" title="เนื้อเพลงมาช้าลง 0.5 วิ">−</button><span id="offV">0.0s</span><button id="offP" title="เนื้อเพลงมาเร็วขึ้น 0.5 วิ">+</button></header>
+    <header><b id="lh">เนื้อเพลง</b><button id="autoSync" style="display:none;width:auto;padding:0 10px;font-size:12px" title="เนื้อเพลงนี้ไม่มีเวลา ให้แอปประมาณเวลาให้">ซิงค์อัตโนมัติ</button><button id="vizBtn" title="แอนิเมชันตามจังหวะเพลง">♫</button><button id="lyNext" title="เนื้อเพลงไม่ตรง? ลองเวอร์ชันอื่น">⟳</button><button id="lyEdit" title="ใส่/แก้เนื้อเพลงเอง">✎</button><button id="offM" title="เนื้อเพลงมาช้าลง 0.1 วิ (กดค้างเพื่อเลื่อนเร็ว) · คีย์ลัด [">−</button><span id="offV">0.0s</span><button id="offP" title="เนื้อเพลงมาเร็วขึ้น 0.1 วิ (กดค้างเพื่อเลื่อนเร็ว) · คีย์ลัด ]">+</button><button id="offSave" title="จำค่าดีเลย์นี้ให้เพลงนี้"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 4h12v17l-6-4-6 4z"/></svg></button></header>
     <div id="lyChoice" class="lychoice" style="display:none"></div>
     <div class="lbox" id="lbox"><div class="lin plain" id="lin"><div class="lmsg">เนื้อเพลงจะขึ้นที่นี่</div></div></div>
     <div class="viz" id="viz"><canvas id="vizc"></canvas><div class="viztools"><div class="vinfo" id="vInfo"></div><div class="vbtns"><button class="mini" id="vTap" title="แตะซ้ำ ๆ ตามจังหวะที่ได้ยิน">แตะตามจังหวะ</button><button class="mini" id="vHalf" title="ครึ่งความเร็ว">½</button><button class="mini" id="vDbl" title="สองเท่า">×2</button><button class="mini" id="vAud" title="จับเสียงจริงเพื่อขยับตามเพลงแม่นขึ้น">🎧 จับเสียงจริง</button><button class="mini" id="vBack">← เนื้อเพลง</button></div></div></div>
@@ -360,11 +380,21 @@ input[type=range]:hover{height:6px}
       <ul id="ql"></ul>
     </div>
   </aside>
+<div id="help"><div class="box"><h3>คีย์ลัด</h3><div class="kv">
+<kbd>Space</kbd><span>เล่น / หยุด</span><kbd>← →</kbd><span>ย้อน / ข้าม 5 วินาที</span><kbd>↑ ↓</kbd><span>เสียง</span><kbd>N / P</kbd><span>เพลงถัดไป / ก่อนหน้า</span>
+<kbd>L</kbd><span>เปิด/ปิดเนื้อเพลง</span><kbd>[ ]</kbd><span>ปรับดีเลย์เนื้อเพลง ±0.1 วิ</span><kbd>S / R</kbd><span>สุ่ม / วนซ้ำ</span><kbd>M</kbd><span>ปิดเสียง</span>
+<kbd>F</kbd><span>เต็มจอ</span><kbd>Q</kbd><span>คิวเพลง</span><kbd>/</kbd><span>ค้นหา</span><kbd>?</kbd><span>หน้าต่างนี้</span></div></div></div>
 <div id="modal"><div class="panel">
   <h3>ตั้งค่า</h3>
   <label><input type="checkbox" id="themeChk"> ให้สีพื้นหลังเปลี่ยนตามปกเพลง</label>
   <div><span class="lab">พื้นหลัง</span>
-    <select id="bgSel"><option value="color">สีไล่เฉดอย่างเดียว</option><option value="still">ภาพเบลอจากปก/MV (เบา)</option><option value="live">MV เบลอเล่นจริง (กินเน็ตและเครื่องมากขึ้น)</option></select></div>
+    <select id="bgSel"><option value="color">สีไล่เฉดอย่างเดียว</option><option value="still">ภาพเบลอจากปก/MV (เบา)</option></select></div>
+  <label><input type="checkbox" id="miniChk"> โหมดปก: แสดงเครื่องเล่นวิดีโอเล็กที่มุมจอ (แนะนำ ตามนโยบายของ YouTube)</label>
+  <label><input type="checkbox" id="pipedChk"> เปิดบริการสำรอง Piped สำหรับค้นหา/แนะนำเพลง/คำบรรยาย (ไม่เป็นทางการ อาจขัดเงื่อนไข YouTube)</label>
+  <div><span class="lab">ขนาดเนื้อเพลง</span>
+    <select id="lzSel"><option value="0.85">เล็ก</option><option value="1">กลาง</option><option value="1.2">ใหญ่</option><option value="1.45">ใหญ่มาก</option></select></div>
+  <div><span class="lab">ตั้งเวลาปิดเพลง</span>
+    <select id="slSel"><option value="0">ไม่ตั้ง</option><option value="15">อีก 15 นาที</option><option value="30">อีก 30 นาที</option><option value="45">อีก 45 นาที</option><option value="60">อีก 1 ชั่วโมง</option><option value="end">เมื่อจบเพลงนี้</option></select></div>
   <div><span class="lab">ฟอนต์</span>
     <select id="ffSel"><option value="IBM Plex Sans Thai">IBM Plex Sans Thai (สะอาด ทันสมัย)</option><option value="Anuphan">Anuphan (กลม อ่านง่าย)</option><option value="Noto Sans Thai">Noto Sans Thai (กลาง ๆ)</option><option value="Prompt">Prompt (เรขาคณิต หนาชัด)</option><option value="Kanit">Kanit (เด่น ดุดัน)</option><option value="Sarabun">Sarabun (ทางการ)</option></select></div>
   <div>
@@ -375,6 +405,10 @@ input[type=range]:hover{height:6px}
     <p style="margin:10px 0 6px"><b style="color:var(--fg)">ลิงก์ตัวกลางเนื้อเพลง NetEase</b> (ไม่บังคับ เพิ่มโอกาสเจอเนื้อแบบมีเวลา โดยเฉพาะเพลงไทย/เอเชีย)</p>
     <input type="text" id="wkIn" placeholder="https://xxxx.workers.dev" autocomplete="off" spellcheck="false">
   </div>
+  <div><span class="lab">สำรอง / กู้ข้อมูล</span>
+    <div class="row"><button class="btn" id="expBtn" style="height:38px">ส่งออกไฟล์สำรอง</button><button class="btn" id="impBtn" style="height:38px">นำเข้า</button><input type="file" id="impFile" accept="application/json" style="display:none"></div>
+    <p class="note">เพลย์ลิสต์ เพลงที่ถูกใจ ประวัติ ค่าดีเลย์ที่จำไว้ และการตั้งค่า (ไม่รวม API key)</p></div>
+  <p class="note">โปรเจกต์ส่วนตัวเพื่อการทดลองและการศึกษา ไม่ได้เกี่ยวข้องหรือได้รับการรับรองจาก YouTube/Google วิดีโอเล่นผ่านเครื่องเล่นฝังอย่างเป็นทางการของ YouTube กด <b>?</b> เพื่อดูคีย์ลัดทั้งหมด</p>
   <p id="keyMsg" style="color:#ffb4b4"></p>
   <ol>
     <li>เปิด <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">console.cloud.google.com</a> แล้วล็อกอินบัญชี Google</li>
@@ -405,7 +439,7 @@ input[type=range]:hover{height:6px}
 const $=id=>document.getElementById(id);
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
-const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
 const enc=encodeURIComponent;
 const norm=s=>(s||'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'');
 const dec=s=>{const t=document.createElement('textarea');t.innerHTML=s;return t.value};
@@ -438,8 +472,11 @@ function themeFrom(url){
   im.onerror=resetTheme;im.src=url;
 }
 let artUrl=null,mvUrl=null;
-let bgMode=ls('bg')||'still',ffName=ls('ff')||'IBM Plex Sans Thai';
+let bgMode=(ls('bg')==='color'?'color':'still'),ffName=ls('ff')||'IBM Plex Sans Thai';
 document.body.dataset.bg=bgMode;
+let lz=+(ls('lz')||1);document.documentElement.style.setProperty('--lz',lz);
+let miniOn=ls('mini')!=='0',usePiped=ls('piped')==='1';
+document.body.dataset.mini=miniOn?'1':'0';
 function applyFont(){
   let l=document.getElementById('ffl');
   if(!l){l=document.createElement('link');l.id='ffl';l.rel='stylesheet';document.head.appendChild(l)}
@@ -452,7 +489,7 @@ function applyTheme(){
   if(u){themeFrom(u);$('bgimg').style.backgroundImage='url("'+u+'")'}
   else{if(!useTheme)resetTheme();$('bgimg').style.backgroundImage='none'}
 }
-function setCover(url){$('cover').src=url}
+function setCover(url){const c=$('cover');c.src=url;c.classList.remove('swap');void c.offsetWidth;c.classList.add('swap');setMedia()}
 let thumbSeq=0,coverArt=false,curPlain='';
 const showAuto=on=>{$('autoSync').style.display=on?'':'none'};
 const BLANK='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
@@ -593,13 +630,17 @@ function finishImport(){
 }
 
 /* ---------- settings ---------- */
-function openSettings(msg){$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
+function openSettings(msg){$('lzSel').value=String(lz);$('slSel').value='0';$('miniChk').checked=miniOn;$('pipedChk').checked=usePiped;$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
 $('setBtn').onclick=()=>openSettings();
 $('setCancel').onclick=()=>$('modal').classList.remove('show');
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('show')});
 $('setSave').onclick=()=>{
   apiKey=$('keyIn').value.trim();lsSet('key',apiKey);wk=$('wkIn').value.trim().replace(/\/+$/,'');lsSet('wk',wk);
-  bgMode=$('bgSel').value;lsSet('bg',bgMode);document.body.dataset.bg=bgMode;bgSync();
+  lz=+$('lzSel').value||1;lsSet('lz',String(lz));document.documentElement.style.setProperty('--lz',lz);
+  setSleep($('slSel').value);
+  miniOn=$('miniChk').checked;lsSet('mini',miniOn?'1':'0');document.body.dataset.mini=miniOn?'1':'0';
+  usePiped=$('pipedChk').checked;lsSet('piped',usePiped?'1':'0');
+  bgMode=$('bgSel').value;lsSet('bg',bgMode);document.body.dataset.bg=bgMode;
   ffName=$('ffSel').value;lsSet('ff',ffName);applyFont();
   useTheme=$('themeChk').checked;lsSet('theme',useTheme?'1':'0');
   if(useTheme)applyTheme();else resetTheme();
@@ -637,6 +678,7 @@ async function ytSearch(q,n){
       if(j&&j.items)return j.items.filter(x=>x.id&&x.id.videoId).map(x=>({id:x.id.videoId,title:dec(x.snippet.title),author:dec(x.snippet.channelTitle)}));
     }catch(e){}
   }
+  if(!usePiped)return null;
   const order=pipedOk?[pipedOk].concat(PIPED.filter(x=>x!==pipedOk)):PIPED;
   try{
     return await Promise.any(order.map(async base=>{
@@ -684,7 +726,7 @@ async function doSearch(q){
   const r=await ytSearch(q);
   const msg=box.querySelector('.msg');if(!msg)return;
   if(r===null){
-    msg.innerHTML='ค้นหาในแอปไม่ได้ตอนนี้ (บริการสำรองใช้ไม่ได้) ใส่ YouTube API key ใน ⚙ จะแก้ปัญหานี้ได้ หรือวางลิงก์เพลงแทนก็ได้ ';
+    msg.innerHTML='ค้นหาในแอปไม่ได้ ต้องใส่ YouTube API key (ฟรี) ใน ⚙ หรือจะเปิดบริการสำรอง Piped (ไม่เป็นทางการ) ในนั้นก็ได้ หรือวางลิงก์เพลงแทนก็ได้ ';
     const b=document.createElement('button');b.className='mini';b.textContent='เปิดตั้งค่า';b.onclick=()=>openSettings();msg.appendChild(b);return;
   }
   if(!r.length){msg.textContent='ไม่พบผลลัพธ์';return}
@@ -965,6 +1007,7 @@ async function dzRecs(it){
 const BADREC=/\b(live|cover|reaction|react|mashup|nonstop|non-stop|playlist|compilation|karaoke|instrumental|slowed|sped up|nightcore|shorts?|trailer|teaser|behind the scenes|making film|interview|fancam|podcast|hour|hours|full album|medley|ep\.?\s?\d)\b|ชั่วโมง|รวมเพลง|คาราโอเกะ/i;
 const isThai=x=>/[฀-๿]/.test(x||'');
 async function pipedJson(path,ms){
+  if(!usePiped)throw new Error('piped off');
   const order=pipedOk?[pipedOk].concat(PIPED.filter(x=>x!==pipedOk)):PIPED;
   return await Promise.any(order.map(async base=>{const j=await tfetch(base+path,ms||6500);pipedOk=base;return j}));
 }
@@ -1097,42 +1140,70 @@ async function drawRec(){
 }
 
 /* ---------- YouTube ---------- */
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
 const sc=document.createElement('script');sc.src='https://www.youtube.com/iframe_api';document.head.appendChild(sc);
 window.onYouTubeIframeAPIReady=()=>{
   player=new YT.Player('yt',{width:'100%',height:'100%',
     playerVars:{controls:0,rel:0,modestbranding:1,playsinline:1,iv_load_policy:3,disablekb:1,fs:0},
-    events:{onReady:()=>{ready=true;applyVol();if(idx>=0&&!queue[idx].pend){restore=true;player.cueVideoById(queue[idx].id)}},
+    events:{onReady:()=>{ready=true;applyVol();if(idx>=0&&!queue[idx].pend){restore=true;const rt=resumeT(queue[idx].id);rt?player.cueVideoById({videoId:queue[idx].id,startSeconds:rt}):player.cueVideoById(queue[idx].id)}},
             onStateChange:onState,
             onError:e=>{toast('เล่นวิดีโอนี้ไม่ได้ (รหัส '+e.data+') ข้ามไปเพลงถัดไป');setTimeout(()=>next(true,true),900)}}});
-  if(bgMode==='live')bgLiveStart();
 };
-let bgp=null,bgReady=false,bgId=null;
-function bgLiveStart(){
-  if(bgp||!window.YT||!YT.Player)return;
-  bgp=new YT.Player('yt2',{width:'100%',height:'100%',
-    playerVars:{controls:0,rel:0,modestbranding:1,playsinline:1,iv_load_policy:3,disablekb:1,fs:0,mute:1},
-    events:{onReady:()=>{bgReady=true;try{bgp.mute()}catch(e){}bgSync()}}});
+
+/* ---------- sleep timer ---------- */
+let sleepEnd=0,sleepAfterSong=false;
+function setSleep(v){
+  sleepEnd=0;sleepAfterSong=false;
+  if(v==='end'){sleepAfterSong=true;toast('จะหยุดเมื่อจบเพลงนี้')}
+  else if(+v>0){sleepEnd=Date.now()+(+v)*60000;toast('จะหยุดเล่นใน '+v+' นาที')}
 }
-function bgSync(){
-  const bv=$('bgv');
-  if(bgMode!=='live'){if(bgReady&&bgp){try{bgp.pauseVideo()}catch(e){}}bv.classList.remove('on');return}
-  if(!bgp){bgLiveStart();return}
-  if(!bgReady||!ready)return;
+setInterval(()=>{if(sleepEnd&&Date.now()>=sleepEnd){sleepEnd=0;try{player.pauseVideo()}catch(e){}toast('หยุดเล่นตามเวลาที่ตั้งไว้ ราตรีสวัสดิ์',6000)}},1000);
+/* ---------- resume position ---------- */
+setInterval(()=>{try{if(ready&&!inAd&&playing&&queue[idx]){lsSet('t',JSON.stringify({id:queue[idx].id,t:Math.floor(player.getCurrentTime())}))}}catch(e){}},4000);
+function resumeT(id){try{const o=JSON.parse(ls('t')||'null');return o&&o.id===id&&o.t>3?o.t:0}catch(e){return 0}}
+/* ---------- media session (ปุ่มมีเดียของระบบ) ---------- */
+function setMedia(){
+  if(!('mediaSession' in navigator)||!window.MediaMetadata)return;
+  const it=queue[idx];if(!it)return;
   try{
-    const it=queue[idx],id=(it&&!it.pend&&!String(it.id).startsWith('dz:'))?it.id:null;
-    bgp.mute();
-    if(!id||inAd){bgp.pauseVideo();bv.classList.remove('on');return}
-    const ct=player.getCurrentTime()||0;
-    if(bgId!==id){bgId=id;bgp.loadVideoById({videoId:id,startSeconds:ct});bgp.mute();try{bgp.setPlaybackQuality('small')}catch(e){}bv.classList.remove('on');return}
-    const st=bgp.getPlayerState(),vd=bgp.getVideoData&&bgp.getVideoData();
-    if(playing&&st!==1&&st!==3)bgp.playVideo();
-    if(!playing&&st===1)bgp.pauseVideo();
-    if(playing&&Math.abs((bgp.getCurrentTime()||0)-ct)>1.2)bgp.seekTo(ct,true);
-    const adBg=vd&&vd.video_id&&vd.video_id!==id;
-    bv.classList.toggle('on',st===1&&!adBg);
+    const art=artUrl||mvUrl||(it.id&&!String(it.id).startsWith('dz:')?thumb(it.id):null);
+    navigator.mediaSession.metadata=new MediaMetadata({title:$('ttl').textContent||'',artist:$('art').textContent||'',artwork:art?[{src:art,sizes:'512x512'}]:[]});
   }catch(e){}
 }
-setInterval(bgSync,1000);
+(function(){
+  if(!('mediaSession' in navigator))return;
+  const h=(a,f)=>{try{navigator.mediaSession.setActionHandler(a,f)}catch(e){}};
+  h('play',()=>{if(ready)player.playVideo()});h('pause',()=>{if(ready)player.pauseVideo()});
+  h('previoustrack',()=>prev());h('nexttrack',()=>next(false));
+  h('seekto',d=>{if(ready&&d.seekTime!=null)player.seekTo(d.seekTime,true)});
+  h('seekbackward',()=>{if(ready)player.seekTo(player.getCurrentTime()-10,true)});
+  h('seekforward',()=>{if(ready)player.seekTo(player.getCurrentTime()+10,true)});
+  setInterval(()=>{try{
+    navigator.mediaSession.playbackState=playing?'playing':'paused';
+    if(ready&&!inAd){const d=player.getDuration()||0;if(d>0)navigator.mediaSession.setPositionState({duration:d,position:Math.min(d,Math.max(0,player.getCurrentTime()||0)),playbackRate:1})}
+  }catch(e){}},1000);
+})();
+/* ---------- fullscreen / help / backup ---------- */
+function toggleFS(){try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}}
+$('fsBtn').onclick=toggleFS;
+const helpEl=$('help');helpEl.onclick=e=>{if(e.target===helpEl)helpEl.classList.remove('show')};
+const BK=/^(pls|hist|q|idx|view|theme|shuf|rep|auto|vol|bg|mini|ff|lz|wk|piped|off:.*|ly:.*|viz:.*|bpmu:.*)$/;
+$('expBtn').onclick=()=>{
+  const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(BK.test(k))d[k]=localStorage.getItem(k)}}catch(e){}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({v:1,data:d})],{type:'application/json'}));
+  a.download='now-playing-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();toast('ส่งออกไฟล์สำรองแล้ว');
+};
+$('impBtn').onclick=()=>$('impFile').click();
+$('impFile').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const o=JSON.parse(r.result);if(!o||!o.data)throw 0;
+    let n=0;Object.keys(o.data).forEach(k=>{if(BK.test(k)){lsSet(k,String(o.data[k]));n++}});
+    toast('นำเข้า '+n+' รายการแล้ว กำลังโหลดใหม่…');setTimeout(()=>location.reload(),900);
+  }catch(x){toast('ไฟล์สำรองไม่ถูกต้อง',4000)}};
+  r.readAsText(f);e.target.value='';
+};
 function playAt(i){
   if(i<0||i>=queue.length)return;
   idx=i;save();drawQ();$('ph').style.display='none';
@@ -1161,7 +1232,7 @@ function onState(e){
   $('stage').classList.toggle('pl',st===1||st===3);
   if(st===5){if(pending)finishImport();else{restore=false;$('ph').style.display='none';loadMeta()}}
   if(st===1){loadMeta();ensureUpcoming()}
-  if(st===0)next(true);
+  if(st===0){if(sleepAfterSong){sleepAfterSong=false;toast('หยุดเล่นตามเวลาที่ตั้งไว้',5000);return}next(true)}
 }
 function toggle(){if(!ready)return;player.getPlayerState()===1?player.pauseVideo():player.playVideo()}
 function pickNext(auto,skipOne){
@@ -1203,6 +1274,17 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape')$('drawer').classList.remove('open');
   if(e.code==='ArrowRight'&&ready)player.seekTo(player.getCurrentTime()+5,true);
   if(e.code==='ArrowLeft'&&ready)player.seekTo(player.getCurrentTime()-5,true);
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.code==='KeyN')next(false);
+  if(e.code==='KeyP')prev();
+  if(e.code==='KeyL')$('lyBtn').click();
+  if(e.code==='KeyF')toggleFS();
+  if(e.code==='KeyS')$('shufBtn').click();
+  if(e.code==='KeyR')$('repBtn').click();
+  if(e.code==='BracketLeft')stepOff(-.1);
+  if(e.code==='BracketRight')stepOff(.1);
+  if(e.key==='?')helpEl.classList.toggle('show');
+  if(e.key==='Escape')helpEl.classList.remove('show');
 });
 
 /* ---------- title / lyrics ---------- */
@@ -1227,6 +1309,8 @@ function loadMeta(){
   const it=queue[idx];if(it&&(!it.title||!it.author)){it.title=d.title;it.author=d.author;save();drawQ()}
   if(it){pushHist(it);updateHeart()}
   $('lh').textContent=p.artist&&p.track?p.artist+' — '+p.track:'เนื้อเพลง';
+  ['ttl','art'].forEach(i=>{const e=$(i);e.classList.remove('swap');void e.offsetWidth;e.classList.add('swap')});
+  setMedia();
   fetchLyrics(p,key);findCover(p,key);
 }
 const lyKey=v=>'ly:'+v;
@@ -1286,7 +1370,7 @@ function parseCaps(txt){
   return res.filter(x=>x.s).length>=8?res:null;
 }
 async function capLyrics(vid){
-  if(!vid||vid.startsWith('dz:'))return null;
+  if(!usePiped||!vid||vid.startsWith('dz:'))return null;
   const order=pipedOk?[pipedOk].concat(PIPED.filter(x=>x!==pipedOk)):PIPED;
   try{
     return await Promise.any(order.map(async base=>{
@@ -1334,7 +1418,7 @@ async function neLyrics(p,dur){
   return null;
 }
 async function fetchLyrics(p,vid){
-  const my=++lyrSeq;setOff(0);
+  const my=++lyrSeq;setOff(Math.round((Number(ls('off:'+vid))||0)*10)/10);
   const sv=vid&&loadSaved(vid);
   if(sv){applySaved(sv);return}
   const dur=(ready&&player.getDuration())||0;
@@ -1420,7 +1504,16 @@ function scrollTo(i){
 }
 window.addEventListener('resize',()=>scrollTo(actI));
 const setOff=v=>{offset=v;$('offV').textContent=(offset>0?'+':'')+offset.toFixed(1)+'s'};
-$('offM').onclick=()=>setOff(offset-.5);$('offP').onclick=()=>setOff(offset+.5);
+const stepOff=d=>setOff(Math.round((offset+d)*10)/10);
+function holdBtn(el,d){let t=null,iv=null;const stop=()=>{clearTimeout(t);clearInterval(iv)};
+  el.onpointerdown=e=>{e.preventDefault();stepOff(d);t=setTimeout(()=>{iv=setInterval(()=>stepOff(d),70)},400)};
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>el.addEventListener(ev,stop))}
+holdBtn($('offM'),-.1);holdBtn($('offP'),.1);
+$('offSave').onclick=()=>{
+  const k='off:'+metaFor;if(!metaFor)return;
+  if(offset===0){try{localStorage.removeItem(k)}catch(e){}toast('ล้างค่าดีเลย์ที่จำไว้ของเพลงนี้แล้ว')}
+  else{lsSet(k,String(offset));toast('จำค่าดีเลย์ '+(offset>0?'+':'')+offset.toFixed(1)+' วิ ให้เพลงนี้แล้ว')}
+};
 
 /* ---------- auto-sync + manual editor ---------- */
 $('autoSync').onclick=()=>{

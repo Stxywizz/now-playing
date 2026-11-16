@@ -1144,7 +1144,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.s
 const sc=document.createElement('script');sc.src='https://www.youtube.com/iframe_api';document.head.appendChild(sc);
 window.onYouTubeIframeAPIReady=()=>{
   player=new YT.Player('yt',{width:'100%',height:'100%',
-    playerVars:{controls:0,rel:0,modestbranding:1,playsinline:1,iv_load_policy:3,disablekb:1,fs:0},
+    playerVars:{controls:0,rel:0,modestbranding:1,playsinline:1,iv_load_policy:3,disablekb:1,fs:0,cc_load_policy:0},
     events:{onReady:()=>{ready=true;applyVol();if(idx>=0&&!queue[idx].pend){restore=true;const rt=resumeT(queue[idx].id);rt?player.cueVideoById({videoId:queue[idx].id,startSeconds:rt}):player.cueVideoById(queue[idx].id)}},
             onStateChange:onState,
             onError:e=>{toast('เล่นวิดีโอนี้ไม่ได้ (รหัส '+e.data+') ข้ามไปเพลงถัดไป');setTimeout(()=>next(true,true),900)}}});
@@ -1231,6 +1231,7 @@ function onState(e){
   $('ppi').innerHTML=(st===1||st===3)?PAUSE:PLAY;
   $('stage').classList.toggle('pl',st===1||st===3);
   if(st===5){if(pending)finishImport();else{restore=false;$('ph').style.display='none';loadMeta()}}
+  if(st===1||st===3){try{player.unloadModule('captions')}catch(e){}}
   if(st===1){loadMeta();ensureUpcoming()}
   if(st===0){if(sleepAfterSong){sleepAfterSong=false;toast('หยุดเล่นตามเวลาที่ตั้งไว้',5000);return}next(true)}
 }

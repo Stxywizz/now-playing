@@ -454,7 +454,9 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
     padding:calc(env(safe-area-inset-top) + 104px) calc(env(safe-area-inset-right) + 14px) calc(var(--cardh,190px) + env(safe-area-inset-bottom) + 14px) calc(env(safe-area-inset-left) + 14px);
     background:linear-gradient(rgba(5,10,22,.5),rgba(5,10,22,.72));-webkit-backdrop-filter:blur(26px);backdrop-filter:blur(26px)}
   body:not([data-tab="now"]) #app .lyrics{display:none}
-  .lyrics header{gap:2px;margin-bottom:4px}
+  .lyrics header{gap:2px;margin-bottom:4px;flex-wrap:wrap}
+  .lyrics header b{flex:1 1 70px}
+  .lyrics header button{width:34px;height:34px}
   .lyrics header b{min-width:0;font-size:12px}
   .lyrics header button{width:38px;height:38px}
   .lyrics header #autoSync{height:34px}
@@ -577,6 +579,26 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 .ph .wl h4{font-size:19px;color:#fff;margin:0}.ph .wl p{font-size:13.5px;opacity:.75;margin:0;line-height:1.55}
 .ph .wl .rc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:4px}
 .ph .wl .rc button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:99px;padding:7px 14px;font:inherit;font-size:13px;cursor:pointer;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.ln .tr{display:block;font-size:.52em;font-weight:500;line-height:1.35;margin-top:5px;color:rgba(255,255,255,.62)}
+.ln.act .tr{color:rgba(255,255,255,.9)}
+#trBtn.on{background:rgba(255,255,255,.22);color:#fff}
+#kar{position:fixed;inset:0;z-index:90;display:none;flex-direction:column;background:#05070f;color:#fff;overflow:hidden;--kimg:none}
+#kar.show{display:flex}
+#kar .kbg{position:absolute;inset:-12%;background:var(--kimg) center/cover,radial-gradient(circle at 30% 20%,var(--c1),var(--c2));filter:blur(70px) saturate(1.7) brightness(.55);transform:scale(1.1)}
+#kar::after{content:'';position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 45%,rgba(0,0,0,0),rgba(0,0,0,.6));pointer-events:none}
+.ktop{position:relative;z-index:2;display:flex;align-items:center;gap:14px;padding:calc(env(safe-area-inset-top) + 22px) 28px 0}
+.ktop img{width:56px;height:56px;border-radius:12px;object-fit:cover;background:#222;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.ktop>div{flex:1;min-width:0}.ktop b{display:block;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ktop i{font-style:normal;opacity:.7;font-size:14px}
+.ktop button{width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:18px;cursor:pointer}
+#karMain{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 5vw;gap:2.4vh;min-height:0}
+.kp,.kn{font-size:clamp(18px,2.6vw,36px);font-weight:700;opacity:.32;max-width:90vw;line-height:1.3}
+.kc{font-size:var(--kfs,6vw);font-weight:800;line-height:1.22;max-width:92vw;letter-spacing:-.5px;text-shadow:0 6px 40px rgba(0,0,0,.35)}
+.kw{display:inline-block;--p:0;color:transparent;-webkit-text-fill-color:transparent;-webkit-background-clip:text;background-clip:text;background-image:linear-gradient(90deg,#fff calc(var(--p)*1.12% - 12%),rgba(255,255,255,.28) calc(var(--p)*1.12%))}
+.kt{font-size:clamp(16px,2.2vw,32px);opacity:.78;font-weight:500;max-width:88vw;line-height:1.35}
+.knone{font-size:clamp(20px,3vw,40px);opacity:.7;font-weight:600}
+.kbar{position:relative;z-index:2;height:4px;margin:0 28px calc(env(safe-area-inset-bottom) + 24px);background:rgba(255,255,255,.18);border-radius:4px;overflow:hidden}
+.kbar i{display:block;height:100%;width:var(--p,0%);background:#fff;border-radius:4px}
 </style>
 </head>
 <body>
@@ -624,7 +646,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
   </main>
 
   <section class="lyrics">
-    <header><button class="lyclose" id="lyClose" title="ปิดเนื้อเพลง" aria-label="ปิดเนื้อเพลง">⌄</button><b id="lh">เนื้อเพลง</b><button id="autoSync" style="display:none;width:auto;padding:0 10px;font-size:12px" title="เนื้อเพลงนี้ไม่มีเวลา ให้แอปประมาณเวลาให้">ซิงค์อัตโนมัติ</button><button id="shBtn" title="แชร์เนื้อเพลงลงสตอรี่"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4M5 13v6a1 1 0 001 1h12a1 1 0 001-1v-6"/></svg></button><button id="vizBtn" title="แอนิเมชันตามจังหวะเพลง">♫</button><button id="lyNext" title="เนื้อเพลงไม่ตรง? ลองเวอร์ชันอื่น">⟳</button><button id="lyEdit" title="ใส่/แก้เนื้อเพลงเอง">✎</button><button id="offM" title="เนื้อเพลงมาช้าลง 0.1 วิ (กดค้างเพื่อเลื่อนเร็ว) · คีย์ลัด [">−</button><span id="offV">0.0s</span><button id="offP" title="เนื้อเพลงมาเร็วขึ้น 0.1 วิ (กดค้างเพื่อเลื่อนเร็ว) · คีย์ลัด ]">+</button><button id="offSave" title="จำค่าดีเลย์นี้ให้เพลงนี้"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 4h12v17l-6-4-6 4z"/></svg></button></header>
+    <header><button class="lyclose" id="lyClose" title="ปิดเนื้อเพลง" aria-label="ปิดเนื้อเพลง">⌄</button><b id="lh">เนื้อเพลง</b><button id="autoSync" style="display:none;width:auto;padding:0 10px;font-size:12px" title="เนื้อเพลงนี้ไม่มีเวลา ให้แอปประมาณเวลาให้">ซิงค์อัตโนมัติ</button><button id="trBtn" title="แปลเนื้อเพลง" style="font-weight:700">文</button><button id="karBtn" title="โหมดคาราโอเกะ (K)"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></button><button id="shBtn" title="แชร์เนื้อเพลงลงสตอรี่"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4M5 13v6a1 1 0 001 1h12a1 1 0 001-1v-6"/></svg></button><button id="vizBtn" title="แอนิเมชันตามจังหวะเพลง">♫</button><button id="lyNext" title="เนื้อเพลงไม่ตรง? ลองเวอร์ชันอื่น">⟳</button><button id="lyEdit" title="ใส่/แก้เนื้อเพลงเอง">✎</button><button id="offM" title="เนื้อเพลงมาช้าลง 0.1 วิ (กดค้างเพื่อเลื่อนเร็ว) · คีย์ลัด [">−</button><span id="offV">0.0s</span><button id="offP" title="เนื้อเพลงมาเร็วขึ้น 0.1 วิ (กดค้างเพื่อเลื่อนเร็ว) · คีย์ลัด ]">+</button><button id="offSave" title="จำค่าดีเลย์นี้ให้เพลงนี้"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 4h12v17l-6-4-6 4z"/></svg></button></header>
     <div id="lyChoice" class="lychoice" style="display:none"></div>
     <div class="lbox" id="lbox"><div class="lin plain" id="lin"><div class="lmsg">เนื้อเพลงจะขึ้นที่นี่</div></div></div>
     <div class="viz" id="viz"><canvas id="vizc"></canvas><div class="viztools"><div class="vinfo" id="vInfo"></div><div class="vbtns"><button class="mini" id="vTap" title="แตะซ้ำ ๆ ตามจังหวะที่ได้ยิน">แตะตามจังหวะ</button><button class="mini" id="vHalf" title="ครึ่งความเร็ว">½</button><button class="mini" id="vDbl" title="สองเท่า">×2</button><button class="mini" id="vAud" title="จับเสียงจริงเพื่อขยับตามเพลงแม่นขึ้น">🎧 จับเสียงจริง</button><button class="mini" id="vBack">← เนื้อเพลง</button></div></div></div>
@@ -652,6 +674,11 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
   </div>
 </div></div>
 <div id="seekTip"></div>
+<div id="kar"><div class="kbg"></div>
+  <div class="ktop"><img id="karImg" alt=""><div><b id="karT"></b><i id="karA"></i></div><button id="karFs" title="เต็มจอ">⛶</button><button id="karX" title="ปิด (Esc)">✕</button></div>
+  <div id="karMain"></div>
+  <div class="kbar"><i id="karP"></i></div>
+</div>
 <div id="statModal"><div class="panel stp">
   <h3>สถิติการฟัง</h3>
   <div class="stcards" id="stCards"></div>
@@ -663,7 +690,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 <div id="help"><div class="box"><h3>คีย์ลัด</h3><div class="kv">
 <kbd>Space</kbd><span>เล่น / หยุด</span><kbd>← →</kbd><span>ย้อน / ข้าม 5 วินาที</span><kbd>↑ ↓</kbd><span>เสียง</span><kbd>N / P</kbd><span>เพลงถัดไป / ก่อนหน้า</span>
 <kbd>L</kbd><span>เปิด/ปิดเนื้อเพลง</span><kbd>[ ]</kbd><span>ปรับดีเลย์เนื้อเพลง ±0.1 วิ</span><kbd>S / R</kbd><span>สุ่ม / วนซ้ำ</span><kbd>M</kbd><span>ปิดเสียง</span>
-<kbd>Ctrl K</kbd><span>เมนูคำสั่ง/ค้นหาเร็ว</span><kbd>F</kbd><span>เต็มจอ</span><kbd>Q</kbd><span>คิวเพลง</span><kbd>/</kbd><span>ค้นหา</span><kbd>?</kbd><span>หน้าต่างนี้</span></div></div></div>
+<kbd>Ctrl K</kbd><span>เมนูคำสั่ง/ค้นหาเร็ว</span><kbd>K</kbd><span>โหมดคาราโอเกะ</span><kbd>F</kbd><span>เต็มจอ</span><kbd>Q</kbd><span>คิวเพลง</span><kbd>/</kbd><span>ค้นหา</span><kbd>?</kbd><span>หน้าต่างนี้</span></div></div></div>
 <div id="modal"><div class="panel">
   <h3>ตั้งค่า</h3>
   <div class="seg stabs" id="setTabs"><button data-t="gen" class="on">ทั่วไป</button><button data-t="mus">เพลง</button><button data-t="con">การเชื่อมต่อ</button><button data-t="dat">ข้อมูล</button></div>
@@ -676,6 +703,9 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
     <select id="ffSel"><option value="IBM Plex Sans Thai">IBM Plex Sans Thai (สะอาด ทันสมัย)</option><option value="Anuphan">Anuphan (กลม อ่านง่าย)</option><option value="Noto Sans Thai">Noto Sans Thai (กลาง ๆ)</option><option value="Prompt">Prompt (เรขาคณิต หนาชัด)</option><option value="Kanit">Kanit (เด่น ดุดัน)</option><option value="Sarabun">Sarabun (ทางการ)</option></select></div>
     <div><span class="lab">ขนาดเนื้อเพลง</span>
     <select id="lzSel"><option value="0.85">เล็ก</option><option value="1">กลาง</option><option value="1.2">ใหญ่</option><option value="1.45">ใหญ่มาก</option></select></div>
+  <div><span class="lab">ภาษาที่ใช้แปลเนื้อเพลง</span>
+      <select id="trlSel"><option value="th">ไทย</option><option value="en">English</option></select>
+      <p class="note">กดปุ่ม 文 บนแผงเนื้อเพลงเพื่อเปิด/ปิดคำแปล แปลอัตโนมัติผ่านบริการแปลของ Google (ไม่เป็นทางการ ความแม่นยำอาจไม่เท่าคนแปล และอาจใช้ไม่ได้บางช่วง)</p></div>
   </div>
   <div class="sec" data-s="mus">
     <div><span class="lab">เพลงที่ต่อให้อัตโนมัติ</span>
@@ -718,6 +748,15 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
     <div><span class="lab">สำรอง / กู้ข้อมูล</span>
       <div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button class="btn" id="expBtn" style="height:38px">ส่งออกไฟล์สำรอง</button><button class="btn" id="impBtn" style="height:38px">นำเข้า</button><input type="file" id="impFile" accept="application/json" style="display:none"></div>
       <p class="note">เพลย์ลิสต์ เพลงที่ถูกใจ ประวัติ ค่าดีเลย์ที่จำไว้ และการตั้งค่า (ไม่รวม API key)</p></div>
+    <div><span class="lab">ซิงก์อัตโนมัติระหว่างเครื่อง</span>
+      <label><input type="checkbox" id="syncChk"> เปิดซิงก์ (เพลย์ลิสต์ ประวัติ เพลงที่ข้าม)</label>
+      <input type="text" id="syncCode" placeholder="รหัสซิงก์ของคุณ (อย่างน้อย 8 ตัว)" autocomplete="off" spellcheck="false" style="margin-top:8px">
+      <div class="row" style="justify-content:flex-start;flex-wrap:wrap;margin-top:8px"><button class="btn" id="syncGen" style="height:36px">สุ่มรหัส</button><button class="btn" id="syncNow" style="height:36px">ซิงก์ตอนนี้</button><span class="tres" id="syncSt"></span></div>
+      <p class="note">ทุกเครื่องที่ใส่รหัสเดียวกันจะเห็นข้อมูลชุดเดียวกัน (รหัสต่างกัน = คนละชุด) ข้อมูลถูกเข้ารหัสในเครื่องก่อนส่ง ต้องใส่ลิงก์ Worker ในแท็บ "การเชื่อมต่อ" และผูกที่เก็บ KV ไว้ก่อน เก็บรหัสเป็นความลับ ใครรู้รหัสก็เข้าถึงข้อมูลได้</p></div>
+    <div><span class="lab">ย้ายข้อมูลไปอีกเครื่อง</span>
+      <div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button class="btn" id="xfBtn" style="height:38px">สร้างลิงก์ย้ายข้อมูล</button><button class="btn" id="xfCopy" style="height:38px;display:none">คัดลอกลิงก์</button></div>
+      <textarea id="xfOut" readonly rows="3" style="display:none;width:100%;margin-top:8px;background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:8px 10px;font-size:12px;resize:none"></textarea>
+      <p class="note">ส่งลิงก์นี้ให้ตัวเอง (เช่น Discord/LINE) แล้วเปิดบนอีกเครื่อง แอปจะถามว่าจะรวมเพลย์ลิสต์ ประวัติ และตั้งค่าเข้าไหม ลิงก์มีข้อมูลของคุณ อย่าส่งให้คนอื่น</p></div>
     <div class="row" style="justify-content:flex-start"><button class="btn" id="rstBtn" style="height:38px">รีเซ็ตการตั้งค่าเป็นค่าเริ่มต้น</button></div>
       <p class="note">โปรเจกต์ส่วนตัวเพื่อการทดลองและการศึกษา ไม่ได้เกี่ยวข้องหรือได้รับการรับรองจาก YouTube/Google วิดีโอเล่นผ่านเครื่องเล่นฝังอย่างเป็นทางการของ YouTube กด <b>?</b> เพื่อดูคีย์ลัดทั้งหมด</p>
   </div>
@@ -743,7 +782,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 <script>
 let pipWin=null;
 const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document.getElementById(id):null);
-const BUILD='2026-11-16.10';
+const BUILD='2026-11-16.12';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
@@ -754,6 +793,7 @@ let player,ready=false,pending=null,queue=[],idx=-1,lines=[],actI=-1,offset=0,me
 let pls=[];try{pls=JSON.parse(ls('pls')||'[]')}catch(e){}
 let skips=new Set();try{skips=new Set(JSON.parse(ls('skips')||'[]'))}catch(e){}
 let divMode=ls('div')==='1';
+let trOn=ls('tr')==='1',trLang=ls('trl')||'th',trArr=[],trTok=0,karOn=false,karI=-2,karWords=[],karT='';
 const saveSkips=()=>{lsSet('skips',JSON.stringify([...skips].slice(-300)))};
 let hist=[];try{hist=JSON.parse(ls('hist')||'[]')}catch(e){}
 let view=ls('view')||'mv',useTheme=ls('theme')!=='0',apiKey=ls('key')||'',wk=ls('wk')||'',restore=false;
@@ -995,7 +1035,7 @@ function finishImport(){
 }
 
 /* ---------- settings ---------- */
-function openSettings(msg){$('dcChk').checked=dcOn;$('dcRes').textContent='';setSecTab('gen');$('spSel').value=String(spd);updChips();$('keyRes').textContent='';$('wkRes').textContent='';$('divSel').value=divMode?'1':'0';$('lzSel').value=String(lz);$('slSel').value='0';$('miniChk').checked=miniOn;$('pipedChk').checked=usePiped;$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
+function openSettings(msg){$('syncChk').checked=ls('syncon')==='1';$('syncCode').value=ls('synccode')||'';$('syncSt').textContent=ls('syncst')||'';$('syncSt').className='tres';$('trlSel').value=trLang;$('dcChk').checked=dcOn;$('dcRes').textContent='';setSecTab('gen');$('spSel').value=String(spd);updChips();$('keyRes').textContent='';$('wkRes').textContent='';$('divSel').value=divMode?'1':'0';$('lzSel').value=String(lz);$('slSel').value='0';$('miniChk').checked=miniOn;$('pipedChk').checked=usePiped;$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
 let spd=+(ls('spd')||1)||1;
 const DC='http://127.0.0.1:6742';let dcOn=ls('dc')==='1',dcSig='',dcStart=0,dcFail=0;
 function dcPost(path,obj){return fetch(DC+path,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(obj)}).then(r=>{dcFail=0;return r}).catch(()=>{dcFail++})}
@@ -1046,6 +1086,8 @@ $('setBtn').onclick=()=>openSettings();
 $('setCancel').onclick=()=>$('modal').classList.remove('show');
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('show')});
 $('setSave').onclick=()=>{
+  {const on=$('syncChk').checked,c=$('syncCode').value.trim();const chg=(ls('synccode')||'')!==c||(ls('syncon')==='1')!==on;lsSet('syncon',on?'1':'0');lsSet('synccode',c);if(chg){lsSet('syncbase','');setTimeout(()=>window.syncCycle&&syncCycle(true),600)}}
+  {const nl=$('trlSel').value;if(nl!==trLang){trLang=nl;lsSet('trl',nl);if(trOn)loadTrans()}}
   dcOn=$('dcChk').checked;lsSet('dc',dcOn?'1':'0');if(!dcOn)dcPost('/clear',{});dcSig='';
   divMode=$('divSel').value==='1';lsSet('div',divMode?'1':'0');
   apiKey=$('keyIn').value.trim();lsSet('key',apiKey);wk=$('wkIn').value.trim().replace(/\/+$/,'');lsSet('wk',wk);
@@ -1638,7 +1680,7 @@ function toggleFS(){try{document.fullscreenElement?document.exitFullscreen():doc
 $('fsBtn').onclick=toggleFS;
 if(!(document.fullscreenEnabled||document.webkitFullscreenEnabled))$('fsBtn').style.display='none';
 const helpEl=$('help');helpEl.onclick=e=>{if(e.target===helpEl)helpEl.classList.remove('show')};
-const BK=/^(dc|spd|lyon|stats|shopt|skips|div|pls|hist|q|idx|view|theme|shuf|rep|auto|vol|bg|mini|ff|lz|wk|piped|off:.*|ly:.*|viz:.*|bpmu:.*)$/;
+const BK=/^(tr|trl|dc|spd|lyon|stats|shopt|skips|div|pls|hist|q|idx|view|theme|shuf|rep|auto|vol|bg|mini|ff|lz|wk|piped|off:.*|ly:.*|viz:.*|bpmu:.*)$/;
 $('expBtn').onclick=()=>{
   const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(BK.test(k))d[k]=localStorage.getItem(k)}}catch(e){}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({v:1,data:d})],{type:'application/json'}));
@@ -2292,6 +2334,7 @@ function buildSynced(raw){
     l.words.forEach(w=>{w.ws=l.t+D*c/tot;c+=w.n;w.we=l.t+D*c/tot});
   });
   applyActive(-1);scrollTo(-1);
+  try{loadTrans()}catch(e){}
 }
 function setP(w,v){if(w.p!==v){w.p=v;w.el.style.setProperty('--p',v)}}
 function applyActive(i){
@@ -2546,6 +2589,7 @@ function frame(){
     const t0=inAd?0:nowT(),d=inAd?0:(player.getDuration()||0);
     if(!dragging&&d){const v=t0/d*1000;$('seek').value=v;$('seek').style.setProperty('--p',(v/10)+'%')}
     $('cur').textContent=fmt(t0);$('rem').textContent='-'+fmt(d-t0);
+    if(karOn)queueMicrotask(()=>karFrame(t0,d));
     if(lines.length){
       const t=t0+offset;let i=actI;
       while(i+1<lines.length&&lines[i+1].t<=t)i++;
@@ -2738,7 +2782,7 @@ if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'
       act('สลับเล่นเพลงแนะนำต่ออัตโนมัติ',()=>$('autoBtn').click()),act('โหมดภาพ: MV',()=>$('mvBtn').click()),act('โหมดภาพ: ปก',()=>$('cvBtn').click()),
       act('ถูกใจ / เลิกถูกใจเพลงนี้',()=>$('likeBtn').click()),act('บันทึกคิวเป็นเพลย์ลิสต์',()=>$('svBtn').click()),
       act('ตั้งเวลาปิดเพลง: 15 นาที',()=>setSleep('15')),act('ตั้งเวลาปิดเพลง: 30 นาที',()=>setSleep('30')),act('ตั้งเวลาปิดเพลง: 1 ชั่วโมง',()=>setSleep('60')),act('ตั้งเวลาปิดเพลง: เมื่อจบเพลงนี้',()=>setSleep('end')),
-      act('สถิติการฟัง',openStats),act('ตั้งค่า',()=>$('setBtn').click()),act('เปลี่ยนความเร็วเล่น (วนค่า)',()=>cycleSpeed()),act('คัดลอกเนื้อเพลง',()=>{const t=(lines&&lines.length?lines.map(l=>l.s||'').join('\n'):curPlain||'').trim();if(!t){toast('ไม่มีเนื้อเพลงให้คัดลอก');return}try{navigator.clipboard.writeText(t).then(()=>toast('คัดลอกเนื้อเพลงแล้ว'))}catch(e){toast('คัดลอกไม่ได้')}}),act('เต็มจอ',()=>$('fsBtn').click(),'F'),act('คีย์ลัดทั้งหมด',()=>helpEl.classList.add('show'),'?')
+      act('สถิติการฟัง',openStats),act('ตั้งค่า',()=>$('setBtn').click()),act('เปลี่ยนความเร็วเล่น (วนค่า)',()=>cycleSpeed()),act('โหมดคาราโอเกะ',()=>karShow(true),'K'),act('เปิด/ปิดคำแปลเนื้อเพลง',()=>$('trBtn').click()),act('ซิงก์ข้อมูลตอนนี้',()=>window.syncCycle&&syncCycle(true)),act('คัดลอกเนื้อเพลง',()=>{const t=(lines&&lines.length?lines.map(l=>l.s||'').join('\n'):curPlain||'').trim();if(!t){toast('ไม่มีเนื้อเพลงให้คัดลอก');return}try{navigator.clipboard.writeText(t).then(()=>toast('คัดลอกเนื้อเพลงแล้ว'))}catch(e){toast('คัดลอกไม่ได้')}}),act('เต็มจอ',()=>$('fsBtn').click(),'F'),act('คีย์ลัดทั้งหมด',()=>helpEl.classList.add('show'),'?')
     ];
   }
   function build(qs){
@@ -2801,6 +2845,269 @@ setInterval(()=>{
   }catch(e){}
 },2000);
 addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','{}')}catch(e){}}});
+
+/* ---------- v26: แปลเนื้อเพลง / คาราโอเกะ / ย้ายข้อมูล ---------- */
+(function(){
+  const trId=()=>metaFor||('t'+((lines[0]&&lines[0].s)||'').slice(0,20));
+  const needTr=s=>{
+    if(!s)return false;
+    const n=s.replace(/[\s\d\W_]/g,'').length;if(!n)return false;
+    if(trLang==='th')return !/[฀-๿]/.test(s);
+    const lat=(s.match(/[A-Za-z]/g)||[]).length;return lat<n*.5;
+  };
+  async function trLine(s){
+    const c=new AbortController(),t=setTimeout(()=>c.abort(),8000);
+    try{
+      const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl='+trLang+'&dt=t&q='+encodeURIComponent(s),{signal:c.signal});
+      if(!r.ok)return null;const j=await r.json();
+      return (j[0]||[]).map(x=>x[0]).join('').trim();
+    }catch(e){return null}finally{clearTimeout(t)}
+  }
+  function saveTr(key,arr){
+    try{
+      let ks=[];try{ks=JSON.parse(ls('trk')||'[]')}catch(e){}
+      ks=ks.filter(x=>x!==key);ks.push(key);
+      while(ks.length>40){try{localStorage.removeItem(ks.shift())}catch(e){}}
+      lsSet(key,JSON.stringify(arr));lsSet('trk',JSON.stringify(ks));
+    }catch(e){}
+  }
+  window.applyTrans=function(){
+    lines.forEach((l,i)=>{
+      if(!l.el)return;let t=l.el.querySelector('.tr');const txt=trOn&&trArr[i];
+      if(txt){if(!t){t=document.createElement('div');t.className='tr';l.el.appendChild(t)}t.textContent=txt}
+      else if(t)t.remove();
+    });
+    setTimeout(()=>{scrollTo(actI);if(karOn)karI=-2},40);
+  };
+  window.loadTrans=async function(){
+    trArr=[];const my=++trTok;
+    if(!trOn||!lines.length){applyTrans();return}
+    const L=lines,key='tr:'+trId()+':'+trLang;
+    try{const c=JSON.parse(ls(key)||'null');if(c&&c.length===L.length){trArr=c;applyTrans();return}}catch(e){}
+    const need=[];L.forEach((l,i)=>{if(needTr(l.s))need.push(i)});
+    if(!need.length){applyTrans();return}
+    toast('กำลังแปลเนื้อเพลง…',2200);
+    const out=new Array(L.length).fill('');let k=0,fail=0;
+    const w=async()=>{while(k<need.length&&my===trTok&&fail<=6){const i=need[k++];const t=await trLine(L[i].s);if(t==null)fail++;else if(t&&t!==L[i].s)out[i]=t}};
+    await Promise.all([w(),w(),w(),w()]);
+    if(my!==trTok||L!==lines)return;
+    if(fail>need.length*.5||fail>6){toast('แปลไม่ได้ตอนนี้ ลองใหม่ภายหลัง',4000);return}
+    trArr=out;applyTrans();saveTr(key,out);
+  };
+  $('trBtn').classList.toggle('on',trOn);
+  $('trBtn').onclick=()=>{
+    trOn=!trOn;lsSet('tr',trOn?'1':'0');$('trBtn').classList.toggle('on',trOn);
+    if(!lines.length){toast(trOn?'เปิดคำแปล (ใช้กับเนื้อเพลงแบบมีเวลา)':'ปิดคำแปลแล้ว');return}
+    loadTrans();
+  };
+
+  // ----- คาราโอเกะ -----
+  const kar=$('kar');
+  function karHead(){
+    const t=$('ttl').textContent||'',a=$('art').textContent||'';
+    if(karT===t+'|'+a)return;karT=t+'|'+a;
+    $('karT').textContent=t;$('karA').textContent=a;
+    const im=artUrl||mvUrl||'';$('karImg').src=im;$('karImg').style.visibility=im?'':'hidden';
+    kar.style.setProperty('--kimg',im?'url("'+im.replace(/"/g,'%22')+'")':'none');
+  }
+  function buildKar(i){
+    const m=$('karMain');m.innerHTML='';karWords=[];
+    if(!lines.length){const d=document.createElement('div');d.className='knone';d.textContent=(curPlain?'เพลงนี้มีเนื้อเพลงแบบไม่มีเวลา ใช้โหมดคาราโอเกะไม่ได้':'ยังไม่มีเนื้อเพลงแบบมีเวลา');m.appendChild(d);return}
+    const mk=(cls,txt)=>{const d=document.createElement('div');d.className=cls;d.textContent=txt;return d};
+    if(i>0&&lines[i-1].s)m.appendChild(mk('kp',lines[i-1].s));
+    const c=document.createElement('div');c.className='kc';
+    if(i>=0&&lines[i].s){
+      const l=lines[i];let wi=0;
+      l.el.childNodes.forEach(n=>{
+        if(n.nodeType===3){c.appendChild(document.createTextNode(' '))}
+        else if(n.classList&&n.classList.contains('w')){
+          const sp=document.createElement('span');sp.className='kw';sp.textContent=n.textContent;c.appendChild(sp);
+          const w=l.words[wi++];if(w)karWords.push({el:sp,ws:w.ws,we:w.we,p:-1});
+        }
+      });
+      const n=(l.s||'').length;
+      c.style.setProperty('--kfs',n>60?'3.6vw':n>40?'4.4vw':n>26?'5.4vw':'6.6vw');
+    }else{c.textContent=i<0?'♪':'• • •';c.style.setProperty('--kfs','6vw');c.style.opacity='.5'}
+    m.appendChild(c);
+    if(trOn&&i>=0&&trArr[i])m.appendChild(mk('kt',trArr[i]));
+    if(lines[i+1]&&lines[i+1].s)m.appendChild(mk('kn',lines[i+1].s));
+    if(lines[i+2]&&lines[i+2].s&&innerHeight>520)m.appendChild(mk('kn',lines[i+2].s));
+  }
+  window.karFrame=function(t0,d){
+    karHead();
+    $('karP').style.setProperty('--p',(d?Math.min(100,t0/d*100):0)+'%');
+    if(actI!==karI){karI=actI;buildKar(actI)}
+    if(!lines.length)return;
+    const t=t0+offset;
+    karWords.forEach(w=>{
+      const p=Math.round(Math.max(0,Math.min(1,(t-w.ws)/((w.we-w.ws)||.01)))*500)/5;
+      if(w.p!==p){w.p=p;w.el.style.setProperty('--p',p)}
+    });
+  };
+  window.karShow=function(on){
+    karOn=on;kar.classList.toggle('show',on);
+    if(on){karI=-2;karT='';karHead();buildKar(actI);karI=actI}
+    else{try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}}
+  };
+  $('karBtn').onclick=()=>karShow(true);
+  $('karX').onclick=()=>karShow(false);
+  $('karFs').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():kar.requestFullscreen()}catch(e){}};
+  kar.addEventListener('dblclick',e=>{if(e.target.closest('button'))return;$('karFs').click()});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&karOn){karShow(false);e.stopPropagation()}
+    else if((e.key==='k'||e.key==='K')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes((e.target||{}).tagName)&&!document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show')){karShow(!karOn)}
+  },true);
+
+  // ----- ย้ายข้อมูลข้ามเครื่อง -----
+  const XF=/^(pls|hist|skips|div|theme|bg|mini|ff|lz|view|shuf|rep|auto|vol|spd|shopt|lyon|tr|trl|off:.*)$/;
+  const b64u={
+    enc:buf=>{let s='';const a=new Uint8Array(buf);for(let i=0;i<a.length;i+=0x8000)s+=String.fromCharCode.apply(null,a.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')},
+    dec:t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';const s=atob(t),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a}
+  };
+  async function gz(str,mode){
+    const S=mode==='c'?CompressionStream:DecompressionStream;
+    const st=new Blob([str]).stream().pipeThrough(new S('gzip'));
+    return new Response(st).arrayBuffer();
+  }
+  $('xfBtn').onclick=async()=>{
+    if(typeof CompressionStream==='undefined'){toast('เบราว์เซอร์นี้ไม่รองรับ ลองใช้ส่งออกไฟล์สำรองแทน',4000);return}
+    const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(XF.test(k))d[k]=localStorage.getItem(k)}}catch(e){}
+    const buf=await gz(JSON.stringify({v:1,data:d}),'c');
+    const url=location.origin+location.pathname+'#import='+b64u.enc(buf);
+    $('xfOut').value=url;$('xfOut').style.display='';$('xfCopy').style.display='';
+    toast(url.length>20000?'ลิงก์ยาวมาก อาจส่งผ่านบางแอปไม่ได้ ใช้ส่งออกไฟล์สำรองแทนก็ได้':'สร้างลิงก์แล้ว',3500);
+  };
+  $('xfCopy').onclick=async()=>{
+    const u=$('xfOut').value;
+    try{if(navigator.share&&/Mobi|Android|iPhone|iPad/.test(navigator.userAgent)){await navigator.share({title:'Now Playing',url:u});return}}catch(e){}
+    try{await navigator.clipboard.writeText(u);toast('คัดลอกลิงก์แล้ว')}catch(e){$('xfOut').select();toast('กด Ctrl+C เพื่อคัดลอก')}
+  };
+  (async function importFromHash(){
+    if(!location.hash.startsWith('#import='))return;
+    try{
+      const buf=await gz(b64u.dec(location.hash.slice(8)),'d').catch(()=>null);
+      // gz() รับ string/Blob: แปลงให้ถูกชนิด
+      let o=null;
+      if(!buf){const st=new Blob([b64u.dec(location.hash.slice(8))]).stream().pipeThrough(new DecompressionStream('gzip'));o=JSON.parse(await new Response(st).text())}
+      else o=JSON.parse(new TextDecoder().decode(buf));
+      if(!o||!o.data)throw 0;
+      const d=o.data;let pl=[];try{pl=JSON.parse(d.pls||'[]')}catch(e){}
+      const n=pl.reduce((a,p)=>a+((p.items||[]).length),0);
+      history.replaceState(null,'',location.pathname+location.search);
+      if(!confirm('พบข้อมูลที่ย้ายมาจากอีกเครื่อง ('+pl.length+' เพลย์ลิสต์, '+n+' เพลง)\nรวมเข้ากับข้อมูลในเครื่องนี้ไหม? (ข้อมูลเดิมจะไม่หาย)'))return;
+      const mergeArr=(a,b,key)=>{const seen=new Set(a.map(key));b.forEach(x=>{if(!seen.has(key(x))){a.push(x);seen.add(key(x))}});return a};
+      Object.keys(d).forEach(k=>{
+        if(!XF.test(k))return;
+        if(k==='pls'){
+          let loc=[];try{loc=JSON.parse(ls('pls')||'[]')}catch(e){}
+          pl.forEach(rp=>{const lp=loc.find(x=>x.id===rp.id);if(!lp)loc.push(rp);else lp.items=mergeArr(lp.items||[],rp.items||[],x=>x.id)});
+          lsSet('pls',JSON.stringify(loc));
+        }else if(k==='hist'||k==='skips'){
+          let loc=[],rem=[];try{loc=JSON.parse(ls(k)||'[]');rem=JSON.parse(d[k]||'[]')}catch(e){}
+          lsSet(k,JSON.stringify(mergeArr(loc,rem,x=>typeof x==='string'?x:x.id).slice(0,k==='hist'?30:300)));
+        }else if(ls(k)==null)lsSet(k,String(d[k]));
+      });
+      toast('ย้ายข้อมูลเรียบร้อย กำลังโหลดใหม่…');setTimeout(()=>location.reload(),900);
+    }catch(e){toast('ลิงก์ย้ายข้อมูลไม่ถูกต้อง',4000)}
+  })();
+  // ภาษาแปลใน ⚙
+  const so=window.openSettings;
+})();
+
+/* ---------- ซิงก์อัตโนมัติ (Cloudflare Worker + KV, เข้ารหัสฝั่งเครื่อง) ---------- */
+(function(){
+  const te=new TextEncoder(),td=new TextDecoder();
+  const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const b64=b=>{let s='';const a=new Uint8Array(b);for(let i=0;i<a.length;i+=0x8000)s+=String.fromCharCode.apply(null,a.subarray(i,i+0x8000));return btoa(s)};
+  const unb64=t=>{const s=atob(t),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a};
+  const sha=async str=>hex(await crypto.subtle.digest('SHA-256',te.encode(str)));
+  let kc=null;
+  async function keys(c){
+    if(kc&&kc.c===c)return kc;
+    const id=await sha('np-id:'+c);
+    const km=await crypto.subtle.importKey('raw',te.encode(c),'PBKDF2',false,['deriveKey']);
+    const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:te.encode('np-sync-v1'),iterations:120000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+    return kc={c,id,key};
+  }
+  async function enc(obj,key){
+    const iv=crypto.getRandomValues(new Uint8Array(12));
+    const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,te.encode(JSON.stringify(obj)));
+    return {iv:b64(iv),ct:b64(ct)};
+  }
+  async function dec(doc,key){
+    const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(doc.iv)},key,unb64(doc.ct));
+    return JSON.parse(td.decode(pt));
+  }
+  const payload=()=>({pls:ls('pls')||'[]',hist:ls('hist')||'[]',skips:ls('skips')||'[]'});
+  const hashOf=p=>sha(JSON.stringify(p));
+  function merge(a,b){
+    const P=x=>{try{return JSON.parse(x)}catch(e){return[]}};
+    const pa=P(a.pls),pb=P(b.pls);
+    pb.forEach(rp=>{const lp=pa.find(x=>x.id===rp.id);if(!lp)pa.push(rp);else{const seen=new Set((lp.items||[]).map(x=>x.id));(rp.items||[]).forEach(x=>{if(!seen.has(x.id)){lp.items=(lp.items||[]).concat([x]);seen.add(x.id)}})}});
+    const u=(x,y,cap)=>{const out=[],seen=new Set();x.concat(y).forEach(v=>{const k=typeof v==='string'?v:v.id;if(!seen.has(k)){seen.add(k);out.push(v)}});return out.slice(0,cap)};
+    return {pls:JSON.stringify(pa),hist:JSON.stringify(u(P(a.hist),P(b.hist),30)),skips:JSON.stringify(u(P(a.skips),P(b.skips),300))};
+  }
+  function applyLocal(p){
+    lsSet('pls',p.pls);lsSet('hist',p.hist);lsSet('skips',p.skips);
+    try{pls=JSON.parse(p.pls)}catch(e){}
+    try{hist=JSON.parse(p.hist)}catch(e){}
+    try{skips=new Set(JSON.parse(p.skips))}catch(e){}
+    try{if($('vlib')&&$('vlib').innerHTML)drawLib()}catch(e){}
+    try{updateHeart()}catch(e){}
+  }
+  const setSt=(m,cls)=>{lsSet('syncst',m);const el=document.getElementById('syncSt');if(el){el.textContent=m;el.className='tres '+(cls||'')}};
+  const hm=()=>new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  let busy=false,lastPush=0;
+  async function push(p,h,id,key){
+    const doc=await enc(p,key);doc.h=h;doc.ts=Date.now();
+    const r=await fetch(wk+'/sync?id='+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(doc)});
+    if(!r.ok)throw new Error('push '+r.status);
+    lastPush=Date.now();lsSet('syncbase',h);
+  }
+  window.syncCycle=async function(force){
+    if(busy||ls('syncon')!=='1')return;
+    const c=(ls('synccode')||'').trim();
+    if(!wk||!/^https:\/\//.test(wk)){if(force)setSt('ต้องใส่ลิงก์ Worker ในแท็บการเชื่อมต่อก่อน','bad');return}
+    if(c.length<8){if(force)setSt('รหัสซิงก์สั้นเกินไป (อย่างน้อย 8 ตัว)','bad');return}
+    if(typeof crypto==='undefined'||!crypto.subtle){setSt('เบราว์เซอร์นี้ไม่รองรับการเข้ารหัส','bad');return}
+    busy=true;
+    try{
+      const {id,key}=await keys(c);
+      const base=ls('syncbase')||'';
+      const lp=payload(),lh=await hashOf(lp);
+      const r=await fetch(wk+'/sync?id='+id);
+      if(r.status===501){setSt('Worker ยังไม่ได้ผูกที่เก็บ KV (ดูวิธีตั้งค่า)','bad');return}
+      if(!r.ok)throw new Error('pull '+r.status);
+      const rem=await r.json();
+      if(!rem){await push(lp,lh,id,key);setSt('ซิงก์แล้ว '+hm(),'ok');return}
+      if(rem.h===lh){lsSet('syncbase',lh);setSt('ซิงก์แล้ว '+hm(),'ok');return}
+      let remote;try{remote=await dec(rem,key)}catch(e){setSt('ถอดรหัสไม่ได้ ข้อมูลบนเซิร์ฟเวอร์อาจเสีย','bad');return}
+      if(lh===base){ // เครื่องนี้ไม่ได้แก้ => รับของใหม่
+        applyLocal(remote);lsSet('syncbase',await hashOf(payload()));setSt('อัปเดตจากเครื่องอื่นแล้ว '+hm(),'ok');
+      }else if(rem.h===base){ // อีกฝั่งไม่ได้แก้ => ส่งของเรา
+        if(!force&&Date.now()-lastPush<120000)return;
+        await push(lp,lh,id,key);setSt('ซิงก์แล้ว '+hm(),'ok');
+      }else{ // แก้ทั้งคู่ => รวม
+        applyLocal(merge(lp,remote));const np=payload(),nh=await hashOf(np);
+        await push(np,nh,id,key);setSt('รวมข้อมูลสองเครื่องแล้ว '+hm(),'ok');
+      }
+    }catch(e){setSt('ซิงก์ไม่สำเร็จ (ตรวจอินเทอร์เน็ต/ลิงก์ Worker)','bad')}
+    finally{busy=false}
+  };
+  $('syncGen').onclick=()=>{
+    const a=new Uint8Array(12);crypto.getRandomValues(a);
+    const abc='abcdefghijkmnpqrstuvwxyz23456789';let t='';a.forEach((v,i)=>{t+=abc[v%abc.length];if(i%4===3&&i<11)t+='-'});
+    $('syncCode').value=t;toast('สุ่มรหัสให้แล้ว จดไว้แล้วนำไปใส่ในเครื่องอื่น อย่าลืมกดบันทึก',5000);
+  };
+  $('syncNow').onclick=()=>{
+    lsSet('synccode',$('syncCode').value.trim());lsSet('syncon',$('syncChk').checked?'1':'0');
+    if(ls('syncon')!=='1'){setSt('ยังไม่ได้เปิดซิงก์','bad');return}
+    setSt('กำลังซิงก์…');syncCycle(true);
+  };
+  setTimeout(()=>syncCycle(false),4000);
+  setInterval(()=>{if(document.visibilityState==='visible')syncCycle(false)},45000);
+  document.addEventListener('visibilitychange',()=>{if(ls('syncon')==='1')syncCycle(document.visibilityState==='hidden')});
+})();
 </script>
 </body>
 </html>

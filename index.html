@@ -816,6 +816,16 @@ function drawPl(v,pl){
   const mk=(t,fn,cls)=>{const b=document.createElement('button');b.className=cls||'btn';b.textContent=t;b.style.padding='7px 14px';b.onclick=()=>fn(b);btns.appendChild(b)};
   mk('▶ เล่นทั้งหมด',()=>playPl(pl,0,false),'btn on');
   mk('สุ่มเล่น',()=>playPl(pl,0,true));
+  let ytPart=0;
+  mk('↗ เปิดใน YouTube',b=>{
+    const ids=pl.items.map(x=>x.id).filter(i=>i&&!String(i).startsWith('dz:')&&/^[\w-]{11}$/.test(i));
+    if(!ids.length){toast('ยังไม่มีเพลงที่เปิดบน YouTube ได้');return}
+    const parts=Math.ceil(ids.length/50),chunk=ids.slice(ytPart*50,ytPart*50+50);
+    window.open('https://www.youtube.com/watch_videos?video_ids='+chunk.join(','),'_blank','noopener');
+    toast(parts>1?'เปิดชุดที่ '+(ytPart+1)+'/'+parts+' (ชุดละ 50 เพลง) ในหน้า YouTube กด “บันทึกเพลย์ลิสต์” เพื่อเก็บไว้ในบัญชี':'ในหน้า YouTube กด “บันทึกเพลย์ลิสต์” เพื่อเก็บไว้ในบัญชีของคุณ',6000);
+    ytPart=(ytPart+1)%parts;
+    if(parts>1)b.textContent='↗ เปิดใน YouTube (ชุดถัดไป '+(ytPart+1)+'/'+parts+')';
+  });
   mk('+ เข้าคิว',()=>{pl.items.forEach(x=>queue.push(x));if(idx<0&&queue.length){idx=0;playAt(0)}else{save();drawQ()};toast('เพิ่มเข้าคิวแล้ว')});
   if(pl.id!=='liked'){
     mk('เปลี่ยนชื่อ',()=>{
@@ -1324,7 +1334,7 @@ async function neLyrics(p,dur){
   return null;
 }
 async function fetchLyrics(p,vid){
-  const my=++lyrSeq;
+  const my=++lyrSeq;setOff(0);
   const sv=vid&&loadSaved(vid);
   if(sv){applySaved(sv);return}
   const dur=(ready&&player.getDuration())||0;

@@ -629,6 +629,32 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 
 .goalcard{padding:14px 16px;border-radius:18px;margin:0 0 16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);cursor:pointer}
 .goalcard .gh{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}.goalcard b{font-size:15px}.goalcard span{margin-left:auto;font-size:13px;opacity:.75}
+
+.gmcard{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:18px;margin:0 0 16px;cursor:pointer;background:linear-gradient(120deg,rgba(60,200,150,.28),rgba(60,120,255,.28));border:1px solid rgba(255,255,255,.12)}
+.gmcard b{font-size:15px;display:block}.gmcard span{font-size:12.5px;opacity:.75}.gmcard .go{margin-left:auto;background:#fff;color:#111;border-radius:18px;padding:7px 15px;font-size:13px;font-weight:600}
+#gmModal{position:fixed;inset:0;z-index:97;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#gmModal.show{display:flex}
+.gmp{width:min(520px,94vw);max-height:92dvh;overflow:auto}
+.gmh{display:flex;align-items:center;gap:8px;margin-bottom:10px}.gmh b{flex:1;font-size:18px}
+#gmWrap{display:none;justify-content:center;margin-bottom:10px}
+#gmYtWrap{width:240px;height:135px;border-radius:14px;overflow:hidden;background:#000}
+#gmYtWrap iframe{width:240px;height:135px;transition:filter .3s}
+#gmYtWrap.blur iframe{filter:blur(18px) brightness(.55)}
+.gmmenu{display:grid;gap:10px}
+.gmopt{padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.08);cursor:pointer;border:1px solid rgba(255,255,255,.08)}
+.gmopt:hover{background:rgba(255,255,255,.14)}.gmopt b{display:block;font-size:16px}.gmopt span{font-size:13px;opacity:.72}.gmopt small{display:block;margin-top:4px;opacity:.55;font-size:12px}
+.gminfo{display:flex;justify-content:space-between;font-size:13px;opacity:.75;margin:6px 0 10px}
+.gmq{font-size:16px;font-weight:600;margin:6px 0 10px;text-align:center}
+.gmch{display:grid;gap:8px}.gmch button{padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:var(--fg);font-size:14.5px;text-align:left;cursor:pointer;font-family:inherit}
+.gmch button:hover:not(:disabled){background:rgba(255,255,255,.15)}.gmch button.ok{background:rgba(60,200,120,.45);border-color:rgba(60,200,120,.9)}.gmch button.bad{background:rgba(230,70,90,.45);border-color:rgba(230,70,90,.9)}
+.gmbar{height:5px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden;margin-bottom:8px}.gmbar i{display:block;height:100%;background:linear-gradient(90deg,#3cc896,#3c78ff);transition:width .25s linear}
+.gmfill{font-size:17px;line-height:2.1;text-align:center;margin:8px 0}.gmfill input{width:110px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:8px;color:var(--fg);padding:4px 8px;font-size:16px;font-family:inherit;text-align:center}
+.gmfill input.ok{border-color:#3cc878;background:rgba(60,200,120,.3)}.gmfill input.bad{border-color:#e6465a;background:rgba(230,70,90,.3)}
+.gmres{text-align:center;padding:18px 6px}.gmres b{display:block;font-size:48px;margin:6px 0}.gmres span{opacity:.75;font-size:14px}
+.gmvs{display:grid;grid-template-columns:1fr 1fr;gap:10px}.gmvs>div{border-radius:16px;overflow:hidden;background:rgba(255,255,255,.08);cursor:pointer;text-align:center;padding-bottom:10px;border:2px solid transparent}
+.gmvs img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}.gmvs b{display:block;font-size:13.5px;margin:8px 8px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gmvs i{font-style:normal;font-size:12px;opacity:.65;display:block;margin:0 8px}.gmvs em{display:block;font-style:normal;font-weight:700;margin-top:6px;min-height:18px}
+.gmvs>div.ok{border-color:#3cc878}.gmvs>div.bad{border-color:#e6465a}
+.gmrow{display:flex;gap:8px;justify-content:center;margin-top:12px}
 </style>
 </head>
 <body>
@@ -727,6 +753,11 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
   <div class="seg stabs" id="rcTabs"><button data-d="7" class="on">7 วัน</button><button data-d="30">30 วัน</button><button data-d="0">ทั้งหมด</button></div>
   <div id="rcBody"></div>
   <div class="row"><button class="btn" id="rcShare" style="height:40px">แชร์เป็นภาพ</button><button class="btn on" id="rcClose" style="height:40px">ปิด</button></div>
+</div></div>
+<div id="gmModal"><div class="panel gmp">
+  <div class="gmh"><b id="gmT">มินิเกม</b><button class="mini" id="gmBack" style="display:none">‹ เมนู</button><button class="mini" id="gmX">ปิด</button></div>
+  <div id="gmWrap"><div id="gmYtWrap" class="blur"><div id="gmYt"></div></div></div>
+  <div id="gmBody"></div>
 </div></div>
 <div id="cmdk"><div class="cbox"><input id="cmdIn" type="text" placeholder="พิมพ์คำสั่ง หรือชื่อเพลง/ศิลปิน…" autocomplete="off" spellcheck="false"><div id="cmdList"></div><div class="chint">↑↓ เลือก · Enter ใช้งาน · Esc ปิด</div></div></div>
 <div id="help"><div class="box"><h3>คีย์ลัด</h3><div class="kv">
@@ -831,7 +862,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 <script>
 let pipWin=null;
 const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document.getElementById(id):null);
-const BUILD='2026-11-16.17';
+const BUILD='2026-11-16.18';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
@@ -2194,7 +2225,7 @@ function prev(){
 }
 $('pp').onclick=toggle;$('next').onclick=()=>next(false);$('prev').onclick=prev;
 document.addEventListener('keydown',e=>{
-  if(document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show'))return;
+  if(document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show,#gmModal.show'))return;
   if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;
   if(e.code==='Space'){e.preventDefault();toggle()}
   if(e.code==='ArrowUp'){e.preventDefault();vol=Math.min(100,vol+5);muted=false;lsSet('vol',vol);applyVol()}
@@ -2867,7 +2898,7 @@ if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'
     return [
       act('เล่น / หยุด',toggle,'Space'),act('เพลงถัดไป',()=>next(false),'N'),act('เพลงก่อนหน้า',prev,'P'),
       act('เปิด/ปิดเนื้อเพลง',()=>$('lyBtn').click(),'L'),act('แชร์เพลง / เนื้อเพลงเป็นรูป',shOpen),
-      act('รีแคปการฟังของฉัน',()=>openRecap()),act('วนซ้ำท่อน A-B (ตั้งจุด A/B/ยกเลิก)',()=>abPress(),'B'),act('ไปหน้า: กำลังเล่น',()=>setTab('now')),act('ไปหน้า: ค้นพบ',()=>setTab('disc')),act('ไปหน้า: ค้นหา',()=>setTab('srch')),act('ไปหน้า: เพลย์ลิสต์',()=>setTab('lib')),
+      act('รีแคปการฟังของฉัน',()=>openRecap()),act('วนซ้ำท่อน A-B (ตั้งจุด A/B/ยกเลิก)',()=>abPress(),'B'),act('มินิเกม (ทายเพลง/เติมเนื้อเพลง)',()=>openGames()),act('ไปหน้า: กำลังเล่น',()=>setTab('now')),act('ไปหน้า: ค้นพบ',()=>setTab('disc')),act('ไปหน้า: ค้นหา',()=>setTab('srch')),act('ไปหน้า: เพลย์ลิสต์',()=>setTab('lib')),
       act('เปิด/ปิดคิวเพลง',()=>$('qBtn').click(),'Q'),act('สลับสุ่มเพลง',()=>$('shufBtn').click(),'S'),act('สลับวนซ้ำ',()=>$('repBtn').click(),'R'),
       act('สลับเล่นเพลงแนะนำต่ออัตโนมัติ',()=>$('autoBtn').click()),act('โหมดภาพ: MV',()=>$('mvBtn').click()),act('โหมดภาพ: ปก',()=>$('cvBtn').click()),
       act('ถูกใจ / เลิกถูกใจเพลงนี้',()=>$('likeBtn').click()),act('บันทึกคิวเป็นเพลย์ลิสต์',()=>$('svBtn').click()),
@@ -3045,7 +3076,7 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
   kar.addEventListener('dblclick',e=>{if(e.target.closest('button'))return;$('karFs').click()});
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'&&karOn){karShow(false);e.stopPropagation()}
-    else if((e.key==='k'||e.key==='K')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes((e.target||{}).tagName)&&!document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show')){karShow(!karOn)}
+    else if((e.key==='k'||e.key==='K')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes((e.target||{}).tagName)&&!document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show,#gmModal.show')){karShow(!karOn)}
   },true);
 
   // ----- ย้ายข้อมูลข้ามเครื่อง -----
@@ -3316,7 +3347,7 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
     const ta=artists(wk)[0];
     ban.innerHTML='<div><b>รีแคปการฟังของคุณ</b><span></span></div><div class="go">ดูเลย</div>';
     ban.querySelector('span').textContent=all.length?('7 วันที่ผ่านมา '+hm(w7)+(ta?' · ศิลปินอันดับ 1: '+ta.a:'')):'ฟังเพลงสักพัก แล้วมาดูสรุปว่าคุณฟังอะไรมากที่สุด';
-    ban.onclick=()=>openRecap();box.appendChild(ban);{const ge=window.goalEl&&window.goalEl();if(ge)box.appendChild(ge)}
+    ban.onclick=()=>openRecap();box.appendChild(ban);{const ge=window.goalEl&&window.goalEl();if(ge)box.appendChild(ge)}{const gm=window.gmEl&&window.gmEl();if(gm)box.appendChild(gm)}
     if(all.filter(x=>okId(x.id)).length<3){
       const h=document.createElement('div');h.className='fyhint';h.textContent='ยังไม่มีข้อมูลการฟังพอ ลองฟังเพลงสัก 3-5 เพลง ที่นี่จะมีเพลย์ลิสต์ที่ทำให้คุณและเพลงแนะนำจากสิ่งที่คุณฟัง';box.appendChild(h);return;
     }
@@ -3568,7 +3599,7 @@ window.mergedStats=function(){
   $('abBtn').onclick=abPress;window.abClear=abClear;window.abPress=abPress;
   setInterval(()=>{if(st===2&&ready&&playing){try{if((player.getCurrentTime()||0)>=B-0.05)player.seekTo(A,true)}catch(e){}}},150);
   document.addEventListener('keydown',e=>{
-    if((e.key==='b'||e.key==='B')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes((e.target||{}).tagName)&&!document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show'))abPress();
+    if((e.key==='b'||e.key==='B')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes((e.target||{}).tagName)&&!document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show,#gmModal.show'))abPress();
   });
 })();
 
@@ -3630,6 +3661,171 @@ window.mergedStats=function(){
   function place(){const fy=$('fy'),ban=fy&&fy.querySelector('.rcban');if(!ban)return;const old=fy.querySelector('.goalcard'),n=window.goalEl();if(old){if(n)old.replaceWith(n);else old.remove()}else if(n)ban.after(n)}
   window.goalPlace=place;place();
   setInterval(goalTick,30000);
+})();
+
+/* ---------- มินิเกม ---------- */
+(function(){
+  const okId=id=>/^[\w-]{11}$/.test(String(id||''));
+  const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const best=k=>+ls('gmbest_'+k)||0;
+  const setBest=(k,v)=>{if(v>best(k)){lsSet('gmbest_'+k,String(v));return true}return false};
+  let timers=[],gp=null,gpReady=false,gpQueue=null,mode='';
+  const clearT=()=>{timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[]};
+  const T=(f,ms)=>{const t=setTimeout(f,ms);timers.push(t);return t};
+  const I=(f,ms)=>{const t=setInterval(f,ms);timers.push(t);return t};
+
+  // รวมเพลงของผู้ใช้
+  function pool(){
+    const m=new Map();
+    const add=x=>{if(x&&okId(x.id)&&!m.has(x.id)&&(x.title||x.t))m.set(x.id,{id:x.id,title:x.title||x.t,author:x.author||x.a||''})};
+    pls.forEach(pl=>(pl.items||[]).forEach(add));hist.forEach(add);
+    const st=window.mergedStats();Object.keys(st.p).forEach(id=>{const e=st.p[id];if((e.s||0)>=60)add({id,t:e.t,a:e.a})});
+    return [...m.values()].filter(x=>!isBlocked(x));
+  }
+  const lab=it=>{const p=parse(it.title||'',it.author||'');const t=(p.track||it.title||'').trim(),a=(p.artist||it.author||'').trim();return{t,a,full:a?t+' — '+a:t}};
+
+  const body=()=>$('gmBody');
+  function menu(){
+    clearT();stopGp();mode='';$('gmT').textContent='มินิเกม';$('gmBack').style.display='none';$('gmWrap').style.display='none';
+    const P=pool();
+    body().innerHTML='<div class="gmmenu"></div>';const M=body().firstChild;
+    const opt=(t,d,k,f,dis)=>{const o=document.createElement('div');o.className='gmopt';o.innerHTML='<b>'+t+'</b><span>'+d+'</span><small>'+(dis||(best(k)?'คะแนนสูงสุด: '+best(k):'ยังไม่เคยเล่น'))+'</small>';o.onclick=f;M.appendChild(o)};
+    opt('🎧 ทายเพลง','ฟังเพลงสั้นๆ 10 วินาที (ภาพเบลอไว้) แล้วทายว่าเพลงอะไร จากเพลงที่คุณเคยฟัง · 10 รอบ','guess',()=>P.length>=6?gGuess():toast('ต้องมีเพลงในประวัติ/เพลย์ลิสต์อย่างน้อย 6 เพลงก่อน',3500));
+    opt('✍️ เติมเนื้อเพลง','เติมคำที่หายไปในเนื้อเพลงที่กำลังเล่นอยู่ · 6 ข้อ','fill',()=>gFill());
+    opt('⚖️ ใครฟังเยอะกว่า','เดาว่าเพลงไหนที่คุณฟังมากกว่ากัน เล่นต่อเนื่องจนกว่าจะพลาด 3 ครั้ง','vs',()=>gVs());
+  }
+  function enter(title){$('gmT').textContent=title;$('gmBack').style.display=''}
+  function result(k,score,total,msg){
+    clearT();stopGp();$('gmWrap').style.display='none';
+    const nb=setBest(k,score);
+    body().innerHTML='<div class="gmres"><span>'+esc(msg||'จบเกม')+'</span><b>'+score+'</b><span>'+(total?'/ '+total+' · ':'')+(nb?'🏆 สถิติใหม่!':'สถิติสูงสุด '+best(k))+'</span></div><div class="gmrow"><button class="btn" id="gmAgain">เล่นอีกครั้ง</button><button class="btn on" id="gmMenu">เมนู</button></div>';
+    $('gmAgain').onclick=()=>({guess:gGuess,fill:gFill,vs:gVs})[k]();$('gmMenu').onclick=menu;
+  }
+
+  // ===== 1) ทายเพลง =====
+  function ensureGp(cb){
+    if(gp&&gpReady)return cb(true);
+    if(!(window.YT&&YT.Player)){toast('เครื่องเล่น YouTube ยังไม่พร้อม ลองใหม่อีกครั้ง',3000);return cb(false)}
+    if(gp){let k=0;const w=setInterval(()=>{if(gpReady){clearInterval(w);cb(true)}else if(++k>30){clearInterval(w);cb(false)}},200);return}
+    gp=new YT.Player('gmYt',{width:240,height:135,playerVars:{controls:0,playsinline:1,rel:0,modestbranding:1,disablekb:1,fs:0,iv_load_policy:3},
+      events:{onReady:()=>{gpReady=true;cb(true)},onStateChange:e=>{if(window._gpState)window._gpState(e.data)},onError:()=>{if(window._gpErr)window._gpErr()}}});
+  }
+  function stopGp(){try{if(gp&&gpReady)gp.pauseVideo()}catch(e){}window._gpState=null;window._gpErr=null}
+  function gGuess(){
+    mode='guess';enter('ทายเพลง');
+    const P=shuf(pool());if(P.length<6){toast('เพลงยังไม่พอ');return menu()}
+    try{if(ready&&playing)player.pauseVideo()}catch(e){}
+    $('gmWrap').style.display='flex';body().innerHTML='<div class="msg">กำลังเตรียมเครื่องเล่น…</div>';
+    ensureGp(ok=>{if(!ok)return menu();round(0,0,P)});
+  }
+  function round(n,score,P){
+    if(mode!=='guess')return;
+    const N=10;if(n>=N)return result('guess',score,N*150,'ทายเพลงเสร็จแล้ว');
+    clearT();
+    const it=P[n%P.length],L=lab(it);
+    let opts=[it];const used=new Set([L.full.toLowerCase()]);
+    for(const x of shuf(P)){if(opts.length>=4)break;const l=lab(x).full.toLowerCase();if(x.id!==it.id&&!used.has(l)){used.add(l);opts.push(x)}}
+    opts=shuf(opts);
+    body().innerHTML='<div class="gminfo"><span>ข้อ '+(n+1)+' / '+N+'</span><span id="gmSc">คะแนน '+score+'</span></div><div class="gmbar"><i id="gmBar" style="width:100%"></i></div><div class="gmq">เพลงนี้คือเพลงอะไร?</div><div class="gmch"></div><div class="gmrow"><button class="mini" id="gmRe">↻ ฟังซ้ำ</button><button class="mini" id="gmSkip">ข้าม</button></div>';
+    $('gmYtWrap').classList.add('blur');
+    const ch=body().querySelector('.gmch');let done=false,t0=Date.now(),clipStart=20+Math.floor(Math.random()*70);
+    const finish=(pick)=>{
+      if(done)return;done=true;clearT();
+      $('gmYtWrap').classList.remove('blur');
+      const left=Math.max(0,15-(Date.now()-t0)/1000);let gain=0;
+      ch.querySelectorAll('button').forEach(b=>{b.disabled=true;if(b.dataset.id===it.id)b.classList.add('ok');else if(b.dataset.id===pick)b.classList.add('bad')});
+      if(pick===it.id)gain=100+Math.round(left*3);
+      $('gmSc').textContent='คะแนน '+(score+gain)+(gain?'  +'+gain:'');
+      try{gp.playVideo()}catch(e){}
+      T(()=>round(n+1,score+gain,P),2300);
+    };
+    opts.forEach(o=>{const b=document.createElement('button');b.textContent=lab(o).full;b.dataset.id=o.id;b.onclick=()=>finish(o.id);ch.appendChild(b)});
+    $('gmSkip').onclick=()=>finish('');
+    const play=()=>{try{gp.loadVideoById({videoId:it.id,startSeconds:clipStart})}catch(e){}};
+    window._gpState=st=>{if(st===1&&!done){clearTimeout(window._gpStop);window._gpStop=setTimeout(()=>{if(!done)try{gp.pauseVideo()}catch(e){}},10000)}};
+    window._gpErr=()=>{if(!done){done=true;clearT();toast('เล่นเพลงนี้ไม่ได้ ข้ามไป',1800);if(P.length>6){P.splice(n%P.length,1);round(n,score,P)}else round(n+1,score,P)}};
+    $('gmRe').onclick=()=>{if(done)return;try{gp.seekTo(clipStart,true);gp.playVideo()}catch(e){}};
+    play();
+    I(()=>{const el=(Date.now()-t0)/1000;const bar=$('gmBar');if(bar)bar.style.width=Math.max(0,100-el/15*100)+'%';if(el>=15)finish('')},250);
+  }
+
+  // ===== 2) เติมเนื้อเพลง =====
+  const nz=x=>(x||'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'');
+  function gFill(){
+    mode='fill';enter('เติมเนื้อเพลง');$('gmWrap').style.display='none';
+    const L=(window.__lyricsLines?window.__lyricsLines():lines)||[];
+    const cand=L.map((l,i)=>({l,i})).filter(o=>o.l.s&&o.l.words&&o.l.words.filter(w=>w.el.textContent.replace(/[^\p{L}\p{N}]/gu,'').length>=3).length>=3);
+    if(cand.length<4){body().innerHTML='<div class="msg">ต้องมีเนื้อเพลงที่ซิงก์เวลาของเพลงที่กำลังเล่นก่อน (เปิดเพลงและรอให้เนื้อเพลงขึ้น) แล้วกลับมาเล่นใหม่</div><div class="gmrow"><button class="btn on" id="gmMenu">เมนู</button></div>';$('gmMenu').onclick=menu;return}
+    const picks=shuf(cand).slice(0,6);let n=0,score=0;
+    const next=()=>{
+      if(mode!=='fill')return;if(n>=picks.length)return result('fill',score,picks.length,'เติมเนื้อเพลงเสร็จแล้ว');
+      const o=picks[n],words=o.l.words.map(w=>w.el.textContent);
+      const idxs=words.map((w,i)=>({w,i})).filter(x=>x.w.replace(/[^\p{L}\p{N}]/gu,'').length>=3);
+      const blanks=new Set(shuf(idxs).slice(0,Math.min(2,Math.max(1,Math.floor(idxs.length/3)))).map(x=>x.i));
+      const prev=L[o.i-1]&&L[o.i-1].s?'<div style="opacity:.55;font-size:14px;text-align:center">'+esc(L[o.i-1].s)+'</div>':'';
+      body().innerHTML='<div class="gminfo"><span>ข้อ '+(n+1)+' / '+picks.length+'</span><span>คะแนน '+score+'</span></div>'+prev+'<div class="gmfill" id="gmLine"></div><div class="gmrow"><button class="mini" id="gmListen">▶ ฟังท่อนนี้</button><button class="btn on" id="gmCheck" style="height:38px">ตรวจคำตอบ</button><button class="mini" id="gmSk">ข้าม</button></div>';
+      const box=$('gmLine'),inputs=[];
+      words.forEach((w,i)=>{
+        if(i)box.appendChild(document.createTextNode(' '));
+        if(blanks.has(i)){const inp=document.createElement('input');inp.type='text';inp.autocomplete='off';inp.spellcheck=false;inp.dataset.a=w;inp.style.width=Math.max(70,Math.min(170,w.length*17))+'px';box.appendChild(inp);inputs.push(inp)}
+        else box.appendChild(document.createTextNode(w));
+      });
+      if(inputs[0])setTimeout(()=>inputs[0].focus(),50);
+      $('gmListen').onclick=()=>{try{player.seekTo(Math.max(0,o.l.t-.3),true);player.playVideo()}catch(e){}};
+      let done=false;
+      const check=()=>{
+        if(done)return;done=true;let ok=0;
+        inputs.forEach(inp=>{const good=nz(inp.value)===nz(inp.dataset.a);inp.classList.add(good?'ok':'bad');if(good)ok++;else inp.value=inp.dataset.a;inp.disabled=true});
+        score+=ok;n++;T(next,ok===inputs.length?1200:2400);
+      };
+      $('gmCheck').onclick=check;$('gmSk').onclick=()=>{if(done)return;inputs.forEach(i=>i.value='');check()};
+      inputs.forEach((inp,k)=>inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(k<inputs.length-1)inputs[k+1].focus();else check()}}));
+    };
+    next();
+  }
+
+  // ===== 3) ใครฟังเยอะกว่า =====
+  function gVs(){
+    mode='vs';enter('ใครฟังเยอะกว่า');$('gmWrap').style.display='none';
+    const st=window.mergedStats();
+    const arr=Object.keys(st.p).map(id=>({id,t:st.p[id].t,a:st.p[id].a,s:st.p[id].s||0})).filter(x=>okId(x.id)&&x.t&&x.s>=60);
+    if(arr.length<6){body().innerHTML='<div class="msg">ต้องมีเพลงที่ฟังแล้วอย่างน้อย 6 เพลงก่อน ฟังเพลงต่ออีกสักพักแล้วกลับมาเล่นใหม่</div><div class="gmrow"><button class="btn on" id="gmMenu">เมนู</button></div>';$('gmMenu').onclick=menu;return}
+    let score=0,lives=3;
+    const next=()=>{
+      if(mode!=='vs')return;
+      let a,b,tries=0;do{a=arr[Math.floor(Math.random()*arr.length)];b=arr[Math.floor(Math.random()*arr.length)];tries++}while((a.id===b.id||Math.abs(a.s-b.s)<Math.max(a.s,b.s)*.12)&&tries<60);
+      if(a.id===b.id)return result('vs',score,0,'เพลงยังไม่พอจะเล่นต่อ');
+      body().innerHTML='<div class="gminfo"><span>คะแนน '+score+'</span><span>'+'❤️'.repeat(lives)+'🖤'.repeat(3-lives)+'</span></div><div class="gmq">เพลงไหนที่คุณฟังเยอะกว่า?</div><div class="gmvs"></div>';
+      const G=body().querySelector('.gmvs');let done=false;
+      [a,b].forEach(x=>{
+        const d=document.createElement('div');d.innerHTML='<img alt="" src="https://i.ytimg.com/vi/'+x.id+'/mqdefault.jpg"><b></b><i></i><em></em>';
+        const p=parse(x.t||'',x.a||'');d.querySelector('b').textContent=p.track||x.t;d.querySelector('i').textContent=p.artist||x.a||'';
+        d.onclick=()=>{
+          if(done)return;done=true;const win=x.s>=(x===a?b.s:a.s);
+          G.querySelectorAll('div').forEach((el,i)=>{const y=i?b:a;el.querySelector('em').textContent=Math.round(y.s/60)+' นาที'});
+          d.classList.add(win?'ok':'bad');
+          if(win)score++;else lives--;
+          T(()=>{if(lives<=0)result('vs',score,0,'หมดชีวิตแล้ว');else next()},1500);
+        };G.appendChild(d);
+      });
+    };
+    next();
+  }
+
+  // ===== modal =====
+  function open(){$('modal').classList.remove('show');$('gmModal').classList.add('show');menu()}
+  function close(){clearT();stopGp();mode='';$('gmModal').classList.remove('show')}
+  $('gmX').onclick=close;$('gmBack').onclick=menu;
+  $('gmModal').onclick=e=>{if(e.target===$('gmModal'))close()};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('gmModal').classList.contains('show'))close()});
+  window.openGames=open;
+
+  window.gmEl=function(){
+    const d=document.createElement('div');d.className='gmcard';
+    d.innerHTML='<div style="font-size:28px">🎮</div><div><b>มินิเกมจากเพลงของคุณ</b><span>ทายเพลง · เติมเนื้อเพลง · ใครฟังเยอะกว่า</span></div><div class="go">เล่นเลย</div>';
+    d.onclick=open;return d;
+  };
+  {const fy=$('fy'),ban=fy&&fy.querySelector('.rcban');if(ban&&!fy.querySelector('.gmcard')){const g=window.gmEl(),gc=fy.querySelector('.goalcard');(gc||ban).after(g)}}
 })();
 </script>
 </body>

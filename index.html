@@ -656,6 +656,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
     <div class="page" id="vdisc">
       <div id="fylist"></div>
       <div id="fy"></div>
+      <div id="gen"></div>
       <div id="rec"></div>
       <div id="hist"></div>
       <div id="charts"></div>
@@ -822,7 +823,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 <script>
 let pipWin=null;
 const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document.getElementById(id):null);
-const BUILD='2026-11-16.14';
+const BUILD='2026-11-16.15';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
@@ -1157,7 +1158,7 @@ function setTab(t){curTab=t;lsSet('lasttab',t);wake();document.body.dataset.tab=
   if((t==='disc'||t==='srch')&&!discInit){discInit=true;initDiscover()}
   if(t==='srch'){drawSH();setTimeout(()=>{if(!isMob())$('q').focus()},60)}
   $('app').classList.toggle('nosearch',t==='now');
-  if(t==='disc'){drawHist();drawRec();window.drawFY&&drawFY()}
+  if(t==='disc'){drawHist();drawRec();window.drawFY&&drawFY();window.drawGen&&drawGen()}
   if(t==='lib')drawLib();
   if(t==='now')setTimeout(()=>scrollTo(actI),60);
 }
@@ -3411,6 +3412,59 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
   const tgt=startMode==='last'?(ls('lasttab')||'disc'):startMode;
   if(!location.hash.startsWith('#import=')&&['now','disc','srch','lib'].includes(tgt)&&tgt!=='now')setTab(tgt);
   else if(tgt==='disc')setTab('disc');
+})();
+
+/* ---------- แนวเพลง (K-pop / T-pop / Hip-hop ...) ---------- */
+(function(){
+  const G=[
+    {n:'K-pop',q:['k-pop hits','kpop top','k-pop'],cc:'kr'},
+    {n:'T-pop',q:['t-pop hits','thai pop hits','เพลงไทยฮิต'],cc:'th'},
+    {n:'ไทยป๊อป',q:['เพลงไทย ป๊อป','thai pop','เพลงไทยใหม่'],cc:'th'},
+    {n:'ฮิปฮอปไทย',q:['thai hip hop','thai rap','แร็พไทย'],cc:'th'},
+    {n:'Hip-hop',q:['hip hop hits','rap hits','hip-hop'],cc:'us'},
+    {n:'Pop',q:['pop hits','today pop','top pop'],cc:'us'},
+    {n:'R&B',q:['r&b hits','rnb','r&b'],cc:'us'},
+    {n:'Lo-fi',q:['lofi','lo-fi beats','chill lofi'],cc:'us'}
+  ];
+  let cur=ls('gen')||'K-pop';if(!G.some(x=>x.n===cur))cur='K-pop';
+  async function fetchGenre(g){
+    const key='gen:'+g.n;
+    try{const c=JSON.parse(ls(key)||'null');if(c&&Date.now()-c.t<12*3600*1000&&c.items&&c.items.length)return c.items}catch(e){}
+    for(const q of g.q){
+      try{
+        const r=await dz('/search/playlist?q='+enc(q)+'&limit=8');
+        const pl=((r&&r.data)||[]).filter(x=>x.nb_tracks>=15).sort((a,b)=>(b.fans||0)-(a.fans||0)||(b.nb_tracks-a.nb_tracks))[0];
+        if(!pl)continue;
+        const t=await dz('/playlist/'+pl.id+'/tracks?limit=40');
+        const seen=new Set(),items=((t&&t.data)||[]).filter(x=>x&&x.artist&&x.title).map(x=>mkDz(x,x.artist.id)).filter(x=>{const k=tkey(x);if(seen.has(k))return false;seen.add(k);return true}).slice(0,30);
+        if(items.length>=8){lsSet(key,JSON.stringify({t:Date.now(),items}));return items}
+      }catch(e){}
+    }
+    return null;
+  }
+  async function drawGen(){
+    const box=$('gen');if(!box)return;
+    box.innerHTML='<h3>แนวเพลง</h3><div class="chips" id="genTabs"></div><div id="genBody"></div>';
+    const tabs=$('genTabs');
+    G.forEach(g=>{const b=document.createElement('button');b.className='chip';b.textContent=g.n;if(g.n===cur){b.style.background='#fff';b.style.color='#111'}
+      b.onclick=()=>{cur=g.n;lsSet('gen',cur);drawGen()};tabs.appendChild(b)});
+    const g=G.find(x=>x.n===cur),body=$('genBody');
+    body.innerHTML='<div class="msg">กำลังโหลดเพลง '+g.n+'…</div>';
+    const items=await fetchGenre(g);
+    if(cur!==g.n)return;
+    if(!items){body.innerHTML='';const m=document.createElement('div');m.className='msg';m.textContent='โหลดเพลย์ลิสต์แนวนี้ไม่ได้ตอนนี้ ';
+      const b1=document.createElement('button');b1.className='mini';b1.textContent='ลองใหม่';b1.onclick=drawGen;
+      const b2=document.createElement('button');b2.className='mini';b2.style.marginLeft='6px';b2.textContent='ค้นหาใน YouTube';b2.onclick=()=>doSearch(g.n+' เพลงฮิต');
+      m.append(b1,b2);body.appendChild(m);return}
+    body.innerHTML='<div class="fyh"><h3 style="margin:8px 0">'+g.n+' ยอดนิยม</h3><button class="mini" id="genPlay">▶ เล่นทั้งหมด</button><button class="mini" id="genShuf">สุ่ม</button></div><div class="row"></div>';
+    const row=body.querySelector('.row');
+    items.forEach(it=>{const c=songCard(it.art||'',it.title,it.author);c.onclick=()=>{playNow(Object.assign({},it));setTab('now')};row.appendChild(c)});
+    wrapRow(row);
+    $('genPlay').onclick=()=>playPl({items:items.map(x=>Object.assign({},x))},0,false);
+    $('genShuf').onclick=()=>playPl({items:items.map(x=>Object.assign({},x))},0,true);
+  }
+  window.drawGen=drawGen;
+  if(curTab==='disc')drawGen();
 })();
 </script>
 </body>

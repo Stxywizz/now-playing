@@ -318,6 +318,9 @@ input[type=range]:hover{height:6px}
 #help h3{margin:0 0 12px;font-size:17px}
 #help .kv{display:grid;grid-template-columns:auto 1fr;gap:7px 18px;font-size:14px;color:var(--dim)}
 #help kbd{background:rgba(255,255,255,.12);border-radius:7px;padding:2px 9px;color:#fff;font-family:inherit;font-size:13px;justify-self:start}
+.panel{max-height:88vh}
+.panel>*{flex-shrink:0}
+.panel>.row:last-child{position:sticky;bottom:-24px;margin:0 -24px -24px;padding:14px 24px;background:rgba(16,22,40,.98);border-top:1px solid rgba(255,255,255,.08);border-radius:0 0 22px 22px}
 .panel .note{font-size:12px;color:var(--dim);line-height:1.6;margin:4px 0}
 .panel .row{display:flex;gap:8px}
 @media (max-width:1000px){#app.lyr{grid-template-columns:minmax(0,1fr) 340px}}
@@ -415,7 +418,7 @@ input[type=range]:hover{height:6px}
     <li>สร้างโปรเจกต์ใหม่ (ชื่ออะไรก็ได้) แล้วกด Enable ที่ "YouTube Data API v3"</li>
     <li>ไปที่ Credentials → Create credentials → API key แล้วคัดลอกมาวางด้านบน</li>
   </ol>
-  <p>ถ้ายังไม่ใส่ key แอปจะลองค้นหาผ่านบริการสำรองให้ก่อน (อาจใช้ไม่ได้บางช่วง) และวางลิงก์เพลงหรือเพลย์ลิสต์เล่นได้ตามปกติ</p>
+  <p>ถ้าไม่ใส่ key ให้ติ๊กเปิดบริการสำรอง Piped ด้านบนแทน (ไม่เป็นทางการ อาจใช้ไม่ได้บางช่วง) การวางลิงก์เพลงหรือเพลย์ลิสต์เล่นได้ตามปกติโดยไม่ต้องใช้ทั้งสองอย่าง</p>
   <div class="row"><button class="btn" id="setCancel">ปิด</button><button class="btn on" id="setSave">บันทึก</button></div>
 </div></div>
 <div id="edModal"><div class="panel">

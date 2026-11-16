@@ -642,16 +642,21 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
       <button class="btn ico" id="fsBtn" title="เต็มจอ (F)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
       <button class="btn ico" id="setBtn" title="ตั้งค่า"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
     </div>
-    <div class="tabs"><button id="tnow" class="on">กำลังเล่น</button><button id="tdisc">ค้นพบ</button><button id="tlib">เพลย์ลิสต์</button></div></div>
+    <div class="tabs"><button id="tnow" class="on">กำลังเล่น</button><button id="tdisc">ค้นพบ</button><button id="tsrch">ค้นหา</button><button id="tlib">เพลย์ลิสต์</button></div></div>
     <div class="stage" id="stage">
       <div class="video"><div id="yt"></div><div class="ph" id="ph">ค้นหาเพลง หรือวางลิงก์ YouTube ด้านบนเพื่อเริ่มเล่น</div></div>
       <div class="coverwrap"><img class="cover" id="cover" alt=""></div>
     </div>
-    <div class="page" id="vdisc">
-      <div id="rec"></div>
+    <div class="page" id="vsrch">
+      <div id="shist"></div>
       <div id="srch"></div>
-      <div id="fy"></div>
       <h3>แนะนำให้ลอง</h3><div class="chips" id="chips"></div>
+      <div class="msg" id="shint">พิมพ์ชื่อเพลง ศิลปิน หรือวางลิงก์ YouTube ในช่องค้นหาด้านบน แล้วกด Enter</div>
+    </div>
+    <div class="page" id="vdisc">
+      <div id="fylist"></div>
+      <div id="fy"></div>
+      <div id="rec"></div>
       <div id="hist"></div>
       <div id="charts"></div>
     </div>
@@ -817,7 +822,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 <script>
 let pipWin=null;
 const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document.getElementById(id):null);
-const BUILD='2026-11-16.13';
+const BUILD='2026-11-16.14';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
@@ -1146,15 +1151,17 @@ document.body.dataset.tab='now';
 function setTab(t){curTab=t;lsSet('lasttab',t);wake();document.body.dataset.tab=t;
   $('stage').style.display=(t==='now'||isMob())?'':'none';
   $('vdisc').style.display=t==='disc'?'block':'none';
+  $('vsrch').style.display=t==='srch'?'block':'none';
   $('vlib').style.display=t==='lib'?'block':'none';
-  ['now','disc','lib'].forEach(k=>$('t'+k).classList.toggle('on',k===t));
-  if(t==='disc'&&!discInit){discInit=true;initDiscover()}
+  ['now','disc','srch','lib'].forEach(k=>$('t'+k).classList.toggle('on',k===t));
+  if((t==='disc'||t==='srch')&&!discInit){discInit=true;initDiscover()}
+  if(t==='srch'){drawSH();setTimeout(()=>{if(!isMob())$('q').focus()},60)}
   $('app').classList.toggle('nosearch',t==='now');
   if(t==='disc'){drawHist();drawRec();window.drawFY&&drawFY()}
   if(t==='lib')drawLib();
   if(t==='now')setTimeout(()=>scrollTo(actI),60);
 }
-$('tnow').onclick=()=>setTab('now');$('tdisc').onclick=()=>setTab('disc');$('tlib').onclick=()=>setTab('lib');
+$('tnow').onclick=()=>setTab('now');$('tdisc').onclick=()=>setTab('disc');$('tsrch').onclick=()=>setTab('srch');$('tlib').onclick=()=>setTab('lib');
 
 /* ---------- search backends ---------- */
 const PIPED=['https://pipedapi.kavin.rocks','https://pipedapi.adminforge.de','https://api.piped.private.coffee','https://pipedapi.leptons.xyz'];
@@ -1210,12 +1217,20 @@ function songCard(img,title,sub){
 }
 
 /* ---------- discover ---------- */
+function drawSH(){
+  const b=$('shist');b.innerHTML='';let h=[];try{h=JSON.parse(ls('sh')||'[]')}catch(e){}
+  if(!h.length)return;
+  b.innerHTML='<div class="shead"><h3>ค้นหาล่าสุด</h3><button class="mini">ล้าง</button></div><div class="chips"></div>';
+  b.querySelector('button').onclick=()=>{lsSet('sh','[]');drawSH()};
+  const c=b.querySelector('.chips');h.forEach(q=>{const x=document.createElement('button');x.className='chip';x.textContent=q;x.onclick=()=>{$('q').value=q;doSearch(q)};c.appendChild(x)});
+}
 async function doSearch(q){
-  setTab('disc');
+  setTab('srch');$('shint').style.display='none';
+  {let h=[];try{h=JSON.parse(ls('sh')||'[]')}catch(e){}h=[q].concat(h.filter(x=>x!==q)).slice(0,10);lsSet('sh',JSON.stringify(h));drawSH()}
   const box=$('srch');
   box.innerHTML='<div class="shead"><h3></h3><button class="mini">ปิด</button></div><div class="msg">กำลังค้นหา…</div>';
   box.querySelector('h3').textContent='ผลการค้นหา “'+q+'”';
-  box.querySelector('button').onclick=()=>{box.innerHTML=''};
+  box.querySelector('button').onclick=()=>{box.innerHTML='';$('shint').style.display=''};
   const r=await ytSearch(q);
   const msg=box.querySelector('.msg');if(!msg)return;
   if(r===null){
@@ -1421,7 +1436,7 @@ $('repBtn').onclick=()=>{repeat=(repeat+1)%3;lsSet('rep',repeat);drawModes();toa
 $('autoBtn').onclick=()=>{autoplayOn=!autoplayOn;lsSet('auto',autoplayOn?'1':'0');drawModes();toast(autoplayOn?'เปิด: เล่นเพลงแนะนำต่อเองเมื่อคิวหมด':'ปิดการเล่นเพลงแนะนำต่อเอง');if(autoplayOn)ensureUpcoming()};
 $('vol').addEventListener('input',e=>{vol=+e.target.value;muted=false;lsSet('vol',vol);applyVol()});
 $('volBtn').onclick=()=>{muted=!muted;applyVol()};
-$('srchBtn').onclick=()=>{setTab('disc');setTimeout(()=>$('q').focus(),60)};
+$('srchBtn').onclick=()=>{setTab('srch');setTimeout(()=>$('q').focus(),60)};
 drawModes();applyVol();
 
 /* ---------- ad detection ---------- */
@@ -2819,7 +2834,7 @@ if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'
     return [
       act('เล่น / หยุด',toggle,'Space'),act('เพลงถัดไป',()=>next(false),'N'),act('เพลงก่อนหน้า',prev,'P'),
       act('เปิด/ปิดเนื้อเพลง',()=>$('lyBtn').click(),'L'),act('แชร์เพลง / เนื้อเพลงเป็นรูป',shOpen),
-      act('รีแคปการฟังของฉัน',()=>openRecap()),act('ไปหน้า: กำลังเล่น',()=>setTab('now')),act('ไปหน้า: ค้นพบ',()=>setTab('disc')),act('ไปหน้า: เพลย์ลิสต์',()=>setTab('lib')),
+      act('รีแคปการฟังของฉัน',()=>openRecap()),act('ไปหน้า: กำลังเล่น',()=>setTab('now')),act('ไปหน้า: ค้นพบ',()=>setTab('disc')),act('ไปหน้า: ค้นหา',()=>setTab('srch')),act('ไปหน้า: เพลย์ลิสต์',()=>setTab('lib')),
       act('เปิด/ปิดคิวเพลง',()=>$('qBtn').click(),'Q'),act('สลับสุ่มเพลง',()=>$('shufBtn').click(),'S'),act('สลับวนซ้ำ',()=>$('repBtn').click(),'R'),
       act('สลับเล่นเพลงแนะนำต่ออัตโนมัติ',()=>$('autoBtn').click()),act('โหมดภาพ: MV',()=>$('mvBtn').click()),act('โหมดภาพ: ปก',()=>$('cvBtn').click()),
       act('ถูกใจ / เลิกถูกใจเพลงนี้',()=>$('likeBtn').click()),act('บันทึกคิวเป็นเพลย์ลิสต์',()=>$('svBtn').click()),
@@ -3177,7 +3192,7 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
 
   // ---------- รายการเพลง (แสดงในกล่อง #srch) ----------
   function showList(title,items,numbered){
-    const box=$('srch');
+    const box=$('fylist');
     box.innerHTML='<div class="shead"><h3></h3><button class="mini" id="lsPlay">▶ เล่นทั้งหมด</button><button class="mini" id="lsShuf">สุ่ม</button><button class="mini" id="lsSave">บันทึกเป็นเพลย์ลิสต์</button><button class="mini" id="lsX">ปิด</button></div>';
     box.querySelector('h3').textContent=title;
     $('lsX').onclick=()=>{box.innerHTML=''};
@@ -3394,7 +3409,7 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
   // ---------- หน้าแรกตอนเปิดแอป ----------
   const startMode=ls('start')||'disc';
   const tgt=startMode==='last'?(ls('lasttab')||'disc'):startMode;
-  if(!location.hash.startsWith('#import=')&&['now','disc','lib'].includes(tgt)&&tgt!=='now')setTab(tgt);
+  if(!location.hash.startsWith('#import=')&&['now','disc','srch','lib'].includes(tgt)&&tgt!=='now')setTab(tgt);
   else if(tgt==='disc')setTab('disc');
 })();
 </script>

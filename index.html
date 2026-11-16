@@ -699,6 +699,11 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
     </div>
       <label><input type="checkbox" id="pipedChk"> เปิดบริการสำรอง Piped สำหรับค้นหา/แนะนำเพลง/คำบรรยาย (ไม่เป็นทางการ อาจขัดเงื่อนไข YouTube)</label>
       <p id="keyMsg" style="color:#ffb4b4"></p>
+    <div>
+      <label><input type="checkbox" id="dcChk"> ส่งสถานะ “กำลังฟัง” ไปที่ Discord</label>
+      <p class="note" style="margin-top:6px">ต้องเปิดโปรแกรมตัวช่วยบนคอมค้างไว้ (ไฟล์ Start-Discord-Presence.bat) และเปิดแอป Discord แบบเดสก์ท็อป</p>
+      <div class="row" style="justify-content:flex-start"><button class="btn" id="dcTest" style="height:36px">ทดสอบการเชื่อมต่อ</button><span class="tres" id="dcRes"></span></div>
+    </div>
     <details><summary>วิธีสร้าง YouTube API key</summary>
     <ol>
     <li>เปิด <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">console.cloud.google.com</a> แล้วล็อกอินบัญชี Google</li>
@@ -738,7 +743,7 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 <script>
 let pipWin=null;
 const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document.getElementById(id):null);
-const BUILD='2026-11-16.9';
+const BUILD='2026-11-16.10';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
@@ -990,8 +995,10 @@ function finishImport(){
 }
 
 /* ---------- settings ---------- */
-function openSettings(msg){setSecTab('gen');$('spSel').value=String(spd);updChips();$('keyRes').textContent='';$('wkRes').textContent='';$('divSel').value=divMode?'1':'0';$('lzSel').value=String(lz);$('slSel').value='0';$('miniChk').checked=miniOn;$('pipedChk').checked=usePiped;$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
+function openSettings(msg){$('dcChk').checked=dcOn;$('dcRes').textContent='';setSecTab('gen');$('spSel').value=String(spd);updChips();$('keyRes').textContent='';$('wkRes').textContent='';$('divSel').value=divMode?'1':'0';$('lzSel').value=String(lz);$('slSel').value='0';$('miniChk').checked=miniOn;$('pipedChk').checked=usePiped;$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
 let spd=+(ls('spd')||1)||1;
+const DC='http://127.0.0.1:6742';let dcOn=ls('dc')==='1',dcSig='',dcStart=0,dcFail=0;
+function dcPost(path,obj){return fetch(DC+path,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(obj)}).then(r=>{dcFail=0;return r}).catch(()=>{dcFail++})}
 function setSecTab(t){$('setTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));document.querySelectorAll('#modal .sec').forEach(x=>x.classList.toggle('on',x.dataset.s===t))}
 $('setTabs').onclick=e=>{const b=e.target.closest('button');if(b)setSecTab(b.dataset.t)};
 function updChips(){
@@ -1029,10 +1036,17 @@ $('rstBtn').onclick=()=>{
 $('spSel').onchange=()=>{spd=+$('spSel').value||1;lsSet('spd',String(spd));applySpeed()};
 function applySpeed(){try{if(ready&&player.setPlaybackRate)player.setPlaybackRate(spd)}catch(e){}}
 window.cycleSpeed=()=>{const L=[0.75,0.9,1,1.1,1.25,1.5];spd=L[(L.indexOf(spd)+1)%L.length]||1;lsSet('spd',String(spd));applySpeed();toast('ความเร็ว '+spd+'×')};
+$('dcTest').onclick=async()=>{
+  res($('dcRes'),'กำลังทดสอบ…');
+  try{const r=await fetch(DC+'/ping');const j=await r.json();
+    res($('dcRes'),j.discord?'เชื่อมต่อ Discord แล้ว ✓':'เจอโปรแกรมตัวช่วย แต่ยังไม่เจอแอป Discord (เปิด Discord เดสก์ท็อปไว้)',j.discord?'ok':'bad')}
+  catch(e){res($('dcRes'),'ไม่เจอโปรแกรมตัวช่วย: เปิด Start-Discord-Presence.bat ก่อน','bad')}
+};
 $('setBtn').onclick=()=>openSettings();
 $('setCancel').onclick=()=>$('modal').classList.remove('show');
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')$('modal').classList.remove('show')});
 $('setSave').onclick=()=>{
+  dcOn=$('dcChk').checked;lsSet('dc',dcOn?'1':'0');if(!dcOn)dcPost('/clear',{});dcSig='';
   divMode=$('divSel').value==='1';lsSet('div',divMode?'1':'0');
   apiKey=$('keyIn').value.trim();lsSet('key',apiKey);wk=$('wkIn').value.trim().replace(/\/+$/,'');lsSet('wk',wk);
   lz=+$('lzSel').value||1;lsSet('lz',String(lz));document.documentElement.style.setProperty('--lz',lz);
@@ -1624,7 +1638,7 @@ function toggleFS(){try{document.fullscreenElement?document.exitFullscreen():doc
 $('fsBtn').onclick=toggleFS;
 if(!(document.fullscreenEnabled||document.webkitFullscreenEnabled))$('fsBtn').style.display='none';
 const helpEl=$('help');helpEl.onclick=e=>{if(e.target===helpEl)helpEl.classList.remove('show')};
-const BK=/^(spd|lyon|stats|shopt|skips|div|pls|hist|q|idx|view|theme|shuf|rep|auto|vol|bg|mini|ff|lz|wk|piped|off:.*|ly:.*|viz:.*|bpmu:.*)$/;
+const BK=/^(dc|spd|lyon|stats|shopt|skips|div|pls|hist|q|idx|view|theme|shuf|rep|auto|vol|bg|mini|ff|lz|wk|piped|off:.*|ly:.*|viz:.*|bpmu:.*)$/;
 $('expBtn').onclick=()=>{
   const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(BK.test(k))d[k]=localStorage.getItem(k)}}catch(e){}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({v:1,data:d})],{type:'application/json'}));
@@ -2767,6 +2781,26 @@ if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'
   },true);
   $('cmdBtn').onclick=()=>{$('modal').classList.remove('show');openK()};
 })();
+
+/* ---------- Discord Rich Presence (ผ่านโปรแกรมตัวช่วยในเครื่อง) ---------- */
+setInterval(()=>{
+  if(!dcOn||dcFail>=5&&Date.now()%30000>2500)return;
+  try{
+    const it=queue[idx];if(!ready||!it){return}
+    const pl=playing&&!inAd;
+    const cur=player.getCurrentTime()||0,dur=player.getDuration()||0;
+    const start=Date.now()-cur*1000;
+    const sig=it.id+'|'+pl;
+    if(sig===dcSig&&Math.abs(start-dcStart)<2500)return;
+    dcSig=sig;dcStart=start;
+    const title=(curP&&curP.track)||it.title||$('ttl').textContent||'';
+    const artist=(curP&&curP.artist)||(it.author||$('art').textContent||'').replace(/\s*-\s*Topic$/i,'');
+    let cover=it.art||artUrl||'';
+    if(!/^https?:/.test(cover)||/^data:/.test(cover))cover=(it.id&&!String(it.id).startsWith('dz:'))?'https://i.ytimg.com/vi/'+it.id+'/hqdefault.jpg':'';
+    dcPost('/presence',{title,artist,cover,url:it.id&&!String(it.id).startsWith('dz:')?'https://www.youtube.com/watch?v='+it.id:'',start:Math.round(start),end:dur?Math.round(start+dur*1000):0,playing:pl});
+  }catch(e){}
+},2000);
+addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','{}')}catch(e){}}});
 </script>
 </body>
 </html>

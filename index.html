@@ -308,6 +308,10 @@ input[type=range]:hover{height:6px}
 
 /* ---------- v13 ---------- */
 .ln{font-size:calc(31px*var(--lz,1))}.ln.gap{font-size:calc(24px*var(--lz,1))}.lin.plain{font-size:calc(20px*var(--lz,1))}
+.card{transition:background .9s ease,border-color .9s ease,box-shadow .9s ease,backdrop-filter .9s ease,-webkit-backdrop-filter .9s ease}
+.topbar,.card .prog,.ctl,.vol,.cact,.cactL,.lyrics header,.viztools,.lychoice{transition:opacity .9s ease}
+body.idle .card{background:transparent;border-color:transparent;box-shadow:none;backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px)}
+body.idle .card .title,body.idle .card .artist{text-shadow:0 2px 18px rgba(0,0,0,.55)}
 @keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes cin{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
 .card .title.swap,.card .artist.swap{animation:tin .55s cubic-bezier(.2,.9,.25,1)}

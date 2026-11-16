@@ -414,7 +414,8 @@ body.idle .card .title,body.idle .card .artist{text-shadow:0 2px 18px rgba(0,0,0
   </aside>
 <div id="shModal"><div class="shbox">
   <div class="shl"><h3>แชร์เนื้อเพลงลงสตอรี่</h3>
-    <p class="note">แตะเลือกบรรทัดที่อยากแชร์ (สูงสุด 6 บรรทัด แนะนำท่อนสั้นๆ)</p>
+    <div class="seg" id="shStyle" style="align-self:flex-start"><button data-s="lyrics" class="on">เนื้อเพลง</button><button data-s="card">การ์ดเพลง (ไม่มีเนื้อ)</button></div>
+    <p class="note" id="shNote">แตะเลือกบรรทัดที่อยากแชร์ (สูงสุด 6 บรรทัด แนะนำท่อนสั้นๆ)</p>
     <div id="shLines"></div>
     <div class="seg" id="shSeg" style="align-self:flex-start"><button data-r="story" class="on">สตอรี่ 9:16</button><button data-r="square">โพสต์ 1:1</button></div>
   </div>
@@ -480,7 +481,7 @@ body.idle .card .title,body.idle .card .artist{text-shadow:0 2px 18px rgba(0,0,0
 <script>
 let pipWin=null;
 const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document.getElementById(id):null);
-const BUILD='2026-11-16.2';
+const BUILD='2026-11-16.3';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
@@ -1341,14 +1342,13 @@ setTimeout(checkUpdate,8000);setInterval(checkUpdate,10*60*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()});
 
 /* ---------- แชร์เนื้อเพลงเป็นภาพ ---------- */
-let shSel=[],shRatio='story',shLinesTxt=[];
+let shSel=[],shRatio='story',shStyle='lyrics',shLinesTxt=[];
 function shSource(){
   if(lines.length)return lines.map(l=>(l.s||'').trim());
   return (curPlain||'').split(/\n+/).map(x=>x.trim());
 }
 function shOpen(){
   const src=shSource();
-  if(!src.some(Boolean)){toast('ยังไม่มีเนื้อเพลงให้แชร์');return}
   shLinesTxt=src;
   const box=$('shLines');box.innerHTML='';
   src.forEach((t,i)=>{
@@ -1367,6 +1367,8 @@ function shOpen(){
   if(a>=0&&src[a]){shSel.push(a);if(src[a+1])shSel.push(a+1)}
   box.querySelectorAll('div').forEach(d=>d.classList.toggle('on',shSel.includes(+d.dataset.i)));
   const first=box.querySelector('div.on');if(first)setTimeout(()=>first.scrollIntoView({block:'center'}),0);
+  if(!src.some(Boolean)){shStyle='card'}
+  shSetStyle(shStyle);
   $('shShare').style.display=(navigator.canShare&&navigator.share)?'':'none';
   $('shModal').classList.add('show');shDraw();
 }
@@ -1384,6 +1386,91 @@ function shWrap(ctx,text,maxW){
   return out;
 }
 let shSeq=0;
+
+function shSetStyle(st){
+  shStyle=st;
+  $('shStyle').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.s===st));
+  $('shLines').style.display=st==='lyrics'?'':'none';
+  $('shNote').style.display=st==='lyrics'?'':'none';
+  shDraw();
+}
+$('shStyle').onclick=e=>{const b=e.target.closest('button');if(b)shSetStyle(b.dataset.s)};
+function shMark(ctx,W,H,ff){
+  ctx.save();ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='500 24px '+ff;
+  try{ctx.letterSpacing='3px'}catch(e){}
+  ctx.fillText('Now-Playing by ppozx',W/2,H-(H>1500?78:44));
+  ctx.restore();
+}
+function shGrain(ctx,W,H){
+  ctx.save();
+  for(let i=0;i<9000;i++){ctx.fillStyle='rgba(255,255,255,'+(Math.random()*.05).toFixed(3)+')';ctx.fillRect(Math.random()*W,Math.random()*H,1.6,1.6)}
+  ctx.restore();
+}
+function shFmt(t){t=Math.max(0,Math.round(t));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')}
+function shCard(ctx,W,H,img,ff){
+  const story=H>1500;
+  // ขอบมืดแบบวิกเนตต์ + แสงฟุ้ง
+  const v=ctx.createRadialGradient(W/2,H*.38,H*.12,W/2,H*.5,H*.82);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.55)');
+  ctx.fillStyle=v;ctx.fillRect(0,0,W,H);
+  const lg=ctx.createLinearGradient(0,0,W,H*.5);lg.addColorStop(0,'rgba(255,255,255,.12)');lg.addColorStop(.5,'rgba(255,255,255,0)');
+  ctx.fillStyle=lg;ctx.fillRect(0,0,W,H);
+  shGrain(ctx,W,H);
+  const cover=story?800:470,cx=story?(W-cover)/2:84,cy=story?250:120;
+  // เรืองแสงสีปกด้านหลัง
+  if(img){try{ctx.save();ctx.filter='blur(46px) saturate(1.7)';ctx.globalAlpha=.75;ctx.drawImage(img,cx+14,cy+44,cover-28,cover-28);ctx.restore()}catch(e){ctx.restore()}}
+  ctx.save();ctx.beginPath();ctx.roundRect(cx,cy,cover,cover,story?60:44);ctx.fillStyle='rgba(255,255,255,.14)';ctx.fill();ctx.restore();
+  if(img){ctx.save();ctx.beginPath();ctx.roundRect(cx,cy,cover,cover,story?60:44);ctx.clip();
+    const sc=Math.max(cover/img.width,cover/img.height);ctx.drawImage(img,cx+cover/2-img.width*sc/2,cy+cover/2-img.height*sc/2,img.width*sc,img.height*sc);ctx.restore()}
+  ctx.save();ctx.beginPath();ctx.roundRect(cx,cy,cover,cover,story?60:44);ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=2;ctx.stroke();ctx.restore();
+  // ป้าย NOW PLAYING + อีควอไลเซอร์เล็ก
+  ctx.save();ctx.textBaseline='middle';ctx.fillStyle='rgba(255,255,255,.8)';ctx.font='600 26px '+ff;
+  try{ctx.letterSpacing='7px'}catch(e){}
+  const lab='NOW PLAYING';
+  const lx=story?W/2:cx+cover+60,ly=story?150:cy+30;
+  ctx.textAlign=story?'center':'left';
+  const lw=ctx.measureText(lab).width;
+  const bx=story?lx-lw/2-52:lx,tx=story?lx+26:lx+46;
+  [18,30,22].forEach((h,i)=>{ctx.fillStyle='#fff';ctx.beginPath();ctx.roundRect(bx+i*12,ly-h/2,6,h,3);ctx.fill()});
+  ctx.fillStyle='rgba(255,255,255,.8)';ctx.fillText(lab,story?lx+26:tx,ly);ctx.restore();
+  // ชื่อเพลง / ศิลปิน
+  const title=(curP&&curP.track&&curP.fromTitle?curP.track:($('ttl').textContent||'')).replace(/\s*[\(\[【][^\)\]】]*(official|mv|m\/v|lyric|audio|video)[^\)\]】]*[\)\]】]/ig,'').trim();
+  const art=$('art').textContent||(curP&&curP.artist)||'';
+  const tx0=story?150:cx+cover+60,maxW=story?W-300-90:W-tx0-70;
+  ctx.textAlign='left';ctx.textBaseline='top';
+  let fs=story?72:58,wl=[];
+  for(;fs>=34;fs-=4){ctx.font='700 '+fs+'px '+ff;wl=shWrap(ctx,title,maxW);if(wl.length<=2)break}
+  wl=wl.slice(0,2);
+  let ty=story?cy+cover+80:cy+86;
+  ctx.fillStyle='#fff';ctx.shadowColor='rgba(0,0,0,.3)';ctx.shadowBlur=20;
+  wl.forEach(l=>{ctx.fillText(l,tx0,ty);ty+=fs*1.2});
+  ctx.shadowBlur=0;
+  ctx.fillStyle='rgba(255,255,255,.7)';ctx.font='500 '+(story?44:36)+'px '+ff;
+  let an=art;while(ctx.measureText(an).width>maxW&&an.length>3)an=an.slice(0,-2);if(an!==art)an+='…';
+  ctx.fillText(an,tx0,ty+10);
+  // หัวใจ
+  if($('likeBtn').classList.contains('on')&&story){
+    ctx.save();ctx.fillStyle='#ff6b8a';ctx.translate(W-150-46,cy+cover+96);
+    ctx.beginPath();ctx.moveTo(23,42);ctx.bezierCurveTo(-18,16,2,-12,23,8);ctx.bezierCurveTo(44,-12,64,16,23,42);ctx.fill();ctx.restore();
+  }
+  // แถบเวลา
+  let cur=0,dur=0;try{if(ready){cur=player.getCurrentTime()||0;dur=player.getDuration()||0}}catch(e){}
+  const p=dur>0?Math.min(1,cur/dur):.32;
+  const px=story?150:cx,pw=story?W-300:W-cx*2,py=story?1440:cy+cover+90;
+  ctx.fillStyle='rgba(255,255,255,.25)';ctx.beginPath();ctx.roundRect(px,py,pw,10,5);ctx.fill();
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.roundRect(px,py,Math.max(10,pw*p),10,5);ctx.fill();
+  ctx.font='500 26px '+ff;ctx.fillStyle='rgba(255,255,255,.6)';ctx.textBaseline='top';
+  ctx.textAlign='left';ctx.fillText(dur>0?shFmt(cur):'0:52',px,py+28);
+  ctx.textAlign='right';ctx.fillText(dur>0?'-'+shFmt(dur-cur):'-2:42',px+pw,py+28);
+  // ปุ่มควบคุม (ตกแต่ง)
+  const cyy=story?py+190:py+140,mid=W/2;
+  ctx.fillStyle='#fff';
+  const tri=(x,dir)=>{ctx.beginPath();ctx.moveTo(x+dir*30,cyy-30);ctx.lineTo(x-dir*22,cyy);ctx.lineTo(x+dir*30,cyy+30);ctx.closePath();ctx.fill();ctx.fillRect(x-dir*30-(dir>0?10:-4),cyy-30,6,60)};
+  ctx.beginPath();ctx.moveTo(mid-170+34,cyy-34);ctx.lineTo(mid-170-26,cyy);ctx.lineTo(mid-170+34,cyy+34);ctx.closePath();ctx.fill();
+  ctx.beginPath();ctx.moveTo(mid+170-34,cyy-34);ctx.lineTo(mid+170+26,cyy);ctx.lineTo(mid+170-34,cyy+34);ctx.closePath();ctx.fill();
+  ctx.fillRect(mid-170-36,cyy-34,7,68);ctx.fillRect(mid+170+29,cyy-34,7,68);
+  ctx.fillRect(mid-24,cyy-38,17,76);ctx.fillRect(mid+7,cyy-38,17,76);
+}
 async function shDraw(){
   const my=++shSeq,cv=$('shCv'),W=1080,H=shRatio==='story'?1920:1080;
   cv.width=W;cv.height=H;
@@ -1401,7 +1488,8 @@ async function shDraw(){
       const sc=Math.max(W,H)/Math.min(img.width,img.height)*1.25;
       ctx.drawImage(img,W/2-img.width*sc/2,H/2-img.height*sc/2,img.width*sc,img.height*sc);ctx.restore()}catch(e){ctx.restore()}
   }
-  ctx.fillStyle='rgba(0,0,0,.30)';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=shStyle==='card'?'rgba(0,0,0,.22)':'rgba(0,0,0,.30)';ctx.fillRect(0,0,W,H);
+  if(shStyle==='card'){shCard(ctx,W,H,img,ff);shMark(ctx,W,H,ff);return}
   const story=shRatio==='story',cover=story?520:300,cx=W/2-cover/2,cy=story?230:96;
   // ปก
   ctx.save();ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=60;ctx.shadowOffsetY=24;
@@ -1410,7 +1498,7 @@ async function shDraw(){
     const s=Math.max(cover/img.width,cover/img.height);ctx.drawImage(img,cx+cover/2-img.width*s/2,cy+cover/2-img.height*s/2,img.width*s,img.height*s);ctx.restore()}
   // เนื้อเพลง
   const txt=shSel.map(i=>shLinesTxt[i]).filter(Boolean);
-  const top=cy+cover+(story?90:60),bottom=H-(story?250:150),maxW=W-170;
+  const top=cy+cover+(story?90:60),bottom=H-(story?250:210),maxW=W-170;
   let fs=story?74:60,wrapped=[];
   for(;fs>=30;fs-=4){
     ctx.font='700 '+fs+'px '+ff;wrapped=[];
@@ -1430,9 +1518,10 @@ async function shDraw(){
   const art=$('art').textContent||'';
   ctx.fillStyle='#fff';ctx.font='700 '+(story?46:38)+'px '+ff;
   let tt=title;while(ctx.measureText(tt).width>W-140&&tt.length>4)tt=tt.slice(0,-2);if(tt!==title)tt+='…';
-  const by=H-(story?190:120);
+  const by=H-(story?190:170);
   ctx.fillText(tt,W/2,by);
   ctx.fillStyle='rgba(255,255,255,.72)';ctx.font='500 '+(story?38:32)+'px '+ff;ctx.fillText(art,W/2,by+(story?66:54));
+  shMark(ctx,W,H,ff);
 }
 $('shBtn').onclick=shOpen;
 $('shClose').onclick=()=>$('shModal').classList.remove('show');

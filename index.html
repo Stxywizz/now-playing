@@ -573,6 +573,19 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 .sec{display:none;flex-direction:column;gap:14px}.sec.on{display:flex}
 .chip2{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:99px;background:rgba(255,255,255,.1);margin-left:6px;vertical-align:1px}
 .chip2.ok{background:rgba(70,200,120,.22);color:#9ff0bf}.chip2.no{background:rgba(255,255,255,.1);color:var(--dim)}
+.dcprev{margin:10px 0;padding:12px;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.1)}
+.dcprev.off{opacity:.5}
+.dcprev .dp-h{font-size:11.5px;font-weight:700;letter-spacing:.02em;color:#c9d3ea;margin-bottom:8px}
+.dcprev .dp-b{display:flex;gap:11px;align-items:center}
+.dcprev img{width:58px;height:58px;border-radius:10px;object-fit:cover;background:rgba(255,255,255,.08);flex:none}
+.dcprev .dp-t{min-width:0;flex:1}
+.dcprev .dp-t #dpT{display:block;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dcprev .dp-t #dpA{display:block;font-size:12.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dcprev .dp-bar{height:4px;border-radius:9px;background:rgba(255,255,255,.14);margin-top:7px;overflow:hidden}
+.dcprev .dp-bar i{display:block;height:100%;background:#5865f2;width:0;transition:width .9s linear}
+.dcprev .dp-tm{font-size:11px;color:var(--dim);margin-top:3px}
+.dcprev .dp-btns{display:flex;gap:8px;margin-top:10px}
+.dcprev .dp-btns span{flex:1;text-align:center;font-size:12.5px;padding:7px 6px;border-radius:8px;background:rgba(255,255,255,.1)}
 .tres{font-size:13px;color:var(--dim);align-self:center}.tres.ok{color:#9ff0bf}.tres.bad{color:#ffb4b4}
 .panel details{font-size:13.5px}.panel summary{cursor:pointer;color:#9cc5ff;margin-bottom:6px}
 .ph .wl{display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 18px;max-width:520px}
@@ -850,9 +863,21 @@ body:not([data-tab="now"])[data-has="0"] .stage{display:none!important}
       <p id="keyMsg" style="color:#ffb4b4"></p>
     <h4 class="grp">Discord</h4>
     <div>
-      <label><input type="checkbox" id="dcChk"> ส่งสถานะ “กำลังฟัง” ไปที่ Discord</label>
-      <p class="note" style="margin-top:6px">ต้องเปิดโปรแกรมตัวช่วยบนคอมค้างไว้ (ไฟล์ Start-Discord-Presence.bat) และเปิดแอป Discord แบบเดสก์ท็อป</p>
+      <label><input type="checkbox" id="dcChk"> ส่งสถานะ “กำลังฟัง” ไปที่ Discord <span class="chip2 no" id="dcChip">ยังไม่ได้ตรวจ</span></label>
+      <div class="dcprev" id="dcPrev"><div class="dp-h" id="dpH">ตัวอย่างที่ Discord จะแสดง</div>
+        <div class="dp-b"><img id="dpImg" alt=""><div class="dp-t"><b id="dpT"></b><span id="dpA"></span><div class="dp-bar"><i id="dpBar"></i></div><div class="dp-tm" id="dpTm"></div></div></div>
+        <div class="dp-btns" id="dpBtns"></div></div>
+      <label><input type="checkbox" id="dcPauseChk"> ยังแสดงเพลงตอนกดหยุดชั่วคราว (ล้างเองหลังผ่านไป 10 นาที)</label>
+      <label><input type="checkbox" id="dcBtnChk"> แสดงปุ่ม “ฟังบน YouTube” และ “เปิดใน Now Playing”</label>
+      <p class="note" style="margin-top:6px">ใช้ได้กับ Discord เดสก์ท็อปบนคอมเท่านั้น (มือถือ/iPad ใช้ไม่ได้) ต้องเปิดโปรแกรมตัวช่วยค้างไว้ สถานะจะถูกล้างเองถ้าปิดเว็บแอป</p>
       <div class="row" style="justify-content:flex-start"><button class="btn" id="dcTest" style="height:36px">ทดสอบการเชื่อมต่อ</button><span class="tres" id="dcRes"></span></div>
+      <details><summary>วิธีตั้งค่า และการให้เปิดเองทุกครั้งที่เปิดคอม</summary>
+      <ol>
+      <li>ติดตั้ง Node.js (รุ่น LTS) จาก nodejs.org ครั้งเดียว</li>
+      <li>ดับเบิลคลิก <b>Start-Discord-Presence.bat</b> ในโฟลเดอร์ discord-helper ค้างไว้ แล้วติ๊กช่องด้านบน</li>
+      <li>อยากให้เปิดเองเงียบๆ ไม่มีหน้าต่าง: ดับเบิลคลิก <b>Install-Autostart.bat</b> ครั้งเดียว (เลิกใช้: Remove-Autostart.bat)</li>
+      <li>ถ้ามีปัญหา เปิดไฟล์ <b>presence.log</b> ในโฟลเดอร์เดียวกันดูได้</li>
+      </ol></details>
     </div>
     <details><summary>วิธีสร้าง YouTube API key</summary>
     <ol>
@@ -909,10 +934,12 @@ const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document
 window.__errs=[];
 addEventListener('error',e=>{try{__errs.push((e.message||'error')+' @'+(e.lineno||0));if(__errs.length>20)__errs.shift()}catch(_){}});
 addEventListener('unhandledrejection',e=>{try{__errs.push('promise: '+String((e.reason&&e.reason.message)||e.reason).slice(0,140));if(__errs.length>20)__errs.shift()}catch(_){}});
-const BUILD='2026-11-17.02';
+const BUILD='2026-11-17.03';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+/* ทุก fetch ที่ไม่ได้ตั้ง signal เอง จะหมดเวลาใน 20 วิ (กันค้างตลอดไปเมื่อเน็ตสะดุด) */
+(function(){const of=window.fetch.bind(window);window.fetch=(u,o)=>{o=o||{};if(o.signal)return of(u,o);const c=new AbortController(),t=setTimeout(()=>c.abort(),20000);return of(u,Object.assign({},o,{signal:c.signal})).finally(()=>clearTimeout(t))}})();
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
-const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu|gen):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.removeItem('fy');localStorage.setItem(k,v)}catch(e2){if(!lsSet.w){lsSet.w=1;setTimeout(()=>{try{toast('พื้นที่เก็บข้อมูลในเครื่องเต็ม บางอย่างอาจบันทึกไม่ได้ ลองล้างแคชใน ⚙ → ข้อมูล',6000)}catch(_){}},0)}}}};
 const enc=encodeURIComponent;
 const norm=s=>(s||'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'');
 const dec=s=>{const t=document.createElement('textarea');t.innerHTML=s;return t.value};
@@ -1169,7 +1196,7 @@ function finishImport(){
 }
 
 /* ---------- settings ---------- */
-function openSettings(msg){$('syncChk').checked=ls('syncon')==='1';$('syncCode').value=ls('synccode')||'';$('syncSt').textContent=ls('syncst')||'';$('syncSt').className='tres';$('trlSel').value=trLang;$('stSel').value=ls('start')||'disc';$('autoPlChk').checked=(ls('autopl')||'1')==='1';$('fadeChk').checked=ls('fade')!=='0';$('goalSel').value=ls('goal')||'0';drawBlkList();$('dcChk').checked=dcOn;$('dcRes').textContent='';setSecTab('gen');$('spSel').value=String(spd);updChips();$('keyRes').textContent='';$('wkRes').textContent='';$('divSel').value=divMode?'1':'0';$('lzSel').value=String(lz);$('slSel').value='0';$('miniChk').checked=miniOn;$('pipedChk').checked=usePiped;$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';$('modal').classList.add('show')}
+function openSettings(msg){$('syncChk').checked=ls('syncon')==='1';$('syncCode').value=ls('synccode')||'';$('syncSt').textContent=ls('syncst')||'';$('syncSt').className='tres';$('trlSel').value=trLang;$('stSel').value=ls('start')||'disc';$('autoPlChk').checked=(ls('autopl')||'1')==='1';$('fadeChk').checked=ls('fade')!=='0';$('goalSel').value=ls('goal')||'0';drawBlkList();$('dcChk').checked=dcOn;$('dcRes').textContent='';setSecTab('gen');$('spSel').value=String(spd);updChips();$('keyRes').textContent='';$('wkRes').textContent='';$('divSel').value=divMode?'1':'0';$('lzSel').value=String(lz);$('slSel').value='0';$('miniChk').checked=miniOn;$('pipedChk').checked=usePiped;$('bgSel').value=bgMode;$('ffSel').value=ffName;$('keyIn').value=apiKey;$('wkIn').value=wk;$('themeChk').checked=useTheme;$('keyMsg').textContent=msg||'';window.dcOpen&&dcOpen();$('modal').classList.add('show')}
 let spd=+(ls('spd')||1)||1;
 const DC='http://127.0.0.1:6742';let dcOn=ls('dc')==='1',dcSig='',dcStart=0,dcFail=0;
 function dcPost(path,obj){return fetch(DC+path,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(obj)}).then(r=>{dcFail=0;return r}).catch(()=>{dcFail++})}
@@ -1185,7 +1212,7 @@ $('setTabs').onclick=e=>{const b=e.target.closest('button');if(b)setSecTab(b.dat
 function updChips(){
   const k=$('keyIn').value.trim(),w=$('wkIn').value.trim();
   $('keyChip').textContent=k?'ตั้งแล้ว':'ยังไม่ตั้ง';$('keyChip').className='chip2 '+(k?'ok':'no');
-  $('wkChip').textContent=w?'ตั้งแล้ว':'ยังไม่ตั้ง';$('wkChip').className='chip2 '+(w?'ok':'no');
+  $('wkChip').textContent=w?(w===DEF_WK?'ค่าเริ่มต้น':'ตั้งแล้ว'):'ปิดอยู่';$('wkChip').className='chip2 '+(w?'ok':'no');
 }
 $('keyIn').addEventListener('input',updChips);$('wkIn').addEventListener('input',updChips);
 function res(el,msg,cls){el.textContent=msg;el.className='tres '+(cls||'')}
@@ -1218,10 +1245,11 @@ $('spSel').onchange=()=>{spd=+$('spSel').value||1;lsSet('spd',String(spd));apply
 function applySpeed(){try{if(ready&&player.setPlaybackRate)player.setPlaybackRate(spd)}catch(e){}}
 window.cycleSpeed=()=>{const L=[0.75,0.9,1,1.1,1.25,1.5];spd=L[(L.indexOf(spd)+1)%L.length]||1;lsSet('spd',String(spd));applySpeed();toast('ความเร็ว '+spd+'×')};
 $('dcTest').onclick=async()=>{
-  res($('dcRes'),'กำลังทดสอบ…');
-  try{const r=await fetch(DC+'/ping');const j=await r.json();
-    res($('dcRes'),j.discord?'เชื่อมต่อ Discord แล้ว ✓':'เจอโปรแกรมตัวช่วย แต่ยังไม่เจอแอป Discord (เปิด Discord เดสก์ท็อปไว้)',j.discord?'ok':'bad')}
-  catch(e){res($('dcRes'),'ไม่เจอโปรแกรมตัวช่วย: เปิด Start-Discord-Presence.bat ก่อน','bad')}
+  res($('dcRes'),'กำลังทดสอบ…');await dcPing();
+  if(!dcSt.ok)res($('dcRes'),'ไม่เจอโปรแกรมตัวช่วย: เปิด Start-Discord-Presence.bat ก่อน','bad');
+  else if(!dcSt.discord)res($('dcRes'),'เจอตัวช่วยแล้ว แต่ยังไม่เจอแอป Discord (เปิด Discord เดสก์ท็อปไว้)','bad');
+  else res($('dcRes'),(dcSt.v<2?'เชื่อมต่อแล้ว ✓ (ตัวช่วยเป็นรุ่นเก่า อัปเดตไฟล์ discord-presence.js เพื่อใช้ฟีเจอร์ใหม่)':'เชื่อมต่อ Discord แล้ว ✓'+(dcSt.user?' ('+dcSt.user+')':''))+(dcInfo()?'':' เปิดเพลงเพื่อดูสถานะ'),'ok');
+  dcSig='';
 };
 $('setBtn').onclick=()=>openSettings();
 $('setCancel').onclick=()=>$('modal').classList.remove('show');
@@ -1230,7 +1258,7 @@ $('setSave').onclick=()=>{
   {const on=$('syncChk').checked,c=$('syncCode').value.trim();const chg=(ls('synccode')||'')!==c||(ls('syncon')==='1')!==on;lsSet('syncon',on?'1':'0');lsSet('synccode',c);if(chg){lsSet('syncbase','');setTimeout(()=>window.syncCycle&&syncCycle(true),600)}}
   lsSet('start',$('stSel').value);lsSet('fade',$('fadeChk').checked?'1':'0');lsSet('goal',$('goalSel').value);window.goalTick&&goalTick();window.goalPlace&&goalPlace();{const a=$('autoPlChk').checked;lsSet('autopl',a?'1':'0');if(a)setTimeout(()=>window.autoPls&&autoPls(),500)}
   {const nl=$('trlSel').value;if(nl!==trLang){trLang=nl;lsSet('trl',nl);if(trOn)loadTrans()}}
-  dcOn=$('dcChk').checked;lsSet('dc',dcOn?'1':'0');if(!dcOn)dcPost('/clear',{});dcSig='';
+  dcOn=$('dcChk').checked;lsSet('dc',dcOn?'1':'0');lsSet('dcpause',$('dcPauseChk').checked?'1':'0');lsSet('dcbtn',$('dcBtnChk').checked?'1':'0');if(!dcOn)dcPost('/clear',{});dcSig='';if(dcOn)setTimeout(dcPing,300);
   divMode=$('divSel').value==='1';lsSet('div',divMode?'1':'0');
   apiKey=$('keyIn').value.trim();lsSet('key',apiKey);wk=$('wkIn').value.trim().replace(/\/+$/,'');lsSet('wk',wk);
   lz=+$('lzSel').value||1;lsSet('lz',String(lz));document.documentElement.style.setProperty('--lz',lz);
@@ -1789,14 +1817,31 @@ async function drawRec(){
 
 /* ---------- YouTube ---------- */
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
-const sc=document.createElement('script');sc.src='https://www.youtube.com/iframe_api';document.head.appendChild(sc);
+let ytTry=0,errRun=0;
+function loadYT(){
+  if(window.YT&&YT.Player){window.onYouTubeIframeAPIReady();return}
+  const sc=document.createElement('script');sc.src='https://www.youtube.com/iframe_api';
+  sc.onerror=()=>{sc.remove();ytFail()};document.head.appendChild(sc);
+  clearTimeout(loadYT.t);loadYT.t=setTimeout(()=>{if(!(window.YT&&YT.Player)){sc.remove();ytFail()}},15000);
+}
+function ytFail(){
+  ytTry++;
+  if(ytTry<=3){toast('โหลดตัวเล่น YouTube ไม่ได้ กำลังลองใหม่…',3000);setTimeout(loadYT,2500*ytTry)}
+  else toastAct('โหลดตัวเล่น YouTube ไม่ได้ (เช็กอินเทอร์เน็ต หรือตัวบล็อกโฆษณา)','ลองใหม่',()=>{ytTry=0;loadYT()},20000);
+}
+addEventListener('online',()=>{if(!player&&!(window.YT&&YT.Player)){ytTry=0;loadYT()}});
 window.onYouTubeIframeAPIReady=()=>{
+  if(player)return;
   player=new YT.Player('yt',{width:'100%',height:'100%',
     playerVars:{controls:0,rel:0,modestbranding:1,playsinline:1,iv_load_policy:3,disablekb:1,fs:0,cc_load_policy:0},
     events:{onReady:()=>{ready=true;applyVol();if(idx>=0&&!queue[idx].pend){restore=true;const rt=resumeT(queue[idx].id);rt?player.cueVideoById({videoId:queue[idx].id,startSeconds:rt}):player.cueVideoById(queue[idx].id)}},
             onStateChange:onState,
-            onError:e=>{toast('เล่นวิดีโอนี้ไม่ได้ (รหัส '+e.data+') ข้ามไปเพลงถัดไป');setTimeout(()=>next(true,true),900)}}});
+            onError:e=>{
+              if(++errRun>=5){errRun=0;toast('เล่นไม่ได้ติดกันหลายเพลง หยุดไว้ก่อน (เช็กอินเทอร์เน็ต หรือลองเพลงอื่น)',6000);return}
+              const why={2:'ลิงก์วิดีโอผิด',5:'ตัวเล่นขัดข้อง',100:'วิดีโอถูกลบหรือเป็นส่วนตัว',101:'เจ้าของไม่อนุญาตให้ฝังเล่น',150:'เจ้าของไม่อนุญาตให้ฝังเล่น'}[e.data]||('รหัส '+e.data);
+              toast('เล่นเพลงนี้ไม่ได้ ('+why+') ข้ามไปเพลงถัดไป');setTimeout(()=>next(true,true),900)}}});
 };
+loadYT();
 
 /* ---------- sleep timer ---------- */
 let sleepEnd=0,sleepAfterSong=false;
@@ -2245,9 +2290,15 @@ function onState(e){
   $('stage').classList.toggle('pl',st===1||st===3);
   if(st===5){if(pending)finishImport();else{restore=false;$('ph').style.display='none';loadMeta()}}
   if(st===1||st===3){try{player.unloadModule('captions')}catch(e){}}
-  if(st===1){loadMeta();ensureUpcoming();applySpeed()}
+  if(st===1){errRun=0;loadMeta();ensureUpcoming();applySpeed();window.announcePlay&&announcePlay()}
   if(st===0){if(sleepAfterSong){sleepAfterSong=false;fadeEnd();toast('หยุดเล่นตามเวลาที่ตั้งไว้',5000);return}next(true)}
 }
+ /* เปิดเล่นหลายแท็บพร้อมกัน: แท็บที่เริ่มเล่นทีหลังจะได้เสียง อีกแท็บหยุดเอง (กันเสียงซ้อน และกันนับสถิติซ้ำ) */
+(function(){
+  const TAB=Math.random().toString(36).slice(2);let bc=null;try{bc=new BroadcastChannel('np-play')}catch(e){}
+  window.announcePlay=()=>{try{bc&&bc.postMessage({t:TAB})}catch(e){}};
+  if(bc)bc.onmessage=m=>{if(m.data&&m.data.t&&m.data.t!==TAB&&playing&&ready){try{player.pauseVideo();toast('หยุดเพลงในแท็บนี้ เพราะมีอีกแท็บเริ่มเล่นอยู่',3800)}catch(e){}}};
+})();
 function toggle(){if(!ready)return;player.getPlayerState()===1?player.pauseVideo():player.playVideo()}
 function pickNext(auto,skipOne){
   if(!queue.length)return -1;
@@ -3001,21 +3052,74 @@ if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'
 })();
 
 /* ---------- Discord Rich Presence (ผ่านโปรแกรมตัวช่วยในเครื่อง) ---------- */
+const dcOpt=()=>({paused:ls('dcpause')==='0'?'clear':'show',buttons:ls('dcbtn')!=='0',app:location.protocol==='https:'?location.origin+location.pathname:''});
+const dcClean=s=>{const t=String(s||'').replace(/\s*[\(\[【（][^\)\]】）]*(?:official|music video|\bmv\b|m\/v|audio|lyrics?|visuali[sz]er|เนื้อเพลง)[^\)\]】）]*[\)\]】）]/gi,'').replace(/\s*[|｜]\s*(?:official|lyrics?).*$/i,'').replace(/\s{2,}/g,' ').trim();return t||String(s||'')};
+function dcInfo(){
+  const it=queue[idx];if(!it)return null;
+  const title=dcClean((curP&&curP.track)||it.title||$('ttl').textContent||'');
+  const artist=((curP&&curP.artist)||(it.author||$('art').textContent||'')).replace(/\s*-\s*Topic$/i,'');
+  const yt=!!(it.id&&!String(it.id).startsWith('dz:'));
+  let cover=it.art||artUrl||'';
+  if(!/^https?:/.test(cover))cover=yt?'https://i.ytimg.com/vi/'+it.id+'/hqdefault.jpg':'';
+  let cur=0,dur=0;try{if(ready){cur=player.getCurrentTime()||0;dur=player.getDuration()||0}}catch(e){}
+  return{it,title,artist,cover,url:yt?'https://www.youtube.com/watch?v='+it.id:'',cur,dur,pl:!!(playing&&!inAd)};
+}
+const dcSt={known:false,ok:false,discord:false,user:'',v:0};let dcWas=null,dcHb=0;
+function dcChipUpd(){
+  const c=$('dcChip');if(!c)return;
+  let t='ยังไม่ได้ตรวจ',k='no';
+  if(dcSt.known){
+    if(dcSt.ok&&dcSt.discord){t='เชื่อมต่อแล้ว';k='ok'}
+    else if(dcSt.ok){t='เจอตัวช่วย แต่ไม่เจอ Discord'}
+    else t='ไม่เจอตัวช่วย';
+  }
+  c.textContent=t;c.className='chip2 '+k;
+}
+async function dcPing(){
+  try{
+    const r=await Promise.race([fetch(DC+'/ping'),new Promise((_,j)=>setTimeout(j,2000))]);const j=await r.json();
+    Object.assign(dcSt,{known:true,ok:true,discord:!!j.discord,user:j.user||'',v:j.v||1});dcFail=0;
+  }catch(e){Object.assign(dcSt,{known:true,ok:false,discord:false,user:''})}
+  dcChipUpd();
+  const k=!dcOn?null:dcSt.ok?(dcSt.discord?'on':'nodc'):'off';
+  if(k!==dcWas){
+    if(k==='on')toast('Discord พร้อมแล้ว กำลังแสดงเพลงที่ฟัง'+(dcSt.user?' ('+dcSt.user+')':''),3200);
+    else if(dcWas==='on'&&k==='off')toast('ติดต่อตัวช่วย Discord ไม่ได้แล้ว (ปิดไปหรือเปล่า?)',4200);
+    dcWas=k;
+  }
+}
+function dcDrawPrev(){
+  const box=$('dcPrev');if(!box)return;
+  const d=dcInfo(),fmt=x=>{x=Math.max(0,Math.floor(x||0));return Math.floor(x/60)+':'+String(x%60).padStart(2,'0')};
+  const sp=$('dcPauseChk').checked,sb=$('dcBtnChk').checked;
+  if(!d){box.classList.remove('off');$('dpH').textContent='ตัวอย่างที่ Discord จะแสดง';$('dpT').textContent='ยังไม่มีเพลงที่เล่น';$('dpA').textContent='เล่นเพลงสักเพลงเพื่อดูตัวอย่าง';$('dpImg').style.visibility='hidden';$('dpBar').style.width='0';$('dpTm').textContent='';$('dpBtns').innerHTML='';return}
+  box.classList.toggle('off',!d.pl&&!sp);
+  $('dpH').textContent=d.pl?'กำลังฟัง Now Playing':(sp?'Now Playing · หยุดชั่วคราว':'หยุดชั่วคราว: Discord จะไม่แสดงสถานะ');
+  $('dpT').textContent=d.title||'—';$('dpA').textContent=d.artist||'ไม่ทราบศิลปิน';
+  const im=$('dpImg');im.style.visibility=d.cover?'visible':'hidden';if(d.cover&&im.dataset.u!==d.cover){im.dataset.u=d.cover;im.src=d.cover}
+  im.onerror=()=>{im.style.visibility='hidden'};
+  $('dpBar').style.width=(d.pl&&d.dur?Math.min(100,d.cur/d.dur*100):0)+'%';
+  $('dpTm').textContent=d.pl?fmt(d.cur)+' / '+fmt(d.dur):'';
+  const b=[];if(sb){if(d.url)b.push('ฟังบน YouTube');if(location.protocol==='https:')b.push('เปิดใน Now Playing')}
+  $('dpBtns').innerHTML=b.map(x=>'<span>'+x+'</span>').join('');
+}
+window.dcOpen=()=>{$('dcPauseChk').checked=ls('dcpause')!=='0';$('dcBtnChk').checked=ls('dcbtn')!=='0';dcChipUpd();dcDrawPrev();dcPing()};
+['dcPauseChk','dcBtnChk'].forEach(i=>$(i).addEventListener('change',dcDrawPrev));
+setInterval(()=>{if($('modal').classList.contains('show')&&$('dcPrev')&&$('dcPrev').offsetParent)dcDrawPrev()},1000);
+let dcTick=0;
+setInterval(()=>{if(document.hidden)return;dcTick++;const open=$('modal').classList.contains('show')&&$('dcPrev')&&$('dcPrev').offsetParent;if(open||(dcOn&&dcTick%4===0))dcPing()},3000);
+setTimeout(()=>{if(dcOn)dcPing()},1500);
 setInterval(()=>{
   if(!dcOn||dcFail>=5&&Date.now()%30000>2500)return;
   try{
-    const it=queue[idx];if(!ready||!it){return}
-    const pl=playing&&!inAd;
-    const cur=player.getCurrentTime()||0,dur=player.getDuration()||0;
-    const start=Date.now()-cur*1000;
-    const sig=it.id+'|'+pl;
-    if(sig===dcSig&&Math.abs(start-dcStart)<2500)return;
+    const d=ready?dcInfo():null;
+    if(!d){if(ready&&dcSig){dcSig='';dcPost('/clear',{})}return}
+    if(Date.now()-dcHb>20000){dcHb=Date.now();dcPost('/hb',{})}
+    const o=dcOpt(),start=Date.now()-d.cur*1000;
+    const sig=[d.it.id,d.pl,d.title,d.artist,d.cover,o.paused,o.buttons].join('|');
+    if(sig===dcSig&&(!d.pl||Math.abs(start-dcStart)<2500))return;
     dcSig=sig;dcStart=start;
-    const title=(curP&&curP.track)||it.title||$('ttl').textContent||'';
-    const artist=(curP&&curP.artist)||(it.author||$('art').textContent||'').replace(/\s*-\s*Topic$/i,'');
-    let cover=it.art||artUrl||'';
-    if(!/^https?:/.test(cover)||/^data:/.test(cover))cover=(it.id&&!String(it.id).startsWith('dz:'))?'https://i.ytimg.com/vi/'+it.id+'/hqdefault.jpg':'';
-    dcPost('/presence',{title,artist,cover,url:it.id&&!String(it.id).startsWith('dz:')?'https://www.youtube.com/watch?v='+it.id:'',start:Math.round(start),end:dur?Math.round(start+dur*1000):0,playing:pl});
+    dcPost('/presence',{title:d.title,artist:d.artist,cover:d.cover,url:d.url,start:Math.round(start),end:d.dur?Math.round(start+d.dur*1000):0,playing:d.pl,opts:o});
   }catch(e){}
 },2000);
 addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','{}')}catch(e){}}});
@@ -3891,6 +3995,8 @@ window.mergedStats=function(){
 (function(){
   document.addEventListener('error',e=>{const t=e.target;if(t&&t.tagName==='IMG'&&t.closest&&t.closest('.sc,.it,.pcard,.gmvs,.rcart'))t.style.visibility='hidden'},true);
   document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.matches&&e.target.matches('[role="button"]')){e.preventDefault();e.target.click()}});
+  try{let n=0;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);n+=k.length+(localStorage.getItem(k)||'').length}
+    if(n>4200000){const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu|gen):/.test(x))ks.push(x)}ks.slice(0,ks.length>>1).forEach(x=>localStorage.removeItem(x))}}catch(e){}
   addEventListener('offline',()=>toast('ออฟไลน์อยู่ เพลงที่กำลังเล่นอาจสะดุด',4000));
   addEventListener('online',()=>toast('กลับมาออนไลน์แล้ว',2500));
 

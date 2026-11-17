@@ -836,7 +836,7 @@ body:not([data-tab="now"])[data-has="0"] .stage{display:none!important}
   <div class="sec" data-s="con">
     <h4 class="grp">การค้นหาเพลง</h4>
     <div>
-      <p style="margin-bottom:6px"><b style="color:var(--fg)">YouTube API key</b> <span class="chip2" id="keyChip"></span><br>ใส่แล้วการค้นหาและเติมคิวเสถียรที่สุด ฟรี ทำครั้งเดียว</p>
+      <p style="margin-bottom:6px"><b style="color:var(--fg)">YouTube API key</b> <span class="chip2" id="keyChip"></span><br><b>ไม่จำเป็น</b> แอปค้นหาเพลงได้เองอยู่แล้ว ใส่ key เพื่อให้ค้นหาและเติมคิวเสถียรที่สุด (ฟรี ทำครั้งเดียว)</p>
       <input type="text" id="keyIn" placeholder="AIza..." autocomplete="off" spellcheck="false">
       <div class="row" style="justify-content:flex-start;margin-top:8px"><button class="btn" id="keyTest" style="height:36px">ทดสอบ key</button><span class="tres" id="keyRes"></span></div>
     </div>
@@ -909,7 +909,7 @@ const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document
 window.__errs=[];
 addEventListener('error',e=>{try{__errs.push((e.message||'error')+' @'+(e.lineno||0));if(__errs.length>20)__errs.shift()}catch(_){}});
 addEventListener('unhandledrejection',e=>{try{__errs.push('promise: '+String((e.reason&&e.reason.message)||e.reason).slice(0,140));if(__errs.length>20)__errs.shift()}catch(_){}});
-const BUILD='2026-11-16.19';
+const BUILD='2026-11-17.01';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
@@ -927,7 +927,8 @@ const artNorm=a=>norm((a||'').replace(/\s*-\s*Topic$/i,''));
 const isBlocked=x=>!!x&&((x.id&&blk.s.includes(x.id))||(x.author&&blk.a.includes(artNorm(x.author))));
 const saveSkips=()=>{lsSet('skips',JSON.stringify([...skips].slice(-300)))};
 let hist=[];try{hist=JSON.parse(ls('hist')||'[]')}catch(e){}
-let view=ls('view')||'mv',useTheme=ls('theme')!=='0',apiKey=ls('key')||'',wk=ls('wk')||'',restore=false;
+const DEF_WK='https://lyrics.ohmzazaza01.workers.dev';
+let view=ls('view')||'mv',useTheme=ls('theme')!=='0',apiKey=ls('key')||'',wk=(()=>{const v=localStorage.getItem('wk');return v===null?DEF_WK:v})(),restore=false;
 try{queue=JSON.parse(ls('q')||'[]');idx=+ls('idx');if(!(idx>=0&&idx<queue.length))idx=queue.length?0:-1}catch(e){queue=[];idx=-1}
 
 function toastAct(m,label,fn,ms=7000){
@@ -961,7 +962,7 @@ let artUrl=null,mvUrl=null;
 let bgMode=(ls('bg')==='color'?'color':'still'),ffName=ls('ff')||'IBM Plex Sans Thai';
 document.body.dataset.bg=bgMode;
 let lz=+(ls('lz')||1);document.documentElement.style.setProperty('--lz',lz);
-let miniOn=ls('mini')!=='0',usePiped=ls('piped')==='1';
+let miniOn=ls('mini')!=='0',usePiped=ls('piped')!=='0';
 document.body.dataset.mini=miniOn?'1':'0';
 function applyFont(){
   let l=document.getElementById('ffl');
@@ -1276,6 +1277,9 @@ async function ytSearch(q,n){
       if(j&&j.items)return j.items.filter(x=>x.id&&x.id.videoId).map(x=>({id:x.id.videoId,title:dec(x.snippet.title),author:dec(x.snippet.channelTitle)}));
     }catch(e){}
   }
+  if(wk){
+    try{const j=await tfetch(wk+'/yt?q='+enc(q)+'&n='+n,9000);if(Array.isArray(j)&&j.length)return j.map(x=>({id:x.id,title:x.title,author:x.author}))}catch(e){}
+  }
   if(!usePiped)return null;
   const order=pipedOk?[pipedOk].concat(PIPED.filter(x=>x!==pipedOk)):PIPED;
   try{
@@ -1333,7 +1337,7 @@ async function doSearch(q){
   const r=await ytSearch(q);
   const msg=box.querySelector('.msg');if(!msg)return;
   if(r===null){
-    msg.innerHTML='ค้นหาในแอปไม่ได้ ต้องใส่ YouTube API key (ฟรี) ใน ⚙ หรือจะเปิดบริการสำรอง Piped (ไม่เป็นทางการ) ในนั้นก็ได้ หรือวางลิงก์เพลงแทนก็ได้ ';
+    msg.innerHTML='ค้นหาตอนนี้ไม่ได้ (ตัวช่วยค้นหาอาจไม่ว่างชั่วคราว) ลองใหม่อีกครั้ง วางลิงก์เพลงแทนก็ได้ หรือใส่ YouTube API key (ฟรี) ใน ⚙ เพื่อความเสถียรสูงสุด ';
     const b=document.createElement('button');b.className='mini';b.textContent='เปิดตั้งค่า';b.onclick=()=>openSettings();msg.appendChild(b);return;
   }
   if(!r.length){msg.textContent='ไม่พบผลลัพธ์';return}
@@ -2780,7 +2784,6 @@ function drawWelcome(){
   ph.innerHTML='<div class="wl"><h4>พร้อมฟังเพลงแล้ว</h4><p>ค้นหาชื่อเพลงด้านบน หรือวางลิงก์ YouTube / เพลย์ลิสต์ได้เลย กด Ctrl+K เพื่อเรียกเมนูคำสั่ง</p><div class="rc"></div></div>';
   const rc=ph.querySelector('.rc');
   (hist||[]).slice(0,4).forEach(it=>{const b=document.createElement('button');b.textContent='▶ '+(it.title||it.id);b.onclick=e=>{e.stopPropagation();playNow({id:it.id,title:it.title,author:it.author})};rc.appendChild(b)});
-  if(!apiKey){const p=document.createElement('p');p.style.marginTop='6px';p.innerHTML='เคล็ดลับ: ใส่ YouTube API key ใน ⚙ เพื่อให้ค้นหาและเติมคิวอัตโนมัติได้';ph.querySelector('.wl').appendChild(p)}
 }
 drawWelcome();
 addEventListener('offline',()=>toast('ออฟไลน์อยู่ เพลงจะเล่นต่อเมื่อกลับมาออนไลน์',4000));
@@ -3896,9 +3899,9 @@ window.mergedStats=function(){
     R('ok','เวอร์ชันแอป',BUILD);
     R(navigator.onLine?'ok':'bad','อินเทอร์เน็ต',navigator.onLine?'ออนไลน์':'ออฟไลน์');
     R(ready?'ok':'warn','เครื่องเล่น YouTube',ready?'พร้อม':'ยังไม่พร้อม (รอโหลด หรือถูกบล็อก)');
-    R(apiKey?'ok':'warn','YouTube API key',apiKey?'ตั้งแล้ว':'ยังไม่ตั้ง (ค้นหา/เติมคิวอาจไม่เสถียร)');
+    R('ok','YouTube API key',apiKey?'ตั้งแล้ว':'ไม่ได้ตั้ง (ไม่จำเป็น ค้นหาผ่านตัวช่วยอัตโนมัติ)');
     if(wk){
-      try{const r=await fetch(wk+'/',{cache:'no-store'});const j=await r.json();R(j.sync||ls('syncon')!=='1'?'ok':'warn','Worker (เนื้อเพลง/ซิงก์)','เชื่อมต่อได้ · v'+(j.v||'?')+' · ที่เก็บซิงก์ '+(j.sync?'พร้อม':'ยังไม่ได้ผูก KV'))}
+      try{const r=await fetch(wk+'/',{cache:'no-store'});const j=await r.json();R(j.sync||ls('syncon')!=='1'?'ok':'warn','Worker (เนื้อเพลง/ซิงก์)','เชื่อมต่อได้ · v'+(j.v||'?')+' · ค้นหา YouTube '+(j.yt?'พร้อม':'ยังไม่รองรับ (ต้องอัปเดต worker.js)')+' · ที่เก็บซิงก์ '+(j.sync?'พร้อม':'ยังไม่ได้ผูก KV'));if(!j.yt)rows[rows.length-1].st='warn'}
       catch(e){R('bad','Worker (เนื้อเพลง/ซิงก์)','เชื่อมต่อไม่ได้ ตรวจลิงก์ในแท็บการเชื่อมต่อ')}
     }else R('warn','Worker (เนื้อเพลง/ซิงก์)','ยังไม่ได้ใส่ลิงก์');
     if(ls('syncon')==='1')R(/ไม่สำเร็จ|ไม่ได้|สั้น|ต้องใส่/.test(ls('syncst')||'')?'bad':'ok','ซิงก์ข้ามเครื่อง',ls('syncst')||'เปิดอยู่');else R('warn','ซิงก์ข้ามเครื่อง','ปิดอยู่');

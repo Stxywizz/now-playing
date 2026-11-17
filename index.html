@@ -909,7 +909,7 @@ const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document
 window.__errs=[];
 addEventListener('error',e=>{try{__errs.push((e.message||'error')+' @'+(e.lineno||0));if(__errs.length>20)__errs.shift()}catch(_){}});
 addEventListener('unhandledrejection',e=>{try{__errs.push('promise: '+String((e.reason&&e.reason.message)||e.reason).slice(0,140));if(__errs.length>20)__errs.shift()}catch(_){}});
-const BUILD='2026-11-17.01';
+const BUILD='2026-11-17.02';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){try{const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(/^(ly|viz|bpmu):/.test(x))ks.push(x)}ks.slice(0,Math.max(10,ks.length>>1)).forEach(x=>localStorage.removeItem(x));localStorage.setItem(k,v)}catch(e2){}}};
@@ -1138,8 +1138,10 @@ function playNow(item){if(item&&item.id&&skips.delete(item.id))saveSkips();queue
 
 /* ---------- input: link / playlist / search ---------- */
 function parseInput(s){
+  // เป็นลิงก์ก็ต่อเมื่อมี youtube.com / youtu.be เท่านั้น (กันคำค้นหาที่บังเอิญยาว 11 ตัวอักษรถูกมองเป็นรหัสวิดีโอ)
+  if(!/(^|[\/.])(youtube\.com|youtu\.be|youtube-nocookie\.com)(\/|$|\?)/i.test(s.replace(/^https?:\/\//i,'')))return{};
   const l=s.match(/[?&]list=([\w-]+)/);
-  const v=s.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/)||(/^[\w-]{11}$/.test(s)?[0,s]:null);
+  const v=s.match(/(?:[?&]v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/);
   return{list:l&&l[1],id:v&&v[1]};
 }
 async function submit(){

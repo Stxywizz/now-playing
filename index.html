@@ -868,7 +868,7 @@ body:not([data-tab="now"])[data-has="0"] .stage{display:none!important}
         <div class="dp-b"><img id="dpImg" alt=""><div class="dp-t"><b id="dpT"></b><span id="dpA"></span><div class="dp-bar"><i id="dpBar"></i></div><div class="dp-tm" id="dpTm"></div></div></div>
         <div class="dp-btns" id="dpBtns"></div></div>
       <label><input type="checkbox" id="dcPauseChk"> ยังแสดงเพลงตอนกดหยุดชั่วคราว (ล้างเองหลังผ่านไป 10 นาที)</label>
-      <label><input type="checkbox" id="dcBtnChk"> แสดงปุ่ม “ฟังบน YouTube” และ “เปิดใน Now Playing”</label>
+      <label><input type="checkbox" id="dcBtnChk"> แสดงปุ่ม “ฟังเพลงนี้บน YouTube” (คนอื่นกดเปิดเพลงนี้ใน YouTube ได้ แต่เข้าเว็บแอปไม่ได้)</label>
       <p class="note" style="margin-top:6px">ใช้ได้กับ Discord เดสก์ท็อปบนคอมเท่านั้น (มือถือ/iPad ใช้ไม่ได้) ต้องเปิดโปรแกรมตัวช่วยค้างไว้ สถานะจะถูกล้างเองถ้าปิดเว็บแอป</p>
       <div class="row" style="justify-content:flex-start"><button class="btn" id="dcTest" style="height:36px">ทดสอบการเชื่อมต่อ</button><span class="tres" id="dcRes"></span></div>
       <details><summary>วิธีตั้งค่า และการให้เปิดเองทุกครั้งที่เปิดคอม</summary>
@@ -934,7 +934,7 @@ const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document
 window.__errs=[];
 addEventListener('error',e=>{try{__errs.push((e.message||'error')+' @'+(e.lineno||0));if(__errs.length>20)__errs.shift()}catch(_){}});
 addEventListener('unhandledrejection',e=>{try{__errs.push('promise: '+String((e.reason&&e.reason.message)||e.reason).slice(0,140));if(__errs.length>20)__errs.shift()}catch(_){}});
-const BUILD='2026-11-17.04';
+const BUILD='2026-11-17.05';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 /* ทุก fetch ที่ไม่ได้ตั้ง signal เอง จะหมดเวลาใน 20 วิ (กันค้างตลอดไปเมื่อเน็ตสะดุด) */
 (function(){const of=window.fetch.bind(window);window.fetch=(u,o)=>{o=o||{};if(o.signal)return of(u,o);const c=new AbortController(),t=setTimeout(()=>c.abort(),20000);return of(u,Object.assign({},o,{signal:c.signal})).finally(()=>clearTimeout(t))}})();
@@ -3052,7 +3052,7 @@ if(idx>=0){$('ph').style.display='none';$('ttl').textContent=queue[idx].title||'
 })();
 
 /* ---------- Discord Rich Presence (ผ่านโปรแกรมตัวช่วยในเครื่อง) ---------- */
-const dcOpt=()=>({paused:ls('dcpause')==='0'?'clear':'show',buttons:ls('dcbtn')!=='0',app:location.protocol==='https:'?location.origin+location.pathname:''});
+const dcOpt=()=>({paused:ls('dcpause')==='0'?'clear':'show',buttons:ls('dcbtn')!=='0'});
 const dcClean=s=>{const t=String(s||'').replace(/\s*[\(\[【（][^\)\]】）]*(?:official|music video|\bmv\b|m\/v|audio|lyrics?|visuali[sz]er|เนื้อเพลง)[^\)\]】）]*[\)\]】）]/gi,'').replace(/\s*[|｜]\s*(?:official|lyrics?).*$/i,'').replace(/\s{2,}/g,' ').trim();return t||String(s||'')};
 function dcInfo(){
   const it=queue[idx];if(!it)return null;
@@ -3094,13 +3094,13 @@ function dcDrawPrev(){
   const sp=$('dcPauseChk').checked,sb=$('dcBtnChk').checked;
   if(!d){box.classList.remove('off');$('dpH').textContent='ตัวอย่างที่ Discord จะแสดง';$('dpT').textContent='ยังไม่มีเพลงที่เล่น';$('dpA').textContent='เล่นเพลงสักเพลงเพื่อดูตัวอย่าง';$('dpImg').style.visibility='hidden';$('dpBar').style.width='0';$('dpTm').textContent='';$('dpBtns').innerHTML='';return}
   box.classList.toggle('off',!d.pl&&!sp);
-  $('dpH').textContent=d.pl?'กำลังฟัง Now Playing':(sp?'Now Playing · หยุดชั่วคราว':'หยุดชั่วคราว: Discord จะไม่แสดงสถานะ');
-  $('dpT').textContent=d.title||'—';$('dpA').textContent=d.artist||'ไม่ทราบศิลปิน';
+  $('dpH').textContent=d.pl?'กำลังฟัง '+(d.title||''):(sp?'หยุดชั่วคราว':'หยุดชั่วคราว: Discord จะไม่แสดงสถานะ');
+  $('dpT').textContent=d.title||'—';$('dpA').textContent='โดย '+(d.artist||'ไม่ทราบศิลปิน');
   const im=$('dpImg');im.style.visibility=d.cover?'visible':'hidden';if(d.cover&&im.dataset.u!==d.cover){im.dataset.u=d.cover;im.src=d.cover}
   im.onerror=()=>{im.style.visibility='hidden'};
   $('dpBar').style.width=(d.pl&&d.dur?Math.min(100,d.cur/d.dur*100):0)+'%';
   $('dpTm').textContent=d.pl?fmt(d.cur)+' / '+fmt(d.dur):'';
-  const b=[];if(sb){if(d.url)b.push('ฟังบน YouTube');if(location.protocol==='https:')b.push('เปิดใน Now Playing')}
+  const b=[];if(sb&&d.url)b.push('▶ ฟังเพลงนี้บน YouTube');
   $('dpBtns').innerHTML=b.map(x=>'<span>'+x+'</span>').join('');
 }
 window.dcOpen=()=>{$('dcPauseChk').checked=ls('dcpause')!=='0';$('dcBtnChk').checked=ls('dcbtn')!=='0';dcChipUpd();dcDrawPrev();dcPing()};

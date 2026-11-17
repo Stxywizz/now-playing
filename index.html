@@ -713,6 +713,7 @@ body:not([data-tab="now"])[data-has="0"] .stage{display:none!important}
 .abkeys{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:13px;color:var(--dim)}.abkeys span{display:inline-flex;align-items:center;gap:4px}
 .abkeys kbd{font-family:inherit;font-size:11.5px;padding:1px 7px;border-radius:6px;background:rgba(255,255,255,.12);color:var(--fg);border:1px solid rgba(255,255,255,.12)}
 .abfoot{text-align:center;font-size:13px!important;color:var(--dim)!important;margin:26px 0 6px!important}
+.abfig{margin:6px auto 4px;max-width:420px;text-align:center}.abfig img{width:100%;height:auto;border-radius:16px;box-shadow:0 14px 40px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1)}.abfig figcaption{font-size:12.5px;color:var(--dim);margin-top:8px}
 .ablink{display:block;margin:28px auto 8px;background:none;border:0;color:var(--dim);font-family:inherit;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 
 /* ----- หน้าต้อนรับ ----- */
@@ -899,11 +900,15 @@ body:not([data-tab="now"])[data-has="0"] .stage{display:none!important}
     <div class="abc"><i>📊</i><b>สถิติและรีแคป</b><span>สรุปการฟังแบบรายสัปดาห์ รายเดือน ศิลปินและเพลงที่ฟังมากที่สุด แชร์เป็นภาพได้ พร้อมเป้าหมายการฟังรายวัน</span></div>
     <div class="abc"><i>🌙</i><b>ก่อนนอน</b><span>ตั้งเวลาปิดเพลง หรือหยุดเมื่อจบเพลงนี้ เสียงค่อยๆ เบาลงก่อนหยุด</span></div>
     <div class="abc"><i>🔄</i><b>ซิงก์ข้ามเครื่อง</b><span>ใช้รหัสเดียวกันเพื่อให้เพลย์ลิสต์ ประวัติ และสถิติตรงกันทุกเครื่อง ข้อมูลเข้ารหัสในเครื่องก่อนส่งเสมอ</span></div>
-    <div class="abc"><i>💬</i><b>Discord</b><span>แสดงเพลงที่กำลังฟังบนโปรไฟล์ Discord พร้อมปก แถบเวลา และปุ่มเปิดเพลงบน YouTube</span></div>
+    <div class="abc"><i>💬</i><b>Discord</b><span>แสดงเพลงที่กำลังฟังบนโปรไฟล์ Discord พร้อมปก แถบเวลา และปุ่ม Listen on YouTube ให้เพื่อนกดฟังตาม</span></div>
     <div class="abc"><i>🎮</i><b>มินิเกม</b><span>ทายเพลงจากเสียง ทายว่าเพลงไหนฟังมากกว่า และเติมเนื้อเพลงที่หายไป</span></div>
     <div class="abc"><i>🎨</i><b>หน้าตาปรับได้</b><span>สีธีมเปลี่ยนตามปกเพลง เลือกพื้นหลัง ฟอนต์ ขนาดเนื้อเพลง และโหมดย่อขนาด</span></div>
     <div class="abc"><i>📱</i><b>ติดตั้งเป็นแอป</b><span>เพิ่มลงหน้าจอโฮมได้แบบแอปจริง (PWA) อัปเดตตัวเองเมื่อมีเวอร์ชันใหม่ และมีหน้าตรวจสถานะระบบ</span></div>
   </div>
+
+  <h3>แสดงผลบน Discord ได้จริง</h3>
+  <p>เมื่อเปิดโปรแกรมตัวช่วยไว้บนคอม เพลงที่กำลังฟังจะขึ้นบนโปรไฟล์ Discord ทันที เพื่อนจะเห็นชื่อเพลง ศิลปิน ปกเพลง และแถบเวลาที่เดินตามจริง และกดปุ่ม <b>Listen on YouTube</b> เพื่อไปฟังเพลงเดียวกันได้</p>
+  <figure class="abfig"><img src="discord-preview.png" alt="ตัวอย่างสถานะกำลังฟังบนโปรไฟล์ Discord" loading="lazy" width="676" height="398"><figcaption>ภาพจริงจากโปรไฟล์ Discord ขณะฟังเพลง DESERVE – BABYMONSTER</figcaption></figure>
 
   <h3>เทคโนโลยีที่ใช้</h3>
   <p>ตัวแอปเขียนด้วย <b>HTML</b> เป็นหลักเพราะเป็นเว็บแอปพลิเคชัน ร่วมกับ <b>CSS</b> สำหรับหน้าตาและแอนิเมชัน และ <b>JavaScript</b> สำหรับการทำงานทั้งหมด ข้อมูลทุกอย่าง เช่น เพลย์ลิสต์ การตั้งค่า และไฟล์สำรอง จัดเก็บในรูปแบบ <b>JSON</b></p>
@@ -1091,7 +1096,7 @@ const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document
 window.__errs=[];
 addEventListener('error',e=>{try{__errs.push((e.message||'error')+' @'+(e.lineno||0));if(__errs.length>20)__errs.shift()}catch(_){}});
 addEventListener('unhandledrejection',e=>{try{__errs.push('promise: '+String((e.reason&&e.reason.message)||e.reason).slice(0,140));if(__errs.length>20)__errs.shift()}catch(_){}});
-const BUILD='2026-11-17.09';
+const BUILD='2026-11-17.10';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 /* ทุก fetch ที่ไม่ได้ตั้ง signal เอง จะหมดเวลาใน 20 วิ (กันค้างตลอดไปเมื่อเน็ตสะดุด) */
 (function(){const of=window.fetch.bind(window);window.fetch=(u,o)=>{o=o||{};if(o.signal)return of(u,o);const c=new AbortController(),t=setTimeout(()=>c.abort(),20000);return of(u,Object.assign({},o,{signal:c.signal})).finally(()=>clearTimeout(t))}})();

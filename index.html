@@ -676,6 +676,8 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 .tile:hover{transform:translateY(-2px)}
 .tile.rc{background:linear-gradient(145deg,rgba(255,92,140,.34),rgba(122,92,255,.3))}
 .tile.goal{background:linear-gradient(145deg,rgba(255,170,70,.30),rgba(255,92,120,.26))}
+@media (max-width:600px){#abTop{display:none}}
+.tile.about{background:linear-gradient(145deg,rgba(90,170,255,.32),rgba(150,110,255,.28))}
 .tile.game{background:linear-gradient(145deg,rgba(60,200,150,.28),rgba(60,120,255,.28))}
 .tile .ti{font-style:normal;font-size:22px;line-height:1;margin-bottom:6px}
 .tile b{font-size:14.5px}.tile span{font-size:12px;opacity:.75;line-height:1.35}
@@ -688,6 +690,84 @@ button,.btn,.chip,.ln,.it,.sc,.plc,.queue li,input[type=range]{touch-action:mani
 .sk .a,.sk .b{background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.14),rgba(255,255,255,.06));background-size:200% 100%;animation:shim 1.3s linear infinite}
 @keyframes shim{to{background-position:-200% 0}}
 body:not([data-tab="now"])[data-has="0"] .stage{display:none!important}
+#abModal{position:fixed;inset:0;z-index:97;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}#abModal.show{display:flex}
+.abp{width:min(720px,95vw);max-height:92dvh;overflow:auto;line-height:1.7}
+.abhead{position:sticky;top:-1px;display:flex;justify-content:flex-end;z-index:2;margin-bottom:-30px}
+.abhero{text-align:center;padding:26px 16px 22px;border-radius:24px;background:radial-gradient(120% 140% at 50% 0%,rgba(122,92,255,.45),rgba(255,92,138,.18) 55%,transparent 80%),rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.abhero img{width:84px;height:84px;border-radius:22px;box-shadow:0 12px 34px rgba(0,0,0,.45)}
+.abhero h2{margin:12px 0 2px;font-size:30px;letter-spacing:-.01em}
+.abhero p{margin:0;color:var(--dim);font-size:15px}
+.abmeta{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.abmeta span{font-size:12.5px;padding:4px 11px;border-radius:99px;background:rgba(255,255,255,.1)}
+.abp h3{font-size:18px;margin:26px 0 8px}
+.abp>p{margin:0 0 10px;font-size:14.5px;color:#d6dcec}
+.abgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px}
+.abc{padding:13px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06)}
+.abc i{font-style:normal;font-size:22px;display:block}.abc b{display:block;font-size:14.5px;margin:4px 0 2px}.abc span{font-size:12.5px;color:var(--dim);line-height:1.6;display:block}
+.abtags{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}.abtags span{font-size:12.5px;padding:4px 11px;border-radius:99px;background:rgba(122,92,255,.22);color:#ddd6ff}
+.abnote{font-size:12.5px!important;color:var(--dim)!important}
+.abul{margin:0;padding-left:20px;font-size:14px;color:#d6dcec}.abul li{margin:4px 0}
+.abtl{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid rgba(255,255,255,.14)}
+.abtl li{position:relative;padding:0 0 12px 8px}.abtl li:before{content:"";position:absolute;left:-25px;top:7px;width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,#ff5c8a,#7a5cff)}
+.abtl b{display:block;font-size:14.5px}.abtl span{font-size:13px;color:var(--dim)}
+.abkeys{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:13px;color:var(--dim)}.abkeys span{display:inline-flex;align-items:center;gap:4px}
+.abkeys kbd{font-family:inherit;font-size:11.5px;padding:1px 7px;border-radius:6px;background:rgba(255,255,255,.12);color:var(--fg);border:1px solid rgba(255,255,255,.12)}
+.abfoot{text-align:center;font-size:13px!important;color:var(--dim)!important;margin:26px 0 6px!important}
+.ablink{display:block;margin:28px auto 8px;background:none;border:0;color:var(--dim);font-family:inherit;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* ----- หน้าต้อนรับ ----- */
+#intro{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(4,8,20,.72);-webkit-backdrop-filter:blur(18px) saturate(1.2);backdrop-filter:blur(18px) saturate(1.2);overflow:hidden}
+#intro.show{display:flex;animation:inFade .5s ease both}
+#intro.out{animation:outFade .45s ease forwards}
+#intro .blob{position:absolute;width:52vmax;height:52vmax;border-radius:50%;filter:blur(70px);opacity:.5;pointer-events:none}
+#intro .b1{background:#7a5cff;top:-18vmax;left:-14vmax;animation:drift1 14s ease-in-out infinite alternate}
+#intro .b2{background:#ff5c8a;bottom:-20vmax;right:-16vmax;animation:drift2 16s ease-in-out infinite alternate}
+#intro .b3{background:#2fb7ff;top:40%;left:55%;width:30vmax;height:30vmax;opacity:.28;animation:drift1 12s ease-in-out infinite alternate-reverse}
+.icard{position:relative;width:min(520px,100%);max-height:calc(100dvh - 36px);overflow:auto;padding:30px 26px 22px;border-radius:30px;text-align:center;
+  background:linear-gradient(160deg,rgba(255,255,255,.13),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.16);box-shadow:0 30px 80px rgba(0,0,0,.5);animation:cardUp .7s cubic-bezier(.2,.9,.25,1.15) both}
+#intro.out .icard{animation:cardDown .45s ease forwards}
+.icon{width:92px;height:92px;border-radius:26px;box-shadow:0 14px 40px rgba(122,92,255,.55);animation:pop .8s .15s cubic-bezier(.3,1.6,.5,1) both}
+.ieq{display:flex;gap:4px;justify-content:center;align-items:flex-end;height:22px;margin:14px 0 4px}
+.ieq i{width:4px;border-radius:3px;background:linear-gradient(#fff,#b9a8ff);animation:eq 1s ease-in-out infinite}
+.ieq i:nth-child(2){animation-delay:.15s}.ieq i:nth-child(3){animation-delay:.3s}.ieq i:nth-child(4){animation-delay:.45s}.ieq i:nth-child(5){animation-delay:.6s}
+.icard h1{margin:4px 0 6px;font-size:34px;letter-spacing:-.02em;background:linear-gradient(90deg,#fff,#d9cfff,#ffc2d6,#fff);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite,rise .6s .25s ease both}
+.icard .isub{margin:0 auto 18px;max-width:400px;font-size:15.5px;line-height:1.75;color:#d7dcf0;animation:rise .6s .35s ease both}
+.ifeat{display:grid;gap:9px;text-align:left;margin-bottom:16px}
+.ifeat>div{display:flex;gap:12px;align-items:center;padding:11px 13px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.06);animation:rise .55s ease both}
+.ifeat>div:nth-child(1){animation-delay:.45s}.ifeat>div:nth-child(2){animation-delay:.55s}.ifeat>div:nth-child(3){animation-delay:.65s}.ifeat>div:nth-child(4){animation-delay:.75s}
+.ifeat em{font-style:normal;font-size:22px;width:40px;height:40px;flex:none;display:grid;place-items:center;border-radius:12px;background:rgba(255,255,255,.1)}
+.ifeat b{display:block;font-size:14.5px}.ifeat span{display:block;font-size:12.8px;color:#aeb6cf;line-height:1.5}
+.iby{font-size:13px;color:#c9cfe4;margin:4px 0 16px;animation:rise .55s .85s ease both}.iby b{color:#fff}
+.igo{width:100%;height:52px;border:0;border-radius:16px;font:inherit;font-size:16.5px;font-weight:700;color:#fff;cursor:pointer;
+  background:linear-gradient(100deg,#7a5cff,#ff5c8a,#7a5cff);background-size:200% 100%;box-shadow:0 10px 30px rgba(255,92,138,.35);animation:rise .55s .95s ease both,shine 5s linear infinite;transition:transform .15s}
+.igo:hover{transform:translateY(-1px)}.igo:active{transform:scale(.98)}
+.irow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;font-size:13.5px;color:#c4cbe0;animation:rise .55s 1.05s ease both}
+.irow label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.irow input{width:18px;height:18px;accent-color:#ff5c8a}
+.irow button{background:none;border:0;color:#bfb2ff;font:inherit;font-size:13.5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.ifoot{position:sticky;bottom:-22px;margin:0 -26px -22px;padding:12px 26px 22px;background:linear-gradient(transparent,rgba(16,18,40,.92) 30%)}
+@media (max-width:600px),(max-height:760px){
+  .icard{padding:22px 18px 18px;border-radius:26px}.ifoot{bottom:-18px;margin:0 -18px -18px;padding:10px 18px 18px}
+  .icon{width:64px;height:64px;border-radius:18px}.ieq{margin:8px 0 2px;height:16px}
+  .icard h1{font-size:28px}.icard .isub{font-size:14px;margin-bottom:12px;line-height:1.6}
+  .ifeat{gap:7px;margin-bottom:10px}.ifeat>div{padding:8px 11px;gap:10px}.ifeat em{width:34px;height:34px;font-size:18px}
+  .ifeat b{font-size:13.8px}.ifeat span{font-size:12.2px}.iby{margin:2px 0 4px}.igo{height:48px}
+}
+@keyframes inFade{from{opacity:0}to{opacity:1}}@keyframes outFade{to{opacity:0;visibility:hidden}}
+@keyframes cardUp{from{opacity:0;transform:translateY(40px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes cardDown{to{opacity:0;transform:translateY(24px) scale(.96)}}
+@keyframes pop{from{opacity:0;transform:scale(.4) rotate(-12deg)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes shine{to{background-position:-250% 0}}
+@keyframes eq{0%,100%{height:5px}50%{height:22px}}
+@keyframes drift1{to{transform:translate(8vmax,6vmax) scale(1.15)}}@keyframes drift2{to{transform:translate(-7vmax,-5vmax) scale(1.1)}}
+@media (prefers-reduced-motion:reduce){#intro *,#intro{animation:none!important}}
+/* อ่านง่ายขึ้น: หน้าเกี่ยวกับ */
+.abp>p{font-size:15.5px!important;line-height:1.9;color:#dfe4f3!important}
+.abp h3{display:flex;align-items:center;gap:10px;font-size:19px!important;margin:32px 0 12px!important}
+.abp h3:before{content:"";width:5px;height:20px;border-radius:3px;background:linear-gradient(#7a5cff,#ff5c8a)}
+.abc b{font-size:15px!important}.abc span{font-size:13.3px!important;line-height:1.7!important}
+.abul{font-size:14.8px!important;line-height:1.8}.abtl span{font-size:13.8px!important}
 #dgModal{position:fixed;inset:0;z-index:98;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}#dgModal.show{display:flex}
 .dgr{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:14px}
 .dgr i{font-style:normal;width:22px;text-align:center}.dgr span{flex:1}.dgr small{display:block;opacity:.6;font-size:12px;margin-top:2px;word-break:break-all}
@@ -708,7 +788,7 @@ body:not([data-tab="now"])[data-has="0"] .stage{display:none!important}
       <button class="btn on" id="lyBtn">เนื้อเพลง</button>
       <button class="btn ico" id="pipBtn" title="หน้าต่างเนื้อเพลงลอย (อยู่บนสุดของจอ)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><rect x="12" y="12" width="7" height="5" rx="1" fill="currentColor" stroke="none"/></svg></button>
       <button class="btn ico" id="fsBtn" title="เต็มจอ (F)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
-      <button class="btn ico" id="setBtn" title="ตั้งค่า"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+      <button class="btn ico" id="abTop" title="เกี่ยวกับ Now Playing" aria-label="เกี่ยวกับ Now Playing" onclick="window.openAbout&&openAbout()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.01" stroke-linecap="round"/></svg></button><button class="btn ico" id="setBtn" title="ตั้งค่า"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
     </div>
     <div class="tabs"><button id="tnow" class="on">กำลังเล่น</button><button id="tdisc">ค้นพบ</button><button id="tsrch">ค้นหา</button><button id="tlib">เพลย์ลิสต์</button></div></div>
     <div class="stage" id="stage">
@@ -729,6 +809,7 @@ body:not([data-tab="now"])[data-has="0"] .stage{display:none!important}
       <div id="rec"></div>
       <div id="gen"></div>
       <div id="charts"></div>
+      <button class="ablink" id="abLink">เกี่ยวกับ Now Playing · จัดทำโดย นายประพล ป้อมตรี</button>
     </div>
     <div class="page" id="vlib"></div>
     <div class="card">
@@ -794,6 +875,82 @@ body:not([data-tab="now"])[data-has="0"] .stage{display:none!important}
   <div id="rcBody"></div>
   <div class="row"><button class="btn" id="rcShare" style="height:40px">แชร์เป็นภาพ</button><button class="btn on" id="rcClose" style="height:40px">ปิด</button></div>
 </div></div>
+<div id="abModal"><div class="panel abp">
+  <div class="abhead"><button class="mini" id="abX">ปิด</button></div>
+  <div class="abhero">
+    <img src="icon-192.png" alt="">
+    <h2>Now Playing</h2>
+    <p>เครื่องเล่นเพลงจาก YouTube พร้อมเนื้อเพลงที่ขยับตามเสียงร้อง</p>
+    <div class="abmeta"><span id="abVer"></span><span>จัดทำโดย นายประพล ป้อมตรี</span></div>
+  </div>
+
+  <h3>ที่มาและวัตถุประสงค์</h3>
+  <p>Now Playing เป็นเว็บแอปพลิเคชันที่ทำงานคู่กับ YouTube จุดเริ่มต้นมาจากการฟังเพลงบน YouTube ทุกวัน แล้วพบว่าหน้าเว็บถูกออกแบบมาเพื่อดูวิดีโอมากกว่าการฟังเพลง เนื้อเพลงต้องเปิดหาแยก แถบเครื่องมือกระจัดกระจาย และไม่มีหน้าจอ “กำลังเล่น” ที่สวยงามแบบแอปเพลงทั่วไป</p>
+  <p>ผลงานชิ้นนี้จึงจัด Layout และแถบเครื่องมือใหม่ทั้งหมด ให้เพลงที่กำลังเล่น เนื้อเพลง และคิวอยู่ในที่ที่หยิบใช้ได้ทันที เพื่อเพิ่มความพึงพอใจในการฟังเพลงในชีวิตประจำวัน และใช้เป็นโครงงานเพื่อการศึกษาและทดลองเทคโนโลยีเว็บสมัยใหม่ ตั้งแต่การออกแบบ UI/UX แอนิเมชัน การทำงานแบบออฟไลน์ ไปจนถึงการเชื่อมต่อบริการภายนอก</p>
+  <p>จุดเด่นคือ <b>เนื้อเพลงที่มีแอนิเมชันตรงกับเสียงร้อง</b> ไล่สีทีละคำตามจังหวะ และ <b>User Interface ที่เรียบง่าย ทันสมัย</b> ใช้งานได้ทั้งคอมพิวเตอร์ แท็บเล็ต และมือถือ</p>
+
+  <h3>ฟังก์ชันหลัก</h3>
+  <div class="abgrid">
+    <div class="abc"><i>🎤</i><b>เนื้อเพลงแบบซิงก์</b><span>ไล่สีทีละคำตามเสียงร้อง ค้นจากหลายแหล่งอัตโนมัติ ปรับจังหวะเองได้ แตะจังหวะสร้างเนื้อใหม่ แปลเป็นไทย/อังกฤษ และโหมดคาราโอเกะเต็มจอ</span></div>
+    <div class="abc"><i>▶️</i><b>การเล่นเพลง</b><span>คิวลากเรียงได้ สุ่ม วนซ้ำ วนช่วง A-B ปรับความเร็ว เติมเพลงต่อไม่รู้จบ จำตำแหน่งเพลงล่าสุด และปุ่มมีเดียของระบบ</span></div>
+    <div class="abc"><i>🧭</i><b>ค้นพบเพลง</b><span>แนะนำเพลงจากสิ่งที่ฟังบ่อย ชาร์ตยอดนิยมไทยและทั่วโลก หมวดแนวเพลง K-pop T-pop ฮิปฮอป และประวัติการฟัง</span></div>
+    <div class="abc"><i>🔎</i><b>ค้นหา</b><span>ค้นหาเพลงได้ทันทีโดยไม่ต้องตั้งค่า วางลิงก์วิดีโอหรือเพลย์ลิสต์ YouTube เพื่อเล่นหรือนำเข้าทั้งชุดได้</span></div>
+    <div class="abc"><i>📚</i><b>คลังเพลง</b><span>สร้างเพลย์ลิสต์เอง เพลย์ลิสต์อัตโนมัติ (Top 50, ฟังล่าสุด) และบล็อกเพลงหรือศิลปินที่ไม่อยากเจอ</span></div>
+    <div class="abc"><i>📊</i><b>สถิติและรีแคป</b><span>สรุปการฟังแบบรายสัปดาห์ รายเดือน ศิลปินและเพลงที่ฟังมากที่สุด แชร์เป็นภาพได้ พร้อมเป้าหมายการฟังรายวัน</span></div>
+    <div class="abc"><i>🌙</i><b>ก่อนนอน</b><span>ตั้งเวลาปิดเพลง หรือหยุดเมื่อจบเพลงนี้ เสียงค่อยๆ เบาลงก่อนหยุด</span></div>
+    <div class="abc"><i>🔄</i><b>ซิงก์ข้ามเครื่อง</b><span>ใช้รหัสเดียวกันเพื่อให้เพลย์ลิสต์ ประวัติ และสถิติตรงกันทุกเครื่อง ข้อมูลเข้ารหัสในเครื่องก่อนส่งเสมอ</span></div>
+    <div class="abc"><i>💬</i><b>Discord</b><span>แสดงเพลงที่กำลังฟังบนโปรไฟล์ Discord พร้อมปก แถบเวลา และปุ่มเปิดเพลงบน YouTube</span></div>
+    <div class="abc"><i>🎮</i><b>มินิเกม</b><span>ทายเพลงจากเสียง ทายว่าเพลงไหนฟังมากกว่า และเติมเนื้อเพลงที่หายไป</span></div>
+    <div class="abc"><i>🎨</i><b>หน้าตาปรับได้</b><span>สีธีมเปลี่ยนตามปกเพลง เลือกพื้นหลัง ฟอนต์ ขนาดเนื้อเพลง และโหมดย่อขนาด</span></div>
+    <div class="abc"><i>📱</i><b>ติดตั้งเป็นแอป</b><span>เพิ่มลงหน้าจอโฮมได้แบบแอปจริง (PWA) อัปเดตตัวเองเมื่อมีเวอร์ชันใหม่ และมีหน้าตรวจสถานะระบบ</span></div>
+  </div>
+
+  <h3>เทคโนโลยีที่ใช้</h3>
+  <p>ตัวแอปเขียนด้วย <b>HTML</b> เป็นหลักเพราะเป็นเว็บแอปพลิเคชัน ร่วมกับ <b>CSS</b> สำหรับหน้าตาและแอนิเมชัน และ <b>JavaScript</b> สำหรับการทำงานทั้งหมด ข้อมูลทุกอย่าง เช่น เพลย์ลิสต์ การตั้งค่า และไฟล์สำรอง จัดเก็บในรูปแบบ <b>JSON</b></p>
+  <div class="abtags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>JSON</span><span>YouTube IFrame Player API</span><span>Service Worker (PWA)</span><span>Web Crypto (AES-GCM)</span><span>Cloudflare Workers + KV</span><span>Node.js (ตัวช่วย Discord)</span></div>
+  <p class="abnote">แหล่งข้อมูล: เนื้อเพลงจาก LRCLIB, NetEase และ lyrics.ovh · ปกและชาร์ตจาก Apple Music และ Deezer · คำแปลจาก Google Translate</p>
+
+  <h3>การเคารพลิขสิทธิ์และความเป็นส่วนตัว</h3>
+  <ul class="abul">
+    <li>เล่นเพลงผ่านตัวเล่น YouTube แบบฝังอย่างเป็นทางการ ไม่ดาวน์โหลดไฟล์ ไม่ตัดโฆษณา ยอดวิวและรายได้ยังเป็นของเจ้าของผลงาน</li>
+    <li>เพลง วิดีโอ เนื้อเพลง และภาพปก เป็นลิขสิทธิ์ของเจ้าของแต่ละราย แอปนี้ไม่ได้เป็นเจ้าของหรือจำหน่ายเนื้อหาใดๆ</li>
+    <li>ไม่มีระบบสมาชิก ไม่เก็บข้อมูลส่วนตัว ข้อมูลการฟังอยู่ในเครื่องของผู้ใช้ และถ้าเปิดซิงก์จะถูกเข้ารหัสก่อนออกจากเครื่อง</li>
+    <li>บริการเสริมบางอย่าง (เช่น ตัวค้นหาสำรอง และบริการแปล) เป็นช่องทางที่ไม่เป็นทางการ อาจหยุดทำงานได้ และปิดได้ในการตั้งค่า</li>
+    <li>เป็นโครงงานส่วนตัวเพื่อการศึกษา ไม่แสวงหากำไร และไม่มีส่วนเกี่ยวข้องกับ YouTube หรือ Google</li>
+  </ul>
+
+  <h3>เส้นทางการพัฒนา</h3>
+  <ol class="abtl">
+    <li><b>เริ่มต้น</b><span>เครื่องเล่นพื้นฐาน เล่นจากลิงก์ YouTube พร้อมหน้าจอกำลังเล่นสไตล์ Apple Music</span></li>
+    <li><b>เนื้อเพลงซิงก์</b><span>ดึงเนื้อเพลงแบบมีเวลา ไล่สีทีละคำ แก้จังหวะ และแตะจังหวะเอง</span></li>
+    <li><b>ค้นหาและค้นพบ</b><span>หน้าค้นพบ ชาร์ต คิวต่อเนื่อง และเพลย์ลิสต์</span></li>
+    <li><b>ข้ามอุปกรณ์</b><span>ติดตั้งเป็นแอป ซิงก์ข้ามเครื่องแบบเข้ารหัส และเชื่อมต่อ Discord</span></li>
+    <li><b>ส่วนตัวขึ้น</b><span>แนะนำเพลงจากการฟัง รีแคป สถิติ เป้าหมาย แนวเพลง และมินิเกม</span></li>
+    <li><b>ขัดเกลา</b><span>ปรับ UI/UX ทั้งระบบ ค้นหาได้โดยไม่ต้องตั้งค่า แปลได้ทุกภาษา และเพิ่มความเสถียร</span></li>
+  </ol>
+
+  <h3>คีย์ลัด</h3>
+  <div class="abkeys">
+    <span><kbd>Space</kbd>เล่น/หยุด</span><span><kbd>N</kbd>/<kbd>P</kbd>ถัดไป/ก่อนหน้า</span><span><kbd>←</kbd><kbd>→</kbd>เลื่อน 5 วิ</span>
+    <span><kbd>↑</kbd><kbd>↓</kbd>เสียง</span><span><kbd>/</kbd>ค้นหา</span><span><kbd>L</kbd>เนื้อเพลง</span><span><kbd>K</kbd>คาราโอเกะ</span>
+    <span><kbd>B</kbd>วน A-B</span><span><kbd>F</kbd>เต็มจอ</span><span><kbd>Ctrl</kbd>+<kbd>K</kbd>เมนูคำสั่ง</span><span><kbd>?</kbd>ทั้งหมด</span>
+  </div>
+
+  <p class="abfoot">Now Playing · จัดทำโดย นายประพล ป้อมตรี<br>ขอบคุณที่ใช้งาน ♫</p>
+</div></div>
+<div id="intro" role="dialog" aria-modal="true" aria-labelledby="iTitle">
+  <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+  <div class="icard">
+    <img class="icon" src="icon-192.png" alt="">
+    <div class="ieq"><i></i><i></i><i></i><i></i><i></i></div>
+    <h1 id="iTitle">Now Playing</h1>
+    <p class="isub">ฟังเพลงจาก YouTube ในหน้าจอที่สวยและใช้ง่ายแบบแอปเพลง พร้อมเนื้อเพลงที่ขยับตามเสียงร้องทีละคำ</p>
+    <div class="ifeat"><div><em>🎤</em><p style="margin:0"><b>เนื้อเพลงตามจังหวะ</b><span>ไล่สีทีละคำ แปลได้ และร้องคาราโอเกะเต็มจอ</span></p></div><div><em>🧭</em><p style="margin:0"><b>ค้นพบเพลงที่ใช่</b><span>แนะนำจากสิ่งที่คุณฟังบ่อย พร้อมชาร์ตและแนวเพลง</span></p></div><div><em>📊</em><p style="margin:0"><b>รีแคปการฟัง</b><span>ดูว่าฟังใครบ่อยสุด ตั้งเป้าหมาย และแชร์เป็นภาพ</span></p></div><div><em>🔄</em><p style="margin:0"><b>ใช้ได้ทุกเครื่อง</b><span>คอม แท็บเล็ต มือถือ ซิงก์ข้ามเครื่อง และขึ้นสถานะ Discord</span></p></div></div>
+    <div class="iby">จัดทำโดย <b>นายประพล ป้อมตรี</b></div>
+    <div class="ifoot"><button class="igo" id="iGo">เริ่มฟังเพลง</button>
+    <div class="irow"><label><input type="checkbox" id="iNo"> ไม่ต้องแสดงหน้านี้อีก</label><button id="iMore">อ่านรายละเอียดทั้งหมด</button></div></div>
+  </div>
+</div>
 <div id="dgModal"><div class="panel gmp">
   <div class="gmh"><b>สถานะระบบ</b><button class="mini" id="dgCopy">คัดลอกรายงาน</button><button class="mini" id="dgX">ปิด</button></div>
   <div id="dgBody"></div>
@@ -890,7 +1047,7 @@ body:not([data-tab="now"])[data-has="0"] .stage{display:none!important}
   </div>
   <div class="sec" data-s="dat">
     <h4 class="grp">ภาพรวม</h4>
-    <div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button class="btn" id="stBtn" style="height:38px">สถิติการฟัง</button><button class="btn" id="rcBtn" style="height:38px">รีแคปของคุณ</button><button class="btn" id="cmdBtn" style="height:38px">เมนูคำสั่ง (Ctrl+K)</button></div>
+    <div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button class="btn" id="stBtn" style="height:38px">สถิติการฟัง</button><button class="btn" id="rcBtn" style="height:38px">รีแคปของคุณ</button><button class="btn" id="cmdBtn" style="height:38px">เมนูคำสั่ง (Ctrl+K)</button><button class="btn" id="abBtn2" style="height:38px">เกี่ยวกับ Now Playing</button><button class="btn" id="introBtn" style="height:38px">แสดงหน้าต้อนรับ</button></div>
     <h4 class="grp">สำรองและซิงก์</h4>
     <div><span class="lab">สำรอง / กู้ข้อมูล</span>
       <div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button class="btn" id="expBtn" style="height:38px">ส่งออกไฟล์สำรอง</button><button class="btn" id="impBtn" style="height:38px">นำเข้า</button><input type="file" id="impFile" accept="application/json" style="display:none"></div>
@@ -934,7 +1091,7 @@ const $=id=>document.getElementById(id)||(pipWin&&!pipWin.closed?pipWin.document
 window.__errs=[];
 addEventListener('error',e=>{try{__errs.push((e.message||'error')+' @'+(e.lineno||0));if(__errs.length>20)__errs.shift()}catch(_){}});
 addEventListener('unhandledrejection',e=>{try{__errs.push('promise: '+String((e.reason&&e.reason.message)||e.reason).slice(0,140));if(__errs.length>20)__errs.shift()}catch(_){}});
-const BUILD='2026-11-17.06';
+const BUILD='2026-11-17.09';
 const PLAY='<path d="M8 5v14l11-7z"/>',PAUSE='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
 /* ทุก fetch ที่ไม่ได้ตั้ง signal เอง จะหมดเวลาใน 20 วิ (กันค้างตลอดไปเมื่อเน็ตสะดุด) */
 (function(){const of=window.fetch.bind(window);window.fetch=(u,o)=>{o=o||{};if(o.signal)return of(u,o);const c=new AbortController(),t=setTimeout(()=>c.abort(),20000);return of(u,Object.assign({},o,{signal:c.signal})).finally(()=>clearTimeout(t))}})();
@@ -2330,7 +2487,7 @@ function prev(){
 }
 $('pp').onclick=toggle;$('next').onclick=()=>next(false);$('prev').onclick=prev;
 document.addEventListener('keydown',e=>{
-  if(document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show,#gmModal.show,#dgModal.show'))return;
+  if(document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show,#gmModal.show,#dgModal.show,#abModal.show,#intro.show'))return;
   if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;
   if(e.code==='Space'){e.preventDefault();toggle()}
   if(e.code==='ArrowUp'){e.preventDefault();vol=Math.min(100,vol+5);muted=false;lsSet('vol',vol);applyVol()}
@@ -3268,7 +3425,7 @@ addEventListener('pagehide',()=>{if(dcOn){try{navigator.sendBeacon(DC+'/clear','
   kar.addEventListener('dblclick',e=>{if(e.target.closest('button'))return;$('karFs').click()});
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'&&karOn){karShow(false);e.stopPropagation()}
-    else if((e.key==='k'||e.key==='K')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes((e.target||{}).tagName)&&!document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show,#gmModal.show,#dgModal.show')){karShow(!karOn)}
+    else if((e.key==='k'||e.key==='K')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes((e.target||{}).tagName)&&!document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show,#gmModal.show,#dgModal.show,#abModal.show,#intro.show')){karShow(!karOn)}
   },true);
 
   // ----- ย้ายข้อมูลข้ามเครื่อง -----
@@ -3565,6 +3722,7 @@ window.mergedStats=function(){
     tiles.appendChild(window.mkTile('rc','📊','รีแคปของคุณ',all.length?(w7>=60?'7 วัน: '+hm(w7):'ดูสรุปการฟัง'):'เริ่มฟังเพื่อดูสรุป',()=>openRecap()));
     if(window.goalEl)tiles.appendChild(window.goalEl());
     if(window.gmEl)tiles.appendChild(window.gmEl());
+    tiles.appendChild(window.mkTile('about','ℹ️','เกี่ยวกับแอปนี้','ที่มา · ผู้จัดทำ',()=>window.openAbout&&openAbout()));
     top.appendChild(tiles);
   }
   function drawFY(){
@@ -3803,7 +3961,7 @@ window.mergedStats=function(){
   $('abBtn').onclick=abPress;window.abClear=abClear;window.abPress=abPress;
   setInterval(()=>{if(st===2&&ready&&playing){try{if((player.getCurrentTime()||0)>=B-0.05)player.seekTo(A,true)}catch(e){}}},150);
   document.addEventListener('keydown',e=>{
-    if((e.key==='b'||e.key==='B')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes((e.target||{}).tagName)&&!document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show,#gmModal.show,#dgModal.show'))abPress();
+    if((e.key==='b'||e.key==='B')&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!['INPUT','TEXTAREA','SELECT'].includes((e.target||{}).tagName)&&!document.querySelector('#modal.show,#edModal.show,#shModal.show,#cmdk.show,#statModal.show,#rcModal.show,#gmModal.show,#dgModal.show,#abModal.show,#intro.show'))abPress();
   });
 })();
 
@@ -4078,6 +4236,33 @@ window.mergedStats=function(){
   const tgt=startMode==='last'?(ls('lasttab')||'disc'):startMode;
   if(location.hash.startsWith('#import='))setTab('disc');
   else if(['disc','srch','lib'].includes(tgt))setTab(tgt);
+})();
+
+/* ---------- หน้าเกี่ยวกับ ---------- */
+(function(){
+  const M=$('abModal');
+  function open(){$('modal').classList.remove('show');$('abVer').textContent='เวอร์ชัน '+(typeof BUILD!=='undefined'?BUILD:'');M.classList.add('show');M.querySelector('.abp').scrollTop=0}
+  const close=()=>M.classList.remove('show');
+  $('abX').onclick=close;M.addEventListener('click',e=>{if(e.target===M)close()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&M.classList.contains('show'))close()});
+  $('abBtn2').onclick=open;$('abLink').onclick=open;window.openAbout=open;
+})();
+
+/* ---------- หน้าต้อนรับ (แสดงทุกครั้งที่เปิด จนกว่าจะติ๊กไม่ต้องแสดงอีก) ---------- */
+(function(){
+  const I=$('intro');
+  function close(more){
+    if(!I.classList.contains('show'))return;
+    lsSet('nointro',$('iNo').checked?'1':'0');
+    I.classList.add('out');
+    setTimeout(()=>{I.classList.remove('show','out');if(more&&window.openAbout)openAbout()},430);
+  }
+  $('iGo').onclick=()=>close(false);
+  $('iMore').onclick=()=>close(true);
+  document.addEventListener('keydown',e=>{if(I.classList.contains('show')&&(e.key==='Escape'||(e.key==='Enter'&&e.target.tagName!=='INPUT'))){e.preventDefault();e.stopPropagation();close(false)}},true);
+  window.showIntro=()=>{$('iNo').checked=ls('nointro')==='1';I.classList.remove('out');I.classList.add('show');setTimeout(()=>{try{$('iGo').focus({preventScroll:true})}catch(e){}},400)};
+  $('introBtn').onclick=()=>{$('modal').classList.remove('show');showIntro()};
+  if(ls('nointro')!=='1'&&!location.hash.startsWith('#import='))showIntro();
 })();
 </script>
 </body>
